@@ -26,6 +26,8 @@ export async function initPiniaStores() {
     $User = useUserStore()
     await $User.init()
 
+    console.log("hello pinia")
+
     $Projects = useProjectStore()
     await $Projects.init()
 

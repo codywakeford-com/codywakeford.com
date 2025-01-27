@@ -7,7 +7,7 @@
             >Send a message</nuxt-link
         >
 
-        <div class="menu-item">View Design File</div>
+        <btn modal="design-modal" class="menu-item">View Design File</btn>
         <div class="menu-item">Accept Deliverable</div>
 
         <div class="menu-item">

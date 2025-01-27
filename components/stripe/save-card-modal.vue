@@ -83,8 +83,6 @@ const state = ref({
 })
 
 interface Props {
-    projectId: Project["id"]
-
     /**Fired when payment is complete and returns a payment record for storage. */
     onComplete?: (setupRecord: PaymentMethod) => void
     onFailure?: () => void

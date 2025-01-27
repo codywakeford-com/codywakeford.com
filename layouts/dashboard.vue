@@ -9,15 +9,16 @@
         </div>
     </div>
 
-    <stripe-payment-modal :project-id="projectId" />
-    <stripe-save-card-modal :project-id="projectId" />
+    <dashboard-loading-screen v-if="false" />
+
+    <stripe-payment-modal />
+    <stripe-save-card-modal />
+    <dashboard-design-modal />
 </template>
 
 <script setup lang="ts">
 const route = useRoute()
 const projectId = route.params.projectId as string
-
-const paymentModal = ref<HTMLDialogElement | null>(null)
 </script>
 
 <style lang="scss" scoped>

@@ -24,4 +24,8 @@ declare global {
 
         stripePaymentProfile: StripePaymentProfile
     }
+    interface $PaymentRecord extends PaymentRecord {
+        projectId: Project["id"]
+        userId: User["id"]
+    }
 }

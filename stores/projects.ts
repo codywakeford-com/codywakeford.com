@@ -6,6 +6,7 @@ import { velorisStaffEmails } from "./notifications"
 export const useProjectStore = defineStore("projects", {
     state: () => ({
         projects: [] as Project[],
+        selectedProjectId: "",
     }),
 
     getters: {
@@ -66,11 +67,17 @@ export const useProjectStore = defineStore("projects", {
 
             return project.quote
         },
-        getProjectById: (state) => (id: string) => {
-            return state.projects.find((project) => {
-                return project.id === id
-            })
-        },
+        getProjectById:
+            (state) =>
+            (id: string): Project => {
+                const project = state.projects.find((project) => {
+                    return project.id === id
+                })
+
+                if (!project) throw new Error("project not found")
+
+                return project
+            },
 
         getNextProjectPhase: (state) => (phase: ProjectPhase) => {
             const index = projectPhases.indexOf(phase)
@@ -81,6 +88,8 @@ export const useProjectStore = defineStore("projects", {
     actions: {
         async init() {
             if (!import.meta.client) return
+
+            console.log("hello projects")
 
             const $db = useDb()
             const colRef = collection($db, "projects")
@@ -93,6 +102,8 @@ export const useProjectStore = defineStore("projects", {
                         id: change.doc.id,
                         ...projectData,
                     } as Project
+
+                    console.log(project)
 
                     if (change.type === "added") {
                         const index = this.projects.findIndex((p) => p.id === project.id)
@@ -120,6 +131,29 @@ export const useProjectStore = defineStore("projects", {
                     }
                 })
             })
+        },
+
+        async changePhaseOnPayment(projectId: Project["id"]) {
+            const project = this.getProjectById(projectId)
+
+            if (project.phase === "discovery") {
+                if (!project.quote) throw new Error("No quote")
+
+                if (project.quote.amountPaid > project.quote.totalAmount / 3) {
+                    this.incrementPhase(projectId)
+                }
+            }
+        },
+
+        async updateDb(project: Project) {
+            try {
+                $fetch(`/api/projects/${project.id}`, {
+                    method: "PUT",
+                    body: { project },
+                })
+            } catch (error) {
+                console.error()
+            }
         },
 
         async read() {
@@ -320,6 +354,19 @@ export const useProjectStore = defineStore("projects", {
             const nextPhase = this.getNextProjectPhase(this.getPhaseById(projectId))
 
             this.updatePhase(projectId, nextPhase)
+
+            switch (nextPhase) {
+                case "design":
+                    await createObject<Action>(`/projects/${projectId}/user-actions`, {
+                        type: "meeting",
+                        message: "Please book a design meeting",
+                    })
+                    break
+
+                default:
+                    break
+            }
+
             $ActivityLogs.addPhaseActivityItem(projectId, nextPhase)
         },
 
@@ -336,19 +383,6 @@ export const useProjectStore = defineStore("projects", {
             })
 
             if (!project) throw new Error("No project found")
-
-            // Notify all clients on project.
-            // $Notifications.create({
-            //     message: "",
-            //     mode: "success",
-            //     title: "You have been requested for a meeting.",
-            //     to: project.emails,
-            //     action: {
-            //         type: "link",
-            //         url: `/admin/clients/${projectId}`,
-            //     },
-            //     type: "project",
-            // })
         },
 
         async delete(id: string) {
@@ -397,7 +431,12 @@ const DummyProject: Omit<Project, "id"> = {
     name: "Test Project",
     emails: ["codypwakeford@gmail.com"],
     phase: "discovery",
-    action: "meeting",
+    action: [
+        {
+            type: "meeting",
+            message: "Please book our discovery meeting.",
+        },
+    ],
     paymentPlan: "noneSelected",
     companyName: "VelorisDesigns",
     domain: "codywakeford.com",

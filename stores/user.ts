@@ -158,34 +158,47 @@ export const useUserStore = defineStore("userStore", {
                     body: { paymentMethod },
                 })
 
-                if (!this.user.stripePaymentProfile.paymentMethods) {
-                    this.user.stripePaymentProfile.paymentMethods = [paymentMethod]
-                } else {
-                    this.user.stripePaymentProfile.paymentMethods.push(paymentMethod)
-                }
+                this.user.stripePaymentProfile.paymentMethods.push(paymentMethod)
             } catch (error) {
                 console.error(error)
             }
         },
 
-        async deletePaymentProfile(paymentProfileId: PaymentProfile["paymentMethodId"]) {
-            const paymentProfileIndex = this.user.paymentProfiles.findIndex((profile) => {
-                return profile.paymentMethodId === paymentProfileId
+        async addPaymentRecord(projectId: Project["id"], paymentRecord: PaymentRecord) {
+            if (!projectId) throw new Error("no prohject id")
+
+            try {
+                await $fetch(`/api/users/${$User.id}/payment-record`, {
+                    method: "POST",
+                    body: {
+                        paymentRecord,
+                        projectId,
+                    },
+                })
+            } catch (error) {
+                console.error(error)
+            }
+        },
+
+        async deletePaymentProfile(paymentMethodId: PaymentMethod["paymentMethodId"]) {
+            const paymentProfileIndex = this.user.stripePaymentProfile.paymentMethods.findIndex((profile) => {
+                return profile.paymentMethodId === paymentMethodId
             })
 
             if (paymentProfileIndex === -1) throw new Error("No profile found")
 
-            const paymentProfile = this.user.paymentProfiles[paymentProfileIndex]
-            this.user.paymentProfiles.splice(paymentProfileIndex, 1)
+            const paymentProfile = this.user.stripePaymentProfile.paymentMethods[paymentProfileIndex]
+
+            this.user.stripePaymentProfile?.paymentMethods?.splice(paymentProfileIndex, 1)
 
             try {
-                await $fetch(`/api/users/${$User.id}/methods/${paymentProfileId}`, {
+                await $fetch(`/api/users/${$User.id}/methods/${paymentMethodId}`, {
                     method: "DELETE",
                 })
 
                 this.writeCache(this.user)
             } catch (error) {
-                this.user.paymentProfiles.push(paymentProfile)
+                this.user.stripePaymentProfile.paymentMethods.push(paymentProfile)
                 console.error(error)
             }
         },

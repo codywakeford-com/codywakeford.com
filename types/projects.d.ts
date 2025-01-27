@@ -6,7 +6,10 @@ declare global {
     /**These are the meetings that can be scheduled. Each one will come with its own description shown to the client. It will also outline the meeting agenda. */
     type MeetingRequestTypes = "discovery" | "design" | "final approval" | "launch"
 
-    type Actions = "meeting" | "document" | "none" | "payment"
+    interface Action {
+        type: "meeting" | "document" | "none" | "payment" | "design-meeting"
+        message?: string
+    }
 
     interface Meeting {
         meetingUrl: string
@@ -24,7 +27,7 @@ declare global {
     interface Project {
         /**Db reference id */
         id: string
-
+        figmaLink?: string
         /**Name of the project e.g. client/ company name */
         name: string
 
@@ -33,7 +36,7 @@ declare global {
 
         /**What phase the project is in. */
         phase: ProjectPhase
-        action?: Actions
+        action: Action[]
         meeting?: Meeting
 
         /**

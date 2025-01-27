@@ -56,6 +56,7 @@
             <dashboard-project-menu v-if="project" :project="project" />
         </div>
     </main>
+    <stripe-payment-modal :project-id="projectId" />
 </template>
 
 <script setup lang="ts">

@@ -32,6 +32,7 @@ export default defineNuxtConfig({
         ["../nova-components", { install: true }],
         ["../novatek-email", { install: true }],
         ["../novatek-payments", { install: true }],
+        ["../firebase-service", { install: true }],
     ],
 
     css: ["@/style/main.scss"],

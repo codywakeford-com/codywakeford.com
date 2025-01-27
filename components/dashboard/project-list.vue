@@ -5,7 +5,12 @@
         </header>
 
         <rflex class="cards">
-            <anchor :to="getProjectUrl(project.id)" class="project-card" v-for="project in projects">
+            <anchor
+                :to="getProjectUrl(project.id)"
+                class="project-card"
+                v-for="project in projects"
+                @click="$Projects.selectedProjectId = project.id"
+            >
                 <h3>{{ project.name }}</h3>
                 <!-- <p>{{ project.companyName }}</p> -->
                 <p class="project-domain">{{ project?.domain }}</p>

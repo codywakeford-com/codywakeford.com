@@ -120,13 +120,10 @@ const state = ref({
 })
 
 interface Props {
-    options?: StripePaymentOptions
-    metadata?: StripeMetaData
-
-    /**Fired when payment is complete and returns a payment record for storage. */
-    onComplete?: (setupRecord: PaymentProfile) => void
-    onPayment?: (paymentRecord: PaymentRecord) => void
-    onFailure?: () => void
+    // projectId: Project["id"]
+    // onComplete?: (setupRecord: PaymentProfile) => void
+    // onPayment?: (paymentRecord: PaymentRecord) => void
+    // onFailure?: () => void
 }
 
 const props = defineProps<Props>()
@@ -181,7 +178,14 @@ async function pay() {
         amount.value
     )
 
-    console.log(paymentRecord)
+    const projectId = $Projects.selectedProjectId
+
+    if (!paymentRecord) throw new Error("No payment record")
+    if (!projectId) throw new Error("No projectId")
+
+    $User.addPaymentRecord(projectId, paymentRecord)
+    $ActivityLogs.addMessageActivityItem(projectId, "has made a payment", $User.email)
+    $Projects.changePhaseOnPayment(projectId)
 }
 </script>
 

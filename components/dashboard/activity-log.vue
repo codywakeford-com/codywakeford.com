@@ -74,7 +74,7 @@
             <div class="message" v-if="activity.type === 'message'">
                 <rflex class="top">
                     <div class="sender">{{ activity.sender }}</div>
-                    <span>accepted the proposal.</span>
+                    <span>{{ activity.message }}</span>
                 </rflex>
 
                 <div class="timestamp">{{ dayjs(activity.timestamp).format("dddd d MMM HH:mma") }}</div>
