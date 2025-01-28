@@ -12,11 +12,11 @@
 
                     <div class="text" v-else-if="activity.phaseTo === 'live'">Your website is live!</div>
 
-                    <div v-else class="text">Project moved to phase {{ activity.phaseTo }}</div>
+                    <div v-else class="text">Project moved to the {{ activity.phaseTo }} phase!</div>
                     <div class="divider" />
                 </div>
 
-                <div class="bottom timestamp">{{ dayjs(activity.timestamp).format("dddd d MMM HH:mma") }}</div>
+                <div class="bottom timestamp">{{ dayjs(activity.timestamp).format("dddd Do MMM HH:mma") }}</div>
             </div>
 
             <!-- Attachment -->
@@ -35,7 +35,7 @@
                     </div>
                     uploaded an attachment
                 </span>
-                <span class="timestamp">{{ dayjs(activity.timestamp).format("dddd d MMM HH:mma") }}</span>
+                <span class="timestamp">{{ dayjs(activity.timestamp).format("dddd Do MMM HH:mma") }}</span>
 
                 <dashboard-file-card-small v-for="file in getFilesForActivity(activity)" :key="file.id" :file="file" />
             </div>
@@ -51,18 +51,18 @@
                         {{ activity.message }}
                     </div>
                 </rflex>
-                <div class="timestamp">{{ dayjs(activity.timestamp).format("dddd d MMM HH:mma") }}</div>
+                <div class="timestamp">{{ dayjs(activity.timestamp).format("dddd Do MMM HH:mma") }}</div>
                 <div v-if="activity.action">
-                    <button v-if="activity.action.type === 'payment'" @click="openModal('paymentModal')">
+                    <button-primary-m v-if="activity.action.type === 'payment'" @click="openModal('paymentModal')">
                         Make Payment
-                    </button>
+                    </button-primary-m>
 
-                    <button
+                    <button-primary-m
                         v-if="activity.action.type === 'accept-design'"
                         @click="$Projects.clientAcceptsDesign(props.project.id)"
                     >
                         Accept Design
-                    </button>
+                    </button-primary-m>
                 </div>
             </div>
 
@@ -73,7 +73,7 @@
                     <span>{{ activity.message }}</span>
                 </rflex>
 
-                <div class="timestamp">{{ dayjs(activity.timestamp).format("dddd d MMM HH:mma") }}</div>
+                <div class="timestamp">{{ dayjs(activity.timestamp).format("dddd Do MMM HH:mma") }}</div>
             </div>
 
             <!-- Meeting -->
@@ -86,7 +86,7 @@
 
                     <div class="meeting-details" v-if="meeting">
                         <div class="timestamp">
-                            {{ dayjs(meeting.startTime).format("dddd d MMM HH:mma") }}
+                            {{ dayjs(meeting.startTime).format("dddd Do MMM HH:mma") }}
                         </div>
                         -
                         <nuxt-link target="_blank" :to="meeting.meetingUrl">Join meeting</nuxt-link>
@@ -100,28 +100,10 @@
                     <div class="sender">codypwakeford@gmail.com</div>
                     has uploaded the project proposal
                 </span>
-                <div class="timestamp">{{ dayjs(activity.timestamp).format("dddd d MMM HH:mma") }}</div>
+                <div class="timestamp">{{ dayjs(activity.timestamp).format("dddd Do MMM HH:mma") }}</div>
 
                 <div class="attachments">
-                    <dashboard-file-card-small
-                        v-if="quote"
-                        v-for="file in [quote?.proposalUrl, quote?.quoteUrl]"
-                        :file="file"
-                    />
-
-                    <!-- <div class="attachment-item">
-                        <Icon icon="circum:file-on" width="30" />
-                        <div class="right">
-                            <div class="name">project-proposal.pdf</div>
-                        </div>
-                    </div>
-
-                    <div class="attachment-item">
-                        <Icon icon="circum:file-on" width="30" />
-                        <div class="right">
-                            <div class="name">quote.pdf</div>
-                        </div>
-                    </div> -->
+                    <dashboard-file-card-small v-if="quote" v-for="file in quote.files" :file="file" />
                 </div>
 
                 <div class="system-message">
@@ -129,7 +111,9 @@
                     expected. Please review the proposal and let me know if you would like to ammend anything.
                 </div>
 
-                <button @click="$Projects.acceptProjectProposal(props.project.id)">Accept Proposal</button>
+                <button-primary-m @click="$Projects.acceptProjectProposal(props.project.id)"
+                    >Accept Proposal</button-primary-m
+                >
             </div>
         </div>
     </section>
@@ -138,6 +122,9 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue"
 import dayjs from "dayjs"
+import advancedFormat from "dayjs/plugin/advancedFormat"
+dayjs.extend(advancedFormat)
+
 interface Props {
     project: Project
 }
@@ -300,5 +287,11 @@ section {
         align-items: flex-start;
         gap: 10px;
     }
+}
+
+.btn {
+    margin-top: 5px;
+    width: min-content;
+    white-space: nowrap;
 }
 </style>

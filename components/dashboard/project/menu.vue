@@ -1,14 +1,10 @@
 <template>
     <div class="menu" v-if="project">
-        <div class="menu-item">Make a payment</div>
-        <div class="menu-item">Request a change</div>
-
         <nuxt-link :to="`/dashboard/chatroom?projectId=${props.project?.id}`" class="menu-item"
             >Send a message</nuxt-link
         >
 
         <btn modal="design-modal" class="menu-item">View Design File</btn>
-        <div class="menu-item">Accept Deliverable</div>
 
         <div class="menu-item">
             <Icon icon="streamline:group-meeting-call" width="20px" />

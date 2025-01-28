@@ -1,6 +1,5 @@
 import { defineStore } from "pinia"
 import { signOut as firebaseSignOut } from "firebase/auth"
-import type Stripe from "stripe"
 export const useUserStore = defineStore("userStore", {
     state: () => ({
         user: {} as User,

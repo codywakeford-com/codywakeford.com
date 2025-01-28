@@ -2,22 +2,18 @@
     <main class="container">
         <header>
             <div class="left">
-                <div class="date">Mon, July 8</div>
+                <div class="date">{{ dayjs(date).format("dddd, MMMM Do") }}</div>
                 <h1 class="project-name">{{ project?.name }}</h1>
             </div>
 
             <div class="right">
-                <div class="project-url">{{ project?.domain }}</div>
-                <!-- <button @click="$ActivityLogs.(projectId, phaseActivityItem)">add phase</button> -->
-                <!-- <button @click="$ActivityLogs.addFilesActivityItem(projectId, )">add file</button> -->
-                <!-- <button @click="$ActivityLogs.create(projectId, actionActivityItem)">Meeting Scheduled</button> -->
-
-                <!-- <button @click="$ActivityLogs.addFilesActivityItem(projectId, ['9rRbFsHxQ3L6W9GCFzRU'])">
-                    
-                </button> -->
-
-                <button @click="$Projects.incrementPhase(projectId)">go to next phase</button>
-                <button v-if="!project?.quote" @click="$Projects.addDummyQuote(projectId)">Upload quote</button>
+                <nuxt-link
+                    target="_blank"
+                    :to="`https://${project.domain}`"
+                    class="project-url"
+                    v-if="project.domain"
+                    >{{ project.domain }}</nuxt-link
+                >
             </div>
         </header>
 
@@ -60,7 +56,21 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
+import dayjs from "dayjs"
+import advancedFormat from "dayjs/plugin/advancedFormat"
+
+dayjs.extend(advancedFormat)
+
+const date = computed(() => {
+    let date = Date.now()
+
+    setTimeout(() => {
+        date = Date.now()
+    }, 1000 * 1800) // 30 mins
+
+    return date
+})
+
 const route = useRoute()
 const projectId = route.params.id as string
 

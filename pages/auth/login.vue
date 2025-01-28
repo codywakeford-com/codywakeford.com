@@ -18,7 +18,6 @@
 
             <anchor to="/auth/forgot-password" class="forgot-password-link">Forgot Password?</anchor>
 
-            <pre>{{ user }}</pre>
             <p v-if="errorMessage" class="error-message">
                 {{ errorMessage }}
             </p>

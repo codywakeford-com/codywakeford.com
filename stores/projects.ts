@@ -136,10 +136,8 @@ export const useProjectStore = defineStore("projects", {
 
             // Move to design phase on 33% payment
             if (project.phase === "discovery") {
-                console.log(project.quote.amountPaid)
-                console.log(project.quote.totalAmount * 0.32)
                 if (project.quote.amountPaid >= project.quote.totalAmount * 0.32) {
-                    this.incrementPhase(projectId)
+                    await this.incrementPhase(projectId)
                 }
 
                 $ActivityLogs.addSystemMessageActivityItem(
@@ -154,7 +152,7 @@ export const useProjectStore = defineStore("projects", {
             // Move to development phase on 66% payment
             if (project.phase === "design") {
                 if (project.quote.amountPaid > project.quote.totalAmount * 0.65) {
-                    this.incrementPhase(projectId)
+                    await this.incrementPhase(projectId)
                 }
 
                 return
@@ -163,39 +161,16 @@ export const useProjectStore = defineStore("projects", {
             // await 100% payment before moving website onto clients URL
             if (project.phase === "launch") {
                 if (project.quote.amountPaid >= project.quote.totalAmount) {
-                    this.incrementPhase(projectId)
+                    await this.incrementPhase(projectId)
                 }
 
                 return
             }
         },
 
-        async updateDb(project: Project) {
-            try {
-                $fetch(`/api/projects/${project.id}`, {
-                    method: "PUT",
-                    body: { project },
-                })
-            } catch (error) {
-                console.error()
-            }
-        },
-
-        async read() {
-            try {
-                const response = await $fetch<Project[]>("/api/projects")
-                this.projects = response
-            } catch (error) {
-                console.error(error)
-            }
-        },
-
         async create(project: Omit<Project, "id">) {
             try {
-                const projectId = await $fetch<Project["id"]>("/api/projects", {
-                    method: "POST",
-                    body: { project: project },
-                })
+                const projectId = await createObject<Omit<Project, "id">>("/projects", project)
 
                 await $ActivityLogs.addPhaseActivityItem(projectId, "discovery")
                 await $ActivityLogs.addSystemMessageActivityItem(
@@ -210,30 +185,9 @@ export const useProjectStore = defineStore("projects", {
 
         async updatePhase(projectId: string, phase: ProjectPhase) {
             try {
-                await $fetch("/api/projects/status", {
-                    method: "PUT",
-                    body: {
-                        id: projectId,
-                        phase: phase,
-                    },
-                })
+                await updateObject(`/projects/${projectId}`, { phase })
 
                 $ActivityLogs.addPhaseActivityItem(projectId, phase)
-            } catch (error) {
-                console.error(error)
-            }
-        },
-
-        async setPaymentPlan(projectId: string, paymentPlan: Project["paymentPlan"]) {
-            try {
-                await $fetch("/api/projects", {
-                    method: "PUT",
-                    body: {
-                        id: projectId,
-                        key: "paymentPlan",
-                        value: paymentPlan,
-                    },
-                })
             } catch (error) {
                 console.error(error)
             }
@@ -243,43 +197,13 @@ export const useProjectStore = defineStore("projects", {
             const meeting = await this.getCalendlyMeetingDetails(meetingUrl, clientUrl)
 
             try {
-                // Add meeting details to db
-                await $fetch("/api/projects", {
-                    method: "PUT",
-                    body: {
-                        id: projectId,
-                        key: "meeting",
-                        value: meeting,
-                    },
-                })
-
-                await $fetch("/api/projects", {
-                    method: "PUT",
-                    body: {
-                        id: projectId,
-                        key: "action",
-                        value: "none",
-                    },
-                })
+                await updateObject(`/projects/${projectId}`, { meeting })
+                await updateObject(`/projects/${projectId}`, { action: "none" })
 
                 $ActivityLogs.addMeetingActivityItem(projectId, "booked")
             } catch (error) {
                 console.error(error)
             }
-
-            // Notify veloris staff
-            // $Notifications.create({
-            //     message: "",
-            //     mode: "success",
-            //     title: "A client has booked a meeting.",
-
-            //     to: velorisStaffEmails,
-            //     action: {
-            //         type: "link",
-            //         url: `/admin/clients/${projectId}`,
-            //     },
-            //     type: "client",
-            // })
         },
 
         async getCalendlyMeetingDetails(meetingUrl: string, clientUrl: string): Promise<Meeting> {
@@ -323,47 +247,6 @@ export const useProjectStore = defineStore("projects", {
             return meeting
         },
 
-        async uploadQuote(projectId: string, quote: ProjectQuote) {
-            await updateObject(`/projects/${projectId}`, quote)
-
-            const docs: Omit<ProjectFile, "id">[] = [
-                {
-                    name: "Project Proposal",
-                    url: quote.proposal,
-                    extension: "pdf",
-                    signed: false,
-                    type: "document",
-                    timestamp: Date.now(),
-                    sender: "codypwakeford@gmail.com",
-                },
-                {
-                    name: "Project Quote",
-                    url: quote.quote,
-                    extension: "pdf",
-                    signed: false,
-                    timestamp: Date.now(),
-                    type: "document",
-                    sender: "codypwakeford@gmail.com",
-                },
-            ]
-
-            docs.forEach((doc) => {
-                createObject<ProjectFile>(`/projects/${projectId}/files`, doc)
-            })
-
-            $Files.addFileToProject(projectId, docs[0])
-            $Files.addFileToProject(projectId, docs[1])
-
-            $ActivityLogs.addQuoteActivityItem(projectId)
-        },
-
-        // async addProjectDocument(projectId: string, document: Omit<ProjectFile, "id">) {
-        //     await useFetch("/api/projects/document", {
-        //         method: "POST",
-        //         body: { id: projectId, document },
-        //     })
-        // },
-
         async updateAmountPaid(projectId: string, amountPaid: number) {
             await $fetch("/api/projects/update-amount-paid", {
                 method: "PUT",
@@ -371,14 +254,10 @@ export const useProjectStore = defineStore("projects", {
             })
         },
 
-        async addDummyQuote(projectId: Project["id"]) {
-            this.uploadQuote(projectId, dummyQuote)
-        },
-
         async incrementPhase(projectId: string) {
             const nextPhase = this.getNextProjectPhase(this.getPhaseById(projectId))
 
-            this.updatePhase(projectId, nextPhase)
+            await this.updatePhase(projectId, nextPhase)
 
             switch (nextPhase) {
                 case "live":
@@ -403,6 +282,30 @@ export const useProjectStore = defineStore("projects", {
                         { type: "none" }
                     )
 
+                    break
+
+                case "launch":
+                    await $ActivityLogs.addSystemMessageActivityItem(
+                        projectId,
+                        "Were ready to show you what we have built. Everything has been thouroughly tested and is ready to go. Be sure to book a call so we can hand show you around!",
+                        { type: "none" }
+                    )
+
+                    const quote = this.quote(projectId)
+                    if (!quote) throw new Error("No quote")
+
+                    const amountPaid = quote.amountPaid
+
+                    if (amountPaid < quote.totalAmount) {
+                        $ActivityLogs.addSystemMessageActivityItem(
+                            projectId,
+                            "Once the final payment is done we will put the website onto your custom domain.",
+                            { type: "payment" }
+                        )
+                    }
+
+                    break
+
                 default:
                     return
             }
@@ -419,9 +322,6 @@ export const useProjectStore = defineStore("projects", {
             const totalCost = this.totalCost(projectId)
 
             if (!amountPaid || !totalCost) throw new Error("No project found")
-
-            console.log(amountPaid)
-            console.log(totalCost * 0.65)
 
             await updateObject<Project>(`/projects/${projectId}`, update)
 
@@ -455,23 +355,9 @@ export const useProjectStore = defineStore("projects", {
         },
 
         async requestMeeting(projectId: string) {
-            const project = this.getProjectById(projectId)
-
-            await useFetch("/api/projects", {
-                method: "put",
-                body: {
-                    id: projectId,
-                    key: "action",
-                    value: "meeting",
-                },
-            })
-
-            if (!project) throw new Error("No project found")
-        },
-
-        async delete(id: string) {
-            await useFetch(`/api/projects/${id}`, {
-                method: "delete",
+            await createObject<Action>(`/projects/${projectId}/user-actions`, {
+                type: "meeting",
+                message: "Please book a meeting.",
             })
         },
 
@@ -479,17 +365,13 @@ export const useProjectStore = defineStore("projects", {
             const quote = this.getProjectById(projectId)?.quote
             if (!quote) throw new Error("Quote not found")
 
-            quote.accepted = true
-
             try {
-                await $fetch("/api/projects", {
-                    method: "PUT",
-                    body: {
-                        id: projectId,
-                        key: "quote",
-                        value: quote,
-                    },
-                })
+                const update = {
+                    quote: { accepted: true },
+                }
+
+                await updateObject(`/projects/${projectId}`, update)
+
                 $ActivityLogs.addMessageActivityItem(projectId, "Project proposal has been accepted.", $User.email)
 
                 if (quote && quote.amountPaid < quote.totalAmount / 3) {
@@ -525,14 +407,6 @@ const DummyProject: Omit<Project, "id"> = {
         },
     ],
     domain: "codywakeford.com",
-}
-
-const dummyQuote: ProjectQuote = {
-    totalAmount: 1000,
-    quote: "https://firebasestorage.googleapis.com/v0/b/portfolio-1953f.firebasestorage.app/o/ftPzCrLExM23hJSFGmvu%2Ffiles%2Fcv%20(1).pdf?alt=media&token=cb0590a8-0b18-4baa-aaf9-f0665651a1fa",
-    proposal:
-        "https://firebasestorage.googleapis.com/v0/b/portfolio-1953f.firebasestorage.app/o/ftPzCrLExM23hJSFGmvu%2Ffiles%2Fcv%20(1).pdf?alt=media&token=cb0590a8-0b18-4baa-aaf9-f0665651a1fa",
-    amountPaid: 0,
 }
 
 /**List of project phases in order for reference. */

@@ -111,7 +111,8 @@ async function uploadQuote(projectId: Project["id"]) {
         files: newFiles,
     }
 
-    await updateObject(`/projects/${projectId}`, quote)
+    await updateObject(`/projects/${projectId}`, { quote })
+    $ActivityLogs.addQuoteActivityItem(projectId)
 }
 
 const project = computed(() => {
