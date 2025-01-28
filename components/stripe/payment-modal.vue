@@ -1,80 +1,3 @@
-<template>
-    <section>
-        <modal id="paymentModal">
-            <header>
-                <h2>Make a payment</h2>
-            </header>
-
-            <div class="controls">
-                <button>Pay 33%</button>
-                <button>Pay All</button>
-            </div>
-
-            <form @submit.prevent="pay" class="payment-form">
-                <div class="saved-cards">
-                    <stripe-payment-method-sm
-                        v-for="(card, index) of paymentProfiles"
-                        @click="selectedCardIndex = index"
-                        :key="index"
-                        :card="card"
-                        :selected="selectedCardIndex === index"
-                    />
-
-                    <!-- <div
-                        class="add-card"
-                        @click="selectedCardIndex = 'newCard'"
-                        :class="{ selected: selectedCardIndex === 'newCard' }"
-                    >
-                        <Icon icon="material-symbols:add" width="25" />
-                        <span>Add a new card</span>
-                    </div> -->
-                </div>
-                <button>Pay</button>
-            </form>
-
-            <!-- TODOOOOo -->
-            <div v-show="selectedCardIndex === 100">
-                <form>
-                    <div class="left">
-                        <div class="form-item">
-                            <label for="cardNumber">Card Number</label>
-                            <div class="input-element" id="card-number-element" ref="cardNumber" />
-                        </div>
-
-                        <div class="form-item">
-                            <label for="cardExpiry">Expiration Date</label>
-                            <div class="input-element" id="card-expiry-element" ref="cardExpiry" />
-                        </div>
-
-                        <div class="form-item">
-                            <label for="cardCvc">CVC</label>
-                            <div class="input-element" id="card-cvc-element" ref="cardCvc" />
-                        </div>
-
-                        <div class="form-item">
-                            <label for="email">Reciept Email:</label>
-                            <input
-                                class="input-element"
-                                type="email"
-                                placeholder="email"
-                                v-model="billingAddress.email"
-                            />
-                        </div>
-                    </div>
-
-                    <div class="right">
-                        <!-- <h3>Billing Address</h3> -->
-                        <div id="address-element" ref="addressElement"></div>
-                    </div>
-                </form>
-                <div class="button-box">
-                    <button-primary-m class="submit-button" @click="pay">Save Card</button-primary-m>
-                </div>
-            </div>
-        </modal>
-    </section>
-</template>
-
 <script setup lang="ts">
 import { Icon } from "@iconify/vue"
 import type {
@@ -86,7 +9,6 @@ import type {
 
 import { loadStripe, type Stripe, type StripeCardElement } from "@stripe/stripe-js"
 
-const amount = ref(10000)
 const selectedCardIndex = ref<number>(0)
 const card = ref<StripeCardNumberElement | null>(null)
 const cardNumber = ref<StripeCardNumberElement | null>(null)
@@ -95,7 +17,7 @@ const cardCvc = ref<StripeCardCvcElement | null>(null)
 const addressElement = ref<StripeAddressElement | null>(null)
 // const card = ref<StripeCardElement | null>(null)
 const stripe = ref<Stripe | null>(null)
-
+const projectId = ref("")
 const billingAddress = ref<StripeBillingAddress>({
     name: "",
     line1: "",
@@ -119,16 +41,32 @@ const state = ref({
     loading: false,
 })
 
-interface Props {
-    // projectId: Project["id"]
-    // onComplete?: (setupRecord: PaymentProfile) => void
-    // onPayment?: (paymentRecord: PaymentRecord) => void
-    // onFailure?: () => void
-}
+const paymentMultiplyer = ref(0.333)
+const amount = computed(() => {
+    const project = $Projects.getProjectById(projectId.value)
+    const total = Number(project?.quote?.totalAmount)
+
+    console.log(total)
+    // const undpaid = Number(total - project.quote.amountPaid)
+
+    return total * paymentMultiplyer.value
+})
+const total = computed((): number => {
+    const project = $Projects.getProjectById(projectId.value)
+    const quote = project?.quote
+
+    if (!quote) return 0
+
+    return quote?.totalAmount
+})
+
+interface Props {}
 
 const props = defineProps<Props>()
-
+const loading = ref(false)
 onMounted(async () => {
+    projectId.value = $Projects.selectedProjectId
+
     const config = useRuntimeConfig()
     stripe.value = await loadStripe(config.public.STRIPE_PUBLISHABLE_KEY)
 
@@ -167,29 +105,120 @@ async function pay() {
         throw new Error("Stripe not initialized or card element not created!")
     }
 
-    const selectedPaymentProfile = paymentProfiles.value[selectedCardIndex.value]
+    loading.value = true
 
-    if (!$User.stripePaymentProfile.customerId) throw new Error("No customer id")
+    try {
+        const selectedPaymentProfile = paymentProfiles.value[selectedCardIndex.value]
 
-    const paymentRecord = await $Stripe.payWithPaymentProfile(
-        stripe.value,
-        $User.stripePaymentProfile.customerId,
-        selectedPaymentProfile,
-        amount.value
-    )
+        if (!$User.stripePaymentProfile.customerId) throw new Error("No customer id")
 
-    const projectId = $Projects.selectedProjectId
+        const paymentRecord = await $Stripe.payWithPaymentProfile(
+            stripe.value,
+            $User.stripePaymentProfile.customerId,
+            selectedPaymentProfile,
+            amount.value
+        )
 
-    if (!paymentRecord) throw new Error("No payment record")
-    if (!projectId) throw new Error("No projectId")
+        const projectId = $Projects.selectedProjectId
 
-    $User.addPaymentRecord(projectId, paymentRecord)
-    $ActivityLogs.addMessageActivityItem(projectId, "has made a payment", $User.email)
-    $Projects.changePhaseOnPayment(projectId)
+        if (!paymentRecord) throw new Error("No payment record")
+        if (!projectId) throw new Error("No projectId")
+
+        await $User.addPaymentRecord(projectId, paymentRecord)
+        await $ActivityLogs.addMessageActivityItem(projectId, "has made a payment", $User.email)
+        await $Projects.changePhaseOnPayment(projectId)
+
+        loading.value = false
+    } catch (error) {
+        console.error(error)
+
+        loading.value = false
+    }
 }
 </script>
+<template>
+    <modal id="paymentModal">
+        <section class="modal-body">
+            <header>
+                <h1>Make a payment</h1>
+            </header>
+
+            <div class="balance">
+                <div class="total">£{{ (total / 100).toFixed(2) }}</div>
+                <div class="amount">£{{ (amount / 100).toFixed(2) }}</div>
+            </div>
+
+            <div class="controls">
+                <button @click="paymentMultiplyer = 0.333">Pay 33%</button>
+                <button @click="paymentMultiplyer = 1">Pay All</button>
+            </div>
+
+            <form @submit.prevent="pay" class="payment-form">
+                <div class="saved-cards">
+                    <stripe-payment-method-sm
+                        v-for="(card, index) of paymentProfiles"
+                        @click="selectedCardIndex = index"
+                        :key="index"
+                        :card="card"
+                        :selected="selectedCardIndex === index"
+                    />
+                </div>
+                <btn class="loading-button" :disabled="loading" :loading="loading">Make Payment</btn>
+            </form>
+
+            <!-- TODOOOOo -->
+            <div v-show="selectedCardIndex === 99">
+                <form>
+                    <div class="left">
+                        <div class="form-item">
+                            <label for="cardNumber">Card Number</label>
+                            <div class="input-element" id="card-number-element" ref="cardNumber" />
+                        </div>
+
+                        <div class="form-item">
+                            <label for="cardExpiry">Expiration Date</label>
+                            <div class="input-element" id="card-expiry-element" ref="cardExpiry" />
+                        </div>
+
+                        <div class="form-item">
+                            <label for="cardCvc">CVC</label>
+                            <div class="input-element" id="card-cvc-element" ref="cardCvc" />
+                        </div>
+
+                        <div class="form-item">
+                            <label for="email">Reciept Email:</label>
+                            <input
+                                class="input-element"
+                                type="email"
+                                placeholder="email"
+                                v-model="billingAddress.email"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="right">
+                        <!-- <h2>Billing Address</h2> -->
+                        <div id="address-element" ref="addressElement"></div>
+                    </div>
+                </form>
+                <div class="button-box">
+                    <button-primary-m class="submit-button" @click="pay">Save Card</button-primary-m>
+                </div>
+            </div>
+        </section>
+    </modal>
+</template>
 
 <style lang="scss" scoped>
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    background: white;
+    padding: 25px;
+    border-radius: $border-radius;
+}
 h2 {
     font-size: 1.25rem;
     margin-bottom: 35px;
@@ -227,6 +256,20 @@ form {
         }
     }
 }
+.loading-button {
+    height: 30px;
+    color: white;
+    border: 0;
+    margin: 0;
+    margin-inline: auto;
+    width: 100%;
+    background: $primary;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: $border-radius;
+}
+
 .input-element {
     background: none;
     padding: 10px 10px;

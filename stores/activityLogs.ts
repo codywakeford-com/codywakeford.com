@@ -130,7 +130,7 @@ export const useActivityLogStore = defineStore("activityLog", {
         async addSystemMessageActivityItem(
             projectId: Project["id"],
             message: SystemMessageActivityItem["message"],
-            action: Actions
+            action: Action
         ) {
             const item: OmitId<SystemMessageActivityItem> = {
                 message: message,

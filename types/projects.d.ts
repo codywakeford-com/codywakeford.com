@@ -1,13 +1,13 @@
 export {}
 
 declare global {
-    type ProjectPhase = "discovery" | "design" | "development" | "final-approval" | "testing" | "launch"
+    type ProjectPhase = "discovery" | "design" | "development" | "testing" | "launch" | "live"
 
     /**These are the meetings that can be scheduled. Each one will come with its own description shown to the client. It will also outline the meeting agenda. */
     type MeetingRequestTypes = "discovery" | "design" | "final approval" | "launch"
 
     interface Action {
-        type: "meeting" | "document" | "none" | "payment" | "design-meeting"
+        type: "meeting" | "document" | "none" | "payment" | "design-meeting" | "accept-design"
         message?: string
     }
 
@@ -25,55 +25,24 @@ declare global {
     }
 
     interface Project {
-        /**Db reference id */
         id: string
-        figmaLink?: string
-        /**Name of the project e.g. client/ company name */
         name: string
-
-        /**List of all clients that have access to the project details */
         emails: string[]
-
-        /**What phase the project is in. */
         phase: ProjectPhase
         action: Action[]
         meeting?: Meeting
 
-        /**
-         * What kind of payment plan does the client use.
-         *
-         * - One: Payment in full upfront.
-         *
-         * - Three: One payment upfront, once on first built website draft and once on completion.
-         *
-         * - Installments: A reccuring monthly payment for the site. //TODO
-         *
-         */
-        paymentPlan: "noneSelected" | "three" | "installments" | "one"
+        design: {
+            url?: string
+            accepted: boolean
+        }
 
-        /**A breif description of the project scope */
-        description?: string
-
-        /**Company domain name */
         domain?: string
-
-        /**The company or person the project is for. */
-        companyName: string
-
-        demoLink?: string
-
         quote?: ProjectQuote
     }
 
     interface ProjectQuote {
-        /**items/ services being purchased */
-        items: ProjectQuoteItem[]
-
-        /**Url link to pdf. */
-        quoteUrl: string
-
-        /**Url link to pdf. */
-        proposalUrl: string
+        files: ProjectFile[]
 
         /**Total of all the payment type items. E.g subscriptions not included. */
         totalAmount: number

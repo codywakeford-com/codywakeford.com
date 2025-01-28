@@ -9,6 +9,9 @@
                     <div class="text" v-if="activity.phaseTo === 'discovery'">
                         Project initiated: Now in the Discovery Phase
                     </div>
+
+                    <div class="text" v-else-if="activity.phaseTo === 'live'">Your website is live!</div>
+
                     <div v-else class="text">Project moved to phase {{ activity.phaseTo }}</div>
                     <div class="divider" />
                 </div>
@@ -34,21 +37,7 @@
                 </span>
                 <span class="timestamp">{{ dayjs(activity.timestamp).format("dddd d MMM HH:mma") }}</span>
 
-                <div class="attachment-item" v-for="file in getFilesForActivity(activity)" :key="file.id">
-                    <Icon
-                        class="icon"
-                        icon="ph:file-pdf-bold"
-                        width="30"
-                        v-if="file.name.includes('pdf')"
-                        color="darkblue"
-                    />
-                    <Icon class="icon" icon="ph:file-doc-bold" width="30" v-else-if="file.name.includes('doc')" />
-                    <Icon class="icon" icon="mdi:document" width="30" v-else />
-
-                    <div class="right">
-                        <div class="name">{{ file.name }}</div>
-                    </div>
-                </div>
+                <dashboard-file-card-small v-for="file in getFilesForActivity(activity)" :key="file.id" :file="file" />
             </div>
 
             <!-- Action -->
@@ -64,8 +53,15 @@
                 </rflex>
                 <div class="timestamp">{{ dayjs(activity.timestamp).format("dddd d MMM HH:mma") }}</div>
                 <div v-if="activity.action">
-                    <button v-if="activity.action === 'payment'" @click="openModal('paymentModal')">
+                    <button v-if="activity.action.type === 'payment'" @click="openModal('paymentModal')">
                         Make Payment
+                    </button>
+
+                    <button
+                        v-if="activity.action.type === 'accept-design'"
+                        @click="$Projects.clientAcceptsDesign(props.project.id)"
+                    >
+                        Accept Design
                     </button>
                 </div>
             </div>
@@ -107,7 +103,13 @@
                 <div class="timestamp">{{ dayjs(activity.timestamp).format("dddd d MMM HH:mma") }}</div>
 
                 <div class="attachments">
-                    <div class="attachment-item">
+                    <dashboard-file-card-small
+                        v-if="quote"
+                        v-for="file in [quote?.proposalUrl, quote?.quoteUrl]"
+                        :file="file"
+                    />
+
+                    <!-- <div class="attachment-item">
                         <Icon icon="circum:file-on" width="30" />
                         <div class="right">
                             <div class="name">project-proposal.pdf</div>
@@ -119,7 +121,7 @@
                         <div class="right">
                             <div class="name">quote.pdf</div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="system-message">
@@ -221,29 +223,6 @@ section {
                 font-size: 0.9rem;
             }
         }
-
-        .attachment-item {
-            margin-block: 10px;
-            margin-inline: 15px 0px;
-            display: flex;
-            border: 1px solid $text-dark3;
-            width: min-content;
-            gap: 5px;
-            align-items: center;
-            padding: 5px;
-            border-radius: 10px;
-            min-width: 250px;
-
-            .icon {
-                border: 1px solid $primary;
-                border-radius: 5px;
-                padding: 5px;
-            }
-
-            .name {
-                white-space: nowrap;
-            }
-        }
     }
 
     .quote {
@@ -305,6 +284,9 @@ section {
 }
 
 .system-message {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
     color: $text-dark3;
     font-size: 0.9rem;
     font-weight: 700;
@@ -315,7 +297,8 @@ section {
     }
 
     .rflex {
-        gap: 5px;
+        align-items: flex-start;
+        gap: 10px;
     }
 }
 </style>

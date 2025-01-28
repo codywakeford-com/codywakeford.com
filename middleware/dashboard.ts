@@ -1,9 +1,7 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
     if (!import.meta.client) return
 
-    // if (!piniaInitialized) {
-    //     await initPiniaStores()
-    // }
+    await $App.appStart()
 
     const isAuthenticated = await $User.isAuthenticated()
     if (!isAuthenticated) return navigateTo("/auth/login")

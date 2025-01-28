@@ -4,7 +4,11 @@
             class="phase-box"
             v-for="(phase, index) in phases"
             :key="index"
-            :class="{ complete: phaseIndex > index, active: phaseIndex === index, incomplete: phaseIndex < index }"
+            :class="{
+                complete: phaseIndex > index || phases[phaseIndex].phaseName === 'live',
+                active: phaseIndex === index && phases[phaseIndex].phaseName !== 'live',
+                incomplete: phaseIndex < index,
+            }"
         >
             <div class="left">
                 <div class="number">{{ index + 1 }}</div>
@@ -13,6 +17,7 @@
 
             <div class="right">
                 <div class="short-description">{{ phase?.shortDescription }}</div>
+                <!-- <div class="full-description">{{ phase?.description }}</div> -->
             </div>
         </div>
     </section>
@@ -39,38 +44,49 @@ const phases: Phase[] = [
     {
         name: "Discovery",
         phaseName: "discovery",
-        shortDescription: "This is where we work together to define the project goals.",
-        description: "This is where we work together to define the project goals.",
+        shortDescription: "In this phase, we define the project scope, goals, and requirements.",
+        description:
+            "The Discovery phase is where we work closely with the client to gather detailed requirements, understand their goals, and define the project’s scope. We aim to establish a clear direction for the project and ensure alignment between all stakeholders.",
     },
     {
         name: "Design",
         phaseName: "design",
-        shortDescription: "This is where we work together to define the project goals.",
-        description: "This is where we work together to define the project goals.",
+        shortDescription:
+            "We create design concepts and prototypes based on the defined project goals and requirements.",
+        description:
+            "During the Design phase, we translate the project requirements into visual concepts. This includes creating wireframes, mockups, and prototypes, which will help the client visualize the final product. We work iteratively with the client to refine the design before moving to development.",
     },
     {
         name: "Development",
         phaseName: "development",
-        shortDescription: "This is where we work together to define the project goals.",
-        description: "This is where we work together to define the project goals.",
-    },
-    {
-        name: "Final Approval",
-        phaseName: "final-approval",
-        shortDescription: "This is where we work together to define the project goals.",
-        description: "This is where we work together to define the project goals.",
+        shortDescription:
+            "This phase involves the actual creation of the product, including coding and technical setup.",
+        description:
+            "The Development phase is where the design is turned into a fully functional product. Our team works on coding, setting up the necessary infrastructure, and integrating any required third-party services. This is the longest phase and involves frequent collaboration with the client to ensure the product meets their expectations.",
     },
     {
         name: "Testing",
         phaseName: "testing",
-        shortDescription: "This is where we work together to define the project goals.",
-        description: "This is where we work together to define the project goals.",
+        shortDescription:
+            "We rigorously test the product to ensure it meets quality standards and is ready for launch.",
+        description:
+            "The Testing phase involves thorough quality assurance (QA) to identify and fix any bugs or issues in the product. We conduct functional testing, usability testing, and performance testing to ensure that the product is stable and works as intended before launch.",
     },
     {
         name: "Launch",
         phaseName: "launch",
-        shortDescription: "This is where we work together to define the project goals.",
-        description: "This is where we work together to define the project goals.",
+        shortDescription:
+            "Here we finalize the product, deploy it to the live environment, and guide the client through the first steps of using the product.",
+        description:
+            "In the Launch phase, the product is deployed to the live environment, and we guide the client through its use. This includes onboarding, training, and providing documentation on how to manage the product. We ensure that the client is fully equipped to use and maintain the product moving forward.",
+    },
+    {
+        name: "Live",
+        phaseName: "live",
+        shortDescription:
+            "The product is live, and we provide ongoing support and maintenance to ensure smooth operation.",
+        description:
+            "The Live phase is where the product is in full operation. We provide ongoing support, monitor its performance, and address any issues that arise. Additionally, we assist the client with updates and new features, ensuring that the product continues to meet their needs as their business evolves.",
     },
 ]
 </script>
@@ -94,6 +110,20 @@ const phases: Phase[] = [
     margin-inline: 10px;
     border-radius: 10px;
     position: relative;
+
+    // .full-description {
+    //     display: none;
+    // }
+
+    // &:hover {
+    //     .full-description {
+    //         display: block;
+    //     }
+
+    //     .short-description {
+    //         display: none;
+    //     }
+    // }
 
     &:nth-child(odd) {
         &::before {

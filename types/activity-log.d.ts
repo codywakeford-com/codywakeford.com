@@ -1,15 +1,23 @@
 export {}
 
 declare global {
+    // An activity item can have an action button attatched
+    type ActionButton = LinkButton | MeetingButton | OpenDesignButton
+
+    interface OpenDesignButton {
+        type: "open-design"
+    }
+
     interface BaseActivityItem {
         id: string
         type: string
         timestamp: number
+        button?: ActionButton
     }
 
     interface ActionActivityItem extends BaseActivityItem {
         type: "action"
-        action: Actions
+        action: Action
         message?: string
     }
 
@@ -23,6 +31,7 @@ declare global {
         sender: string
         level: "success" | "danger" | "neutral"
         message: string
+        button: ButtonAction
     }
 
     interface PhaseActivityItem extends BaseActivityItem {

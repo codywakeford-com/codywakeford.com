@@ -64,12 +64,12 @@ import { Icon } from "@iconify/vue"
 const route = useRoute()
 const projectId = route.params.id as string
 
-const files = computed(() => {
-    return $Files.get
-})
-
 const project = computed(() => {
     return $Projects.getProjectById(projectId)
+})
+
+const files = computed(() => {
+    return $Files.get
 })
 
 definePageMeta({

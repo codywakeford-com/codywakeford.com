@@ -10,10 +10,9 @@
     </div>
 
     <dashboard-loading-screen v-if="false" />
-
     <stripe-payment-modal />
     <stripe-save-card-modal />
-    <dashboard-design-modal />
+    <!-- <dashboard-design-modal /> -->
 </template>
 
 <script setup lang="ts">

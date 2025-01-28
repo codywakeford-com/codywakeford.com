@@ -9,6 +9,7 @@ export type ChatroomStore = ReturnType<typeof useChatroomStore>
 export type NotificationStore = ReturnType<typeof useNotificationStore>
 export type FileStore = ReturnType<typeof useFileStore>
 export type ActivityLogStore = ReturnType<typeof useActivityLogStore>
+export type AppStore = ReturnType<typeof useAppStore>
 
 let $User: UserStore
 let $Chatroom: ChatroomStore
@@ -16,17 +17,17 @@ let $Projects: ProjectStore
 let $Notifications: NotificationStore
 let $Files: FileStore
 let $ActivityLogs: ActivityLogStore
-
-export let piniaInitialized = false
+let $App: AppStore
 
 export async function initPiniaStores() {
     if (!import.meta.client) return
-    if (piniaInitialized) return
+
+    $App = useAppStore()
+
+    if ($App.initialized) return
 
     $User = useUserStore()
     await $User.init()
-
-    console.log("hello pinia")
 
     $Projects = useProjectStore()
     await $Projects.init()
@@ -38,13 +39,12 @@ export async function initPiniaStores() {
     // $Notifications.init()
 
     $Files = useFileStore()
-    $Files.init()
+    await $Files.init()
 
     $Chatroom = useChatroomStore()
-    $Chatroom.init()
+    await $Chatroom.init()
 
-    piniaInitialized = true
-    console.log("piniasInitialized")
+    $App.setInitialized(true)
 }
 
-export { $User, $Projects, $Chatroom, $Notifications, $Files, $ActivityLogs }
+export { $User, $Projects, $Chatroom, $Notifications, $Files, $ActivityLogs, $App }

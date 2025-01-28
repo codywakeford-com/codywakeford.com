@@ -45,7 +45,7 @@ export const useProjectStore = defineStore("projects", {
 
             if (!project) throw new Error("No project found")
 
-            return project.quote?.totalAmount
+            return project.quote?.amountPaid
         },
 
         totalCost: (state) => (projectId: Project["id"]) => {
@@ -74,7 +74,7 @@ export const useProjectStore = defineStore("projects", {
                     return project.id === id
                 })
 
-                if (!project) throw new Error("project not found")
+                // if (!project) throw new Error("project not found")
 
                 return project
             },
@@ -89,8 +89,6 @@ export const useProjectStore = defineStore("projects", {
         async init() {
             if (!import.meta.client) return
 
-            console.log("hello projects")
-
             const $db = useDb()
             const colRef = collection($db, "projects")
 
@@ -102,8 +100,6 @@ export const useProjectStore = defineStore("projects", {
                         id: change.doc.id,
                         ...projectData,
                     } as Project
-
-                    console.log(project)
 
                     if (change.type === "added") {
                         const index = this.projects.findIndex((p) => p.id === project.id)
@@ -136,12 +132,41 @@ export const useProjectStore = defineStore("projects", {
         async changePhaseOnPayment(projectId: Project["id"]) {
             const project = this.getProjectById(projectId)
 
-            if (project.phase === "discovery") {
-                if (!project.quote) throw new Error("No quote")
+            if (!project.quote) throw new Error("No quote")
 
-                if (project.quote.amountPaid > project.quote.totalAmount / 3) {
+            // Move to design phase on 33% payment
+            if (project.phase === "discovery") {
+                console.log(project.quote.amountPaid)
+                console.log(project.quote.totalAmount * 0.32)
+                if (project.quote.amountPaid >= project.quote.totalAmount * 0.32) {
                     this.incrementPhase(projectId)
                 }
+
+                $ActivityLogs.addSystemMessageActivityItem(
+                    projectId,
+                    "Thank you for choosing us! Please book the initial design meeting at your convenience.",
+                    { type: "design-meeting", message: "Book the design meeting" }
+                )
+
+                return
+            }
+
+            // Move to development phase on 66% payment
+            if (project.phase === "design") {
+                if (project.quote.amountPaid > project.quote.totalAmount * 0.65) {
+                    this.incrementPhase(projectId)
+                }
+
+                return
+            }
+
+            // await 100% payment before moving website onto clients URL
+            if (project.phase === "launch") {
+                if (project.quote.amountPaid >= project.quote.totalAmount) {
+                    this.incrementPhase(projectId)
+                }
+
+                return
             }
         },
 
@@ -173,6 +198,11 @@ export const useProjectStore = defineStore("projects", {
                 })
 
                 await $ActivityLogs.addPhaseActivityItem(projectId, "discovery")
+                await $ActivityLogs.addSystemMessageActivityItem(
+                    projectId,
+                    "Welcome to our new project! To kick things off, book the discovery meeting.",
+                    { type: "meeting", message: "Book a call" }
+                )
             } catch (error) {
                 console.error(error)
             }
@@ -294,19 +324,12 @@ export const useProjectStore = defineStore("projects", {
         },
 
         async uploadQuote(projectId: string, quote: ProjectQuote) {
-            await useFetch("/api/projects", {
-                method: "put",
-                body: {
-                    id: projectId,
-                    key: "quote",
-                    value: quote,
-                },
-            })
+            await updateObject(`/projects/${projectId}`, quote)
 
             const docs: Omit<ProjectFile, "id">[] = [
                 {
                     name: "Project Proposal",
-                    url: quote.proposalUrl,
+                    url: quote.proposal,
                     extension: "pdf",
                     signed: false,
                     type: "document",
@@ -315,7 +338,7 @@ export const useProjectStore = defineStore("projects", {
                 },
                 {
                     name: "Project Quote",
-                    url: quote.quoteUrl,
+                    url: quote.quote,
                     extension: "pdf",
                     signed: false,
                     timestamp: Date.now(),
@@ -324,7 +347,9 @@ export const useProjectStore = defineStore("projects", {
                 },
             ]
 
-            docs.forEach((doc) => this.addProjectDocument(projectId, doc))
+            docs.forEach((doc) => {
+                createObject<ProjectFile>(`/projects/${projectId}/files`, doc)
+            })
 
             $Files.addFileToProject(projectId, docs[0])
             $Files.addFileToProject(projectId, docs[1])
@@ -332,12 +357,12 @@ export const useProjectStore = defineStore("projects", {
             $ActivityLogs.addQuoteActivityItem(projectId)
         },
 
-        async addProjectDocument(projectId: string, document: Omit<ProjectFile, "id">) {
-            await useFetch("/api/projects/document", {
-                method: "POST",
-                body: { id: projectId, document },
-            })
-        },
+        // async addProjectDocument(projectId: string, document: Omit<ProjectFile, "id">) {
+        //     await useFetch("/api/projects/document", {
+        //         method: "POST",
+        //         body: { id: projectId, document },
+        //     })
+        // },
 
         async updateAmountPaid(projectId: string, amountPaid: number) {
             await $fetch("/api/projects/update-amount-paid", {
@@ -356,6 +381,14 @@ export const useProjectStore = defineStore("projects", {
             this.updatePhase(projectId, nextPhase)
 
             switch (nextPhase) {
+                case "live":
+                    $ActivityLogs.addSystemMessageActivityItem(
+                        projectId,
+                        "Your website is now live! View the website at your custom domain.",
+                        { type: "none" }
+                    )
+                    break
+
                 case "design":
                     await createObject<Action>(`/projects/${projectId}/user-actions`, {
                         type: "meeting",
@@ -363,11 +396,62 @@ export const useProjectStore = defineStore("projects", {
                     })
                     break
 
+                case "development":
+                    await $ActivityLogs.addSystemMessageActivityItem(
+                        projectId,
+                        "Great, were glad your happy with the design. Now we will get our heads down and build out your vision. Check back for updates on how were doing.",
+                        { type: "none" }
+                    )
+
                 default:
-                    break
+                    return
+            }
+        },
+
+        async clientAcceptsDesign(projectId: Project["id"]) {
+            const update = {
+                design: {
+                    accepted: true,
+                },
             }
 
-            $ActivityLogs.addPhaseActivityItem(projectId, nextPhase)
+            const amountPaid = this.amountPaid(projectId)
+            const totalCost = this.totalCost(projectId)
+
+            if (!amountPaid || !totalCost) throw new Error("No project found")
+
+            console.log(amountPaid)
+            console.log(totalCost * 0.65)
+
+            await updateObject<Project>(`/projects/${projectId}`, update)
+
+            if (amountPaid <= totalCost * 0.65) {
+                await $ActivityLogs.addSystemMessageActivityItem(
+                    projectId,
+                    "Before moving to the development phase we ask that you pay the 2nd third of the payment.",
+                    { type: "payment" }
+                )
+            } else {
+                await this.incrementPhase(projectId)
+            }
+        },
+
+        async addDesignDocument(projectId: Project["id"], figmaLink: string) {
+            const update = {
+                design: {
+                    url: figmaLink,
+                    accepted: false,
+                },
+            }
+
+            await updateObject<Project>(`/projects/${projectId}`, update)
+
+            $ActivityLogs.addMessageActivityItem(projectId, "has uploaded the design document.", "codypwakeford.com")
+            $ActivityLogs.addSystemMessageActivityItem(
+                projectId,
+                "When your 100% happy with the design, you accept it in the action menu. This will move the project into the development phase. Beware, once the website is in development no changes may be made.",
+                { type: "accept-design", message: "Accept design document." }
+            )
         },
 
         async requestMeeting(projectId: string) {
@@ -412,7 +496,7 @@ export const useProjectStore = defineStore("projects", {
                     $ActivityLogs.addSystemMessageActivityItem(
                         projectId,
                         "To progress to the design phase you need to pay a minimum of 1 third of the quote cost.",
-                        "payment"
+                        { type: "payment" }
                     )
                 }
             } catch (error) {
@@ -431,27 +515,25 @@ const DummyProject: Omit<Project, "id"> = {
     name: "Test Project",
     emails: ["codypwakeford@gmail.com"],
     phase: "discovery",
+    design: {
+        accepted: false,
+    },
     action: [
         {
             type: "meeting",
             message: "Please book our discovery meeting.",
         },
     ],
-    paymentPlan: "noneSelected",
-    companyName: "VelorisDesigns",
     domain: "codywakeford.com",
-    description: "Website design and developement.",
 }
 
 const dummyQuote: ProjectQuote = {
     totalAmount: 1000,
-    quoteUrl:
+    quote: "https://firebasestorage.googleapis.com/v0/b/portfolio-1953f.firebasestorage.app/o/ftPzCrLExM23hJSFGmvu%2Ffiles%2Fcv%20(1).pdf?alt=media&token=cb0590a8-0b18-4baa-aaf9-f0665651a1fa",
+    proposal:
         "https://firebasestorage.googleapis.com/v0/b/portfolio-1953f.firebasestorage.app/o/ftPzCrLExM23hJSFGmvu%2Ffiles%2Fcv%20(1).pdf?alt=media&token=cb0590a8-0b18-4baa-aaf9-f0665651a1fa",
-    proposalUrl:
-        "https://firebasestorage.googleapis.com/v0/b/portfolio-1953f.firebasestorage.app/o/ftPzCrLExM23hJSFGmvu%2Ffiles%2Fcv%20(1).pdf?alt=media&token=cb0590a8-0b18-4baa-aaf9-f0665651a1fa",
-    items: [],
     amountPaid: 0,
 }
 
 /**List of project phases in order for reference. */
-const projectPhases: ProjectPhase[] = ["discovery", "design", "development", "final-approval", "testing", "launch"]
+const projectPhases: ProjectPhase[] = ["discovery", "design", "development", "testing", "launch", "live"]
