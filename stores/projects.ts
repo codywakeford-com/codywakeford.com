@@ -67,6 +67,7 @@ export const useProjectStore = defineStore("projects", {
 
             return project.quote
         },
+
         getProjectById:
             (state) =>
             (id: string): Project => {
@@ -101,6 +102,7 @@ export const useProjectStore = defineStore("projects", {
                         ...projectData,
                     } as Project
 
+                    debugger
                     if (change.type === "added") {
                         const index = this.projects.findIndex((p) => p.id === project.id)
                         if (index === -1) {
@@ -133,7 +135,6 @@ export const useProjectStore = defineStore("projects", {
             const project = this.getProjectById(projectId)
 
             if (!project.quote) throw new Error("No quote")
-
             // Move to design phase on 33% payment
             if (project.phase === "discovery") {
                 if (project.quote.amountPaid >= project.quote.totalAmount * 0.32) {
@@ -170,6 +171,7 @@ export const useProjectStore = defineStore("projects", {
 
         async create(project: Omit<Project, "id">) {
             try {
+                debugger
                 const projectId = await createObject<Omit<Project, "id">>("/projects", project)
 
                 await $ActivityLogs.addPhaseActivityItem(projectId, "discovery")

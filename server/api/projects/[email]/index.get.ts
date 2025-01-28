@@ -4,7 +4,6 @@ export default eventHandler(async (event) => {
     const db = event.context.db
     const { email } = event.context.params || {}
 
-    console.log(email)
     if (!email) {
         throw new Error("Email parameter is required")
     }

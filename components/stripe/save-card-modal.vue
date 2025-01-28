@@ -129,14 +129,10 @@ async function addCard() {
     }
 
     state.value.loading = true
-    console.log("Stripe and card elements validated")
-
     try {
         if (!billingAddress.value) {
             throw new Error("No billing address")
         }
-
-        console.log("Billing address validated")
 
         if (!$User.stripeCustomerId) {
             console.log("Creating Stripe customer")
@@ -144,11 +140,9 @@ async function addCard() {
         }
 
         const customerId = $User.stripeCustomerId
-        console.log("Stripe Customer ID:", customerId)
 
         if (!customerId) throw new Error("Stripe customer ID not found")
 
-        console.log("Calling $Stripe.setupPaymentMethod")
         const paymentMethod = await $Stripe.setupPaymentMethod(
             stripe.value,
             card.value,
@@ -167,8 +161,6 @@ async function addCard() {
             if (props.onComplete) props.onComplete(paymentMethod)
             console.log("Payment method added successfully")
         }
-
-        console.log("Exiting addCard function")
     } catch (error) {
         console.error("Error in addCard:", error)
 

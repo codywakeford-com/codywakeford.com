@@ -48,12 +48,6 @@ useCalendlyEventListener({
         const staffMeetingUrl = event.data.payload.event.uri
         const clientMeetingUrl = event.data.payload.invitee.uri
         $Projects.meetingScheduled(props.project.id, staffMeetingUrl, clientMeetingUrl)
-
-        console.log("helllooooo")
-    },
-
-    onDateAndTimeSelected: (event) => {
-        console.log(event)
     },
 })
 </script>

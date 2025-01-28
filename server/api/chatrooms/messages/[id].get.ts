@@ -17,7 +17,6 @@ export default eventHandler(async (event) => {
             ...doc.data(),
         }))
 
-        console.log(messages)
         return messages
     } catch (error) {
         throw createError({ statusCode: 500, statusMessage: `Error getting messages: ${error}` })

@@ -46,9 +46,6 @@ const amount = computed(() => {
     const project = $Projects.getProjectById(projectId.value)
     const total = Number(project?.quote?.totalAmount)
 
-    console.log(total)
-    // const undpaid = Number(total - project.quote.amountPaid)
-
     return total * paymentMultiplyer.value
 })
 const total = computed((): number => {

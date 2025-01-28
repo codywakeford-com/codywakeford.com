@@ -133,8 +133,6 @@ export const useUserStore = defineStore("userStore", {
                     paymentMethods: [],
                 }
 
-                console.log(stripePaymentProfile)
-
                 await $fetch(`/api/users/${$User.id}`, {
                     method: "PUT",
                     body: { stripePaymentProfile },

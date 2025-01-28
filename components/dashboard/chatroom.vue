@@ -149,12 +149,9 @@ function scrollToBottom() {
         const lastMessage = container.lastElementChild
 
         if (lastMessage) {
-            console.log(lastMessage)
-            console.log("sscrolling")
-
             lastMessage.scrollIntoView({
-                behavior: "smooth", // Smooth scroll
-                block: "end", // Scroll to the bottom of the container
+                behavior: "smooth",
+                block: "end",
             })
         }
     } else {

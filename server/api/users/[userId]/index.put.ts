@@ -4,8 +4,6 @@ export default eventHandler(async (event) => {
     const db = event.context.db
     const { userId } = event.context.params || {}
 
-    console.log(event.context.params)
-
     if (!userId) {
         throw createError({
             statusCode: 400,

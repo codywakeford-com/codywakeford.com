@@ -4,8 +4,6 @@ export default eventHandler(async (event) => {
     const db = event.context.db
     const { email } = event.context.params || {}
 
-    console.log("hereere")
-
     if (!email) {
         throw createError({ statusCode: 400, statusMessage: "Server expects `email` param" })
     }
