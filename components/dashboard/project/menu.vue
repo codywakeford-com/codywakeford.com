@@ -4,7 +4,7 @@
             >Send a message</nuxt-link
         >
 
-        <btn modal="design-modal" class="menu-item">View Design File</btn>
+        <btn v-if="$Projects.designUrl(props.project.id)" modal="design-modal" class="menu-item">View Design File</btn>
 
         <div class="menu-item">
             <Icon icon="streamline:group-meeting-call" width="20px" />

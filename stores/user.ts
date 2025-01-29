@@ -4,11 +4,16 @@ export const useUserStore = defineStore("userStore", {
     state: () => ({
         user: {} as User,
         isLoading: true,
+        reciepts: [] as PaymentRecord[],
     }),
 
     getters: {
         get(state) {
             return state.user
+        },
+
+        getReciepts(state) {
+            return state.reciepts
         },
 
         stripeCustomerId(state) {
@@ -78,6 +83,14 @@ export const useUserStore = defineStore("userStore", {
 
             this.user = cachedUser
             this.isLoading = false
+
+            try {
+                const reciepts = await readArray<PaymentRecord>(`/users/${this.user.id}/payment-records`)
+
+                this.reciepts = [...reciepts]
+            } catch (error) {
+                console.error("failed to fetch reciepts", error)
+            }
         },
 
         async signUp(provider: AuthProvider, email: string, password: string) {

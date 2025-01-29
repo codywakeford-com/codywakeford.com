@@ -8,11 +8,14 @@
             "port": 9222,
             "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}",
-            "skipFiles": ["${workspaceFolder}/node_modules/**/*.js"],
 
+            "sourceMaps": true,
+            "smartStep": true,
+            "skipFiles": ["<node_internals>/**", "${workspaceFolder}/node_modules/**"],
             "sourceMapPathOverrides": {
                 "webpack:///node_modules/*": "${workspaceFolder}/node_modules/*"
-            }
+            },
+            "resolveSourceMapLocations": ["${workspaceFolder}/", "!/node_modules/**"]
         }
     ]
 }

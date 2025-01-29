@@ -20,6 +20,16 @@ export const useProjectStore = defineStore("projects", {
             })
         },
 
+        designUrl: (state) => (projectId: Project["id"]) => {
+            const project = state.projects.find((project) => {
+                return project.id === projectId
+            })
+
+            if (!project) return
+
+            return project.design.url
+        },
+
         getPhaseById: (state) => (projectId: string) => {
             const projectIndex = state.projects.findIndex((project) => {
                 return project.id === projectId
@@ -102,7 +112,6 @@ export const useProjectStore = defineStore("projects", {
                         ...projectData,
                     } as Project
 
-                    debugger
                     if (change.type === "added") {
                         const index = this.projects.findIndex((p) => p.id === project.id)
                         if (index === -1) {
@@ -171,7 +180,6 @@ export const useProjectStore = defineStore("projects", {
 
         async create(project: Omit<Project, "id">) {
             try {
-                debugger
                 const projectId = await createObject<Omit<Project, "id">>("/projects", project)
 
                 await $ActivityLogs.addPhaseActivityItem(projectId, "discovery")
@@ -199,7 +207,9 @@ export const useProjectStore = defineStore("projects", {
             const meeting = await this.getCalendlyMeetingDetails(meetingUrl, clientUrl)
 
             try {
-                await updateObject(`/projects/${projectId}`, { meeting })
+                await createObject<Meeting>(`/projects/${projectId}/meetings`, meeting)
+
+                // await updateObject(`/projects/${projectId}`, { meeting })
                 await updateObject(`/projects/${projectId}`, { action: "none" })
 
                 $ActivityLogs.addMeetingActivityItem(projectId, "booked")
@@ -231,11 +241,14 @@ export const useProjectStore = defineStore("projects", {
             const meeting: Meeting = Object.assign(
                 {},
                 {
+                    id: uuid(),
+                    timestamp: Date.now(),
                     name: calendlyMeeting.resource.name as string,
-                    startTime: calendlyMeeting.resource.start_time as string,
+                    startTime: new Date(calendlyMeeting.resource.start_time).getTime(),
                     meetingUrl: calendlyMeeting.resource.location.join_url as string,
                     cancelUrl: clientDetails.resource.cancel_url as string,
                     rescheduleUrl: clientDetails.resource.reschedule_url as string,
+                    status: MeetingStatus.Scheduled,
 
                     clients: [
                         {

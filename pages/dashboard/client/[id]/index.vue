@@ -28,7 +28,7 @@
         </div>
 
         <div class="files-container card">
-            <h2>Files</h2>
+            <h2>Recent Files</h2>
 
             <div class="files">
                 <dashboard-file-card
@@ -41,10 +41,6 @@
                     :delete="false"
                 />
             </div>
-        </div>
-
-        <div class="action-required card">
-            <h2>Actions Required</h2>
         </div>
 
         <div class="action-menu card">
@@ -79,7 +75,7 @@ const project = computed(() => {
 })
 
 const files = computed(() => {
-    return $Files.get
+    return $Files.getRecent(5)
 })
 
 definePageMeta({
@@ -98,7 +94,7 @@ main {
     grid-template-areas:
         "header header header"
         "timeline activity-log action-menu"
-        "timeline activity-log actions-required"
+        "timeline activity-log action-menu"
         "timeline files files";
 
     grid-template-rows: auto 10fr 6fr 4fr;

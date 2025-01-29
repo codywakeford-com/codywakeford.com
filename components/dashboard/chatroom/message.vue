@@ -30,7 +30,7 @@
             }"
             v-if="files.length"
         >
-            <dashboard-file-card
+            <dashboard-file-card-small
                 :delete="false"
                 :download="true"
                 v-for="(file, index) of files"

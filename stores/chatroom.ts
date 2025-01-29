@@ -108,23 +108,17 @@ export const useChatroomStore = defineStore("chatrooms", {
 
             const optimisticMessage: Message = {
                 ...message,
-                id: `temp-${Date.now()}`, // Temporary ID
-                timestamp: Date.now(), // Temporary timestamp
+                id: `temp-${Date.now()}`,
+                timestamp: Date.now(),
             }
 
-            chatroom.messages.unshift(optimisticMessage)
+            chatroom.messages.push(optimisticMessage)
 
             try {
-                await $fetch("/api/chatrooms/message", {
-                    method: "POST",
-                    body: {
-                        id: projectId,
-                        message: message,
-                    },
-                })
+                await createObject<Omit<Message, "id" | "timestamp">>(`/projects/${projectId}/messages`, message)
             } catch (error) {
                 console.error(error)
-                chatroom.messages.shift()
+                chatroom.messages.pop()
             }
         },
     },

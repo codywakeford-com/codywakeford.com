@@ -130,24 +130,28 @@ export const useActivityLogStore = defineStore("activityLog", {
         async addSystemMessageActivityItem(
             projectId: Project["id"],
             message: SystemMessageActivityItem["message"],
-            action: Action
+            actions: Action["id"][]
         ) {
-            const item: OmitId<SystemMessageActivityItem> = {
+            const item: SystemMessageActivityItem = {
+                id: uuid(),
                 message: message,
                 type: "system-message",
                 timestamp: Date.now(),
-                action: action,
+                actions,
+                sender: "system",
             }
 
             await this.create(projectId, item)
         },
 
         async addMeetingActivityItem(projectId: Project["id"], update: MeetingActivityItem["update"]) {
-            const item: OmitId<MeetingActivityItem> = {
+            const item: MeetingActivityItem = {
+                id: uuid(),
                 sender: $User.email,
                 update: update,
                 type: "meeting",
                 timestamp: Date.now(),
+                actions: [],
             }
 
             await this.create(projectId, item)

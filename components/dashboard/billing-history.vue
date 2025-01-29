@@ -1,48 +1,56 @@
 <script setup lang="ts">
-const reciepts = [
-    {
-        id: "1",
-        description: "this is the payment description",
-        date: "March 24 2024",
-        status: "pending",
-        amount: "£1000.00",
-    },
-    {
-        id: "1",
-        description: "this is the payment description",
-        date: "March 24 2024",
-        status: "pending",
-        amount: "£1000.00",
-    },
-    {
-        id: "1",
-        description: "this is the payment description",
-        date: "March 24 2024",
-        status: "pending",
-        amount: "£1000.00",
-    },
-    {
-        id: "1",
-        description: "this is the payment description",
-        date: "March 24 2024",
-        status: "pending",
-        amount: "£1000.00",
-    },
-    {
-        id: "1",
-        description: "this is the payment description",
-        date: "March 24 2024",
-        status: "pending",
-        amount: "£1000.00",
-    },
-    {
-        id: "1",
-        description: "this is the payment description",
-        date: "March 24 2024",
-        status: "pending",
-        amount: "£1000.00",
-    },
-]
+import dayjs from "dayjs"
+import advancedFormat from "dayjs/plugin/advancedFormat"
+dayjs.extend(advancedFormat)
+
+const reciepts = computed(() => {
+    return $User.getReciepts
+})
+
+// const reciepts = [
+//     {
+//         id: "1",
+//         description: "this is the payment description",
+//         date: "March 24 2024",
+//         status: "pending",
+//         amount: "£1000.00",
+//     },
+//     {
+//         id: "1",
+//         description: "this is the payment description",
+//         date: "March 24 2024",
+//         status: "pending",
+//         amount: "£1000.00",
+//     },
+//     {
+//         id: "1",
+//         description: "this is the payment description",
+//         date: "March 24 2024",
+//         status: "pending",
+//         amount: "£1000.00",
+//     },
+//     {
+//         id: "1",
+//         description: "this is the payment description",
+//         date: "March 24 2024",
+//         status: "pending",
+//         amount: "£1000.00",
+//     },
+//     {
+//         id: "1",
+//         description: "this is the payment description",
+//         date: "March 24 2024",
+//         status: "pending",
+//         amount: "£1000.00",
+//     },
+//     {
+//         id: "1",
+//         description: "this is the payment description",
+//         date: "March 24 2024",
+//         status: "pending",
+//         amount: "£1000.00",
+//     },
+// ]
 </script>
 
 <template>
@@ -74,9 +82,9 @@ const reciepts = [
                     <tr v-for="(reciept, index) in reciepts">
                         <td>{{ reciept.id }}</td>
                         <td>{{ reciept.description }}</td>
-                        <td>{{ reciept.date }}</td>
-                        <td>{{ reciept.status }}</td>
-                        <td>{{ reciept.amount }}</td>
+                        <td>{{ dayjs(reciept.timestamp).format("dddd Do MMM HH:mma") }}</td>
+                        <td>completed</td>
+                        <td>£{{ (reciept.totalPaid / 100).toFixed(2) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -87,6 +95,7 @@ const reciepts = [
 <style lang="scss" scoped>
 section {
     background: white;
+    position: relative;
     padding: 25px;
     margin-top: 25px;
     border-radius: $border-radius;
@@ -102,6 +111,7 @@ header {
     .left,
     .right {
         display: flex;
+        gap: 3px;
         flex-direction: column;
     }
 
@@ -138,6 +148,19 @@ table {
 th,
 td {
     padding: 15px 10px;
+}
+
+tbody {
+    display: block;
+    height: 700px;
+    overflow: auto;
+}
+
+thead,
+tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed; /* even columns width , fix width of table too*/
 }
 
 thead {

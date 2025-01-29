@@ -1,5 +1,5 @@
 <template>
-    <div class="file" @click="pdfModal?.showModal()">
+    <div class="file" @click="pdfModal?.showModal()" :class="{document: file.type === 'document'}">
         <!-- <div class="controls" v-if="props.delete || props.download">
             <Icon
                 @click="emits('delete')"
@@ -15,13 +15,14 @@
                 width="14"
             />
         </div> -->
-        <div class="top">
-            <Icon icon="circum:file-on" width="75" class="document-icon" v-if="file.type === 'document'" />
-            <img :src="file.previewUrl ? file.previewUrl : file.url" v-else />
+        <div class="top" >
+            <embed   embed v-if="file.type === 'document'" :src="file.url" width="150px" height="100px"></embed>
+                <!-- <Icon icon="circum:file-on" width="75" class="document-icon" /> -->
+                <img  v-else :src="file.previewUrl ? file.previewUrl : file.url" />
         </div>
-
-        <div class="bottom">
-            <div class="name" v-if="file.type === 'document'">{{ truncatedName }}</div>
+            
+        <div class="bottom" v-if="file.type === 'document'">
+            <div class="name" >{{ truncatedName }}</div>
         </div>
     </div>
     <!-- 
@@ -60,28 +61,61 @@ const emits = defineEmits(["delete"])
     position: relative;
     gap: 5px;
     border-radius: $border-radius;
-
+    
     height: min-content;
     min-width: 175px;
-    height: 175px;
     max-width: 175px;
     background: $text-light1;
     border: 1px solid $text-light2;
-    // box-shadow: 1px 1px 10px $text-light2;
+    cursor: pointer;
 
-    .top {
-        display: flex;
-        flex: 1;
-        align-items: center;
-        justify-content: center;
+    &.document {
+        padding: 10px 5px;
 
-        .document-icon {
-            padding-top: 5px;
+        .top {
+
+            display: flex;
+            flex: 1;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            
+            max-height: 100px;
+            position: relative;
+            padding-block: 5px;
+
+            &::after {
+                    content: "";
+                    height: 100%;
+                    width: 100%;
+                    z-index: 10;;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                }
+
+            embed {
+                position: relative;
+                object-fit: cover;
+
+                scrollbar-width: 0px;
+                border: none;
+            }
+            
+                    .document-icon {
+                        padding-top: 5px;
+                    }
         }
     }
 
+    &.image {
+        
+        padding-block: 0;
+    }
+    
+
     .bottom {
-        padding: 15px;
+        padding-inline: 15px;
         text-align: left;
 
         .name {
@@ -114,8 +148,5 @@ const emits = defineEmits(["delete"])
 dialog {
     border: none;
     padding: 0;
-
-    &::backdrop {
-    }
 }
 </style>

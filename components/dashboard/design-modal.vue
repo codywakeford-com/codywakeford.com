@@ -4,7 +4,7 @@
             style="border: 1px solid rgba(0, 0, 0, 0.1)"
             width="750px"
             height="900px"
-            :src="project?.design.url"
+            :src="designUrl"
             allowfullscreen
         ></iframe>
     </modal>
@@ -16,8 +16,10 @@ definePageMeta({
     middleware: "dashboard",
 })
 
-const project = computed(() => {
-    return $Projects.getProjectById($Projects.selectedProjectId)
+const designUrl = computed(() => {
+    if (!$Projects.selectedProjectId) return ""
+
+    return $Projects.designUrl($Projects.selectedProjectId)
 })
 </script>
 

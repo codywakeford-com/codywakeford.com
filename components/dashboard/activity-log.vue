@@ -77,8 +77,8 @@
             </div>
 
             <!-- Meeting -->
-            <div class="meeting" v-if="activity.type === 'meeting'">
-                <div v-if="activity.update === 'booked'">
+            <div class="meeting" v-if="activity.type === 'meeting'" :class="{ 'show-meeting-details': meetingDetails }">
+                <div v-if="activity.update === 'booked'" @click="meetingDetails = !meetingDetails">
                     <rflex>
                         <div class="sender">{{ activity.sender }}</div>
                         <span>has booked a meeting.</span>
@@ -91,6 +91,14 @@
                         -
                         <nuxt-link target="_blank" :to="meeting.meetingUrl">Join meeting</nuxt-link>
                     </div>
+                </div>
+
+                <div class="expand-icon">
+                    <Icon icon="tabler:list-details" />
+                </div>
+
+                <div class="meeting-details" v-if="project.meeting">
+                    {{ project.meeting }}
                 </div>
             </div>
 
@@ -124,7 +132,7 @@ import { Icon } from "@iconify/vue"
 import dayjs from "dayjs"
 import advancedFormat from "dayjs/plugin/advancedFormat"
 dayjs.extend(advancedFormat)
-
+const meetingDetails = ref(false)
 interface Props {
     project: Project
 }
@@ -227,6 +235,9 @@ section {
     .meeting {
         .rflex {
             gap: 5px;
+        }
+
+        &.show-meeting-details {
         }
 
         .meeting-details {

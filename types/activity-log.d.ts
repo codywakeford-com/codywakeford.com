@@ -12,13 +12,12 @@ declare global {
         id: string
         type: string
         timestamp: number
-        button?: ActionButton
+        actions: Action["id"][]
+        sender: User["email"] | "system"
     }
 
     interface ActionActivityItem extends BaseActivityItem {
         type: "action"
-        action: Action
-        message?: string
     }
 
     interface AttachmentActivityItem extends BaseActivityItem {
@@ -28,10 +27,7 @@ declare global {
 
     interface MessageActivityItem extends BaseActivityItem {
         type: "message"
-        sender: string
-        level: "success" | "danger" | "neutral"
         message: string
-        button: ButtonAction
     }
 
     interface PhaseActivityItem extends BaseActivityItem {
@@ -47,16 +43,15 @@ declare global {
     interface SystemMessageActivityItem extends BaseActivityItem {
         type: "system-message"
         message: string
-        action?: Action
+        sender: "system"
     }
 
     interface MeetingActivityItem extends BaseActivityItem {
         type: "meeting"
         update: "changed" | "booked" | "cancelled" | "proposed"
-        sender: User["email"]
     }
 
-    type $ActivityItem =
+    type ActivityItem =
         | ActionActivityItem
         | AttachmentActivityItem
         | MessageActivityItem
@@ -65,12 +60,8 @@ declare global {
         | MeetingActivityItem
         | SystemMessageActivityItem
 
-    type OmitId<T> = Omit<T, "id">
-
-    type ActivityItem = OmitId<ActivityItem>
-
     interface ActivityLog {
         projectId: string
-        activity: $ActivityItem[]
+        activity: ActivityItem[]
     }
 }

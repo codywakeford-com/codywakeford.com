@@ -3,27 +3,6 @@ export {}
 declare global {
     type ProjectPhase = "discovery" | "design" | "development" | "testing" | "launch" | "live"
 
-    /**These are the meetings that can be scheduled. Each one will come with its own description shown to the client. It will also outline the meeting agenda. */
-    type MeetingRequestTypes = "discovery" | "design" | "final approval" | "launch"
-
-    interface Action {
-        type: "meeting" | "document" | "none" | "payment" | "design-meeting" | "accept-design"
-        message?: string
-    }
-
-    interface Meeting {
-        meetingUrl: string
-        name: string
-        startTime: string
-        cancelUrl: string
-        rescheduleUrl: string
-
-        clients: {
-            name: string
-            email: string
-        }[]
-    }
-
     interface Project {
         id: string
         name: string

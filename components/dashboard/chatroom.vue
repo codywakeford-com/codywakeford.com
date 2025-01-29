@@ -4,7 +4,7 @@
             <div
                 class="project-card"
                 @click="selectedProjectId = project.id"
-                v-for="project of $Projects.getByEmail($User.email)"
+                v-for="project of chatrooms"
                 :class="{ active: selectedProjectId === project.id }"
             >
                 <div class="domain">
@@ -23,7 +23,7 @@
             <div class="input-container">
                 <div class="input-box">
                     <div v-if="messageFiles.length" class="message-files">
-                        <dashboard-file-card
+                        <dashboard-file-card-small
                             @delete="removeFile(file.name)"
                             :delete="true"
                             :download="false"
@@ -59,7 +59,7 @@
             </div>
         </div>
         <div class="files-container card">
-            <h2></h2>
+            <h2>Project Files</h2>
             <div class="files">
                 <dashboard-file-card
                     class="doc-card"
@@ -79,12 +79,24 @@ import { Icon } from "@iconify/vue"
 
 const route = useRoute()
 const { projectId } = route.query
-
 const selectedProjectId = ref((projectId as string) || "")
 const messagesContainer = ref<HTMLElement | null>(null)
 const messageFiles = ref<File[]>([])
-
 const sending = ref(false)
+const hello = "hello"
+const chatrooms = computed(() => {
+    return $Projects.getByEmail($User.email)
+})
+
+watch(
+    chatrooms,
+    (newChatrooms) => {
+        if (newChatrooms.length > 0 && !selectedProjectId.value) {
+            selectedProjectId.value = newChatrooms[0].id
+        }
+    },
+    { immediate: true }
+)
 
 const files = computed(() => {
     return $Files.getFilesByProjectId(selectedProjectId.value)
@@ -121,7 +133,7 @@ function removeFile(fileName: string) {
     })
 
     if (index !== -1) {
-        messageFiles.value.splice(index, 1) // This modifies the array in place
+        messageFiles.value.splice(index, 1)
     }
 }
 
@@ -132,6 +144,7 @@ watch(messages, () => {
 })
 
 async function sendMessage(messageObj: Omit<Message, "id" | "timestamp">, messageFiles: File[]) {
+    if (!selectedProjectId) return
     if (messageObj.message.trim() === "" && !messageFiles.length) return
 
     if (messageFiles.length) {
@@ -218,6 +231,8 @@ section {
 }
 .files-container {
     display: flex;
+    flex-direction: column;
+    gap: 25px;
     flex: 1;
     padding-block: 25px;
     padding-inline: 25px;
@@ -262,6 +277,7 @@ section {
     gap: 10px;
     padding: 15px;
     max-width: 100%;
+    background: white;
 
     .input-box {
         flex: 1;
