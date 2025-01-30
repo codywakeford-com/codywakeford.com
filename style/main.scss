@@ -50,7 +50,12 @@ p {
     height: 100%;
     width: 100%;
     background-image: url("/assets/background-pattern.webp");
+
+    &.light {
+        opacity: 0.3;
+    }
 }
+
 .calendly-overlay {
     // display: none;
 }

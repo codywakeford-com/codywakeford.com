@@ -3,16 +3,12 @@
         <header>
             <div class="left">
                 <div class="date">{{ dayjs(date).format("dddd, MMMM Do") }}</div>
-                <h1 class="project-name">{{ project?.name }}</h1>
+                <h1 class="project-name">Project Dashboard</h1>
             </div>
 
             <div class="right">
-                <nuxt-link
-                    target="_blank"
-                    :to="`https://${project.domain}`"
-                    class="project-url"
-                    v-if="project.domain"
-                    >{{ project.domain }}</nuxt-link
+                <nuxt-link target="_blank" :to="`https://${project.domain}`" class="project-url" v-if="project.domain"
+                    >https://{{ project.domain }}</nuxt-link
                 >
             </div>
         </header>

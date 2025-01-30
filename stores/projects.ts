@@ -150,11 +150,21 @@ export const useProjectStore = defineStore("projects", {
                     await this.incrementPhase(projectId)
                 }
 
+                const action: Action = {
+                    id: uuid(),
+                    description: "Book the initial design meeting",
+                    timestamp: Date.now(),
+                    status: "pending",
+                    action: "book-meeting",
+                }
+
                 $ActivityLogs.addSystemMessageActivityItem(
                     projectId,
                     "Thank you for choosing us! Please book the initial design meeting at your convenience.",
-                    { type: "design-meeting", message: "Book the design meeting" }
+                    [action.id]
                 )
+
+                createObject<Action>(`/projects/${projectId}/user-required-actions`, action)
 
                 return
             }
@@ -181,12 +191,21 @@ export const useProjectStore = defineStore("projects", {
         async create(project: Omit<Project, "id">) {
             try {
                 const projectId = await createObject<Omit<Project, "id">>("/projects", project)
+                const action: Action = {
+                    id: uuid(),
+                    timestamp: Date.now(),
+                    status: "pending",
+                    action: "book-meeting",
+                    description: "Please book a design meeting",
+                }
+
+                await createObject(`/projects/${projectId}/user-required-actions`, action)
 
                 await $ActivityLogs.addPhaseActivityItem(projectId, "discovery")
                 await $ActivityLogs.addSystemMessageActivityItem(
                     projectId,
                     "Welcome to our new project! To kick things off, book the discovery meeting.",
-                    { type: "meeting", message: "Book a call" }
+                    [action.id]
                 )
             } catch (error) {
                 console.error(error)
@@ -278,23 +297,26 @@ export const useProjectStore = defineStore("projects", {
                 case "live":
                     $ActivityLogs.addSystemMessageActivityItem(
                         projectId,
-                        "Your website is now live! View the website at your custom domain.",
-                        { type: "none" }
+                        "Your website is now live! View the website at your custom domain."
                     )
                     break
 
                 case "design":
-                    await createObject<Action>(`/projects/${projectId}/user-actions`, {
-                        type: "meeting",
-                        message: "Please book a design meeting",
-                    })
+                    const action: Action = {
+                        id: uuid(),
+                        action: "book-meeting",
+                        status: "pending",
+                        timestamp: Date.now(),
+                        description: "Please schedule a design meeting.",
+                    }
+
+                    await createObject<Action>(`/projects/${projectId}/user-actions`, action)
                     break
 
                 case "development":
                     await $ActivityLogs.addSystemMessageActivityItem(
                         projectId,
-                        "Great, were glad your happy with the design. Now we will get our heads down and build out your vision. Check back for updates on how were doing.",
-                        { type: "none" }
+                        "Great, were glad your happy with the design. Now we will get our heads down and build out your vision. Check back for updates on how were doing."
                     )
 
                     break
@@ -302,8 +324,7 @@ export const useProjectStore = defineStore("projects", {
                 case "launch":
                     await $ActivityLogs.addSystemMessageActivityItem(
                         projectId,
-                        "Were ready to show you what we have built. Everything has been thouroughly tested and is ready to go. Be sure to book a call so we can hand show you around!",
-                        { type: "none" }
+                        "Were ready to show you what we have built. Everything has been thouroughly tested and is ready to go. Be sure to book a call so we can hand show you around!"
                     )
 
                     const quote = this.quote(projectId)
@@ -311,13 +332,23 @@ export const useProjectStore = defineStore("projects", {
 
                     const amountPaid = quote.amountPaid
 
-                    if (amountPaid < quote.totalAmount) {
-                        $ActivityLogs.addSystemMessageActivityItem(
-                            projectId,
-                            "Once the final payment is done we will put the website onto your custom domain.",
-                            { type: "payment" }
-                        )
+                    if (amountPaid >= quote.totalAmount) return
+
+                    const paymentAction: Action = {
+                        id: uuid(),
+                        action: "payment",
+                        status: "pending",
+                        timestamp: Date.now(),
+                        description: "Please make the final payment.",
                     }
+
+                    await createObject<Action>(`/projects/${projectId}/user-required-actions`, paymentAction)
+
+                    $ActivityLogs.addSystemMessageActivityItem(
+                        projectId,
+                        "Once the final payment is done we will put the website onto your custom domain.",
+                        [paymentAction.id]
+                    )
 
                     break
 
@@ -341,10 +372,20 @@ export const useProjectStore = defineStore("projects", {
             await updateObject<Project>(`/projects/${projectId}`, update)
 
             if (amountPaid <= totalCost * 0.65) {
+                const action: Action = {
+                    id: uuid(),
+                    action: "payment",
+                    description: "Please make a payment to continue.",
+                    timestamp: Date.now(),
+                    status: "pending",
+                }
+
+                createObject(`/projects/${projectId}/user-required-actions`, action)
+
                 await $ActivityLogs.addSystemMessageActivityItem(
                     projectId,
                     "Before moving to the development phase we ask that you pay the 2nd third of the payment.",
-                    { type: "payment" }
+                    [action.id]
                 )
             } else {
                 await this.incrementPhase(projectId)
@@ -362,19 +403,31 @@ export const useProjectStore = defineStore("projects", {
             await updateObject<Project>(`/projects/${projectId}`, update)
 
             $ActivityLogs.addMessageActivityItem(projectId, "has uploaded the design document.", "codypwakeford.com")
+
+            const action: Action = {
+                id: uuid(),
+                action: "accept-design",
+                description: "Accept the design docuement to move to the development phase",
+                timestamp: Date.now(),
+                status: "pending",
+            }
+
+            createObject<Action>(`/projects/${projectId}/user-required-actions`, action)
+
             $ActivityLogs.addSystemMessageActivityItem(
                 projectId,
                 "When your 100% happy with the design, you accept it in the action menu. This will move the project into the development phase. Beware, once the website is in development no changes may be made.",
-                { type: "accept-design", message: "Accept design document." }
+                [action.id]
             )
         },
 
-        async requestMeeting(projectId: string) {
-            await createObject<Action>(`/projects/${projectId}/user-actions`, {
-                type: "meeting",
-                message: "Please book a meeting.",
-            })
-        },
+        // async requestMeeting(projectId: string) {
+
+        //     await createObject<Action>(`/projects/${projectId}/user-required-actions`, {
+        //         type: "meeting",
+        //         message: "Please book a meeting.",
+        //     })
+        // },
 
         async acceptProjectProposal(projectId: Project["id"]) {
             const quote = this.getProjectById(projectId)?.quote
@@ -390,10 +443,20 @@ export const useProjectStore = defineStore("projects", {
                 $ActivityLogs.addMessageActivityItem(projectId, "Project proposal has been accepted.", $User.email)
 
                 if (quote && quote.amountPaid < quote.totalAmount / 3) {
+                    const action: Action = {
+                        id: uuid(),
+                        action: "payment",
+                        status: "pending",
+                        timestamp: Date.now(),
+                        description: "Please make a payment to continue.",
+                    }
+
+                    createObject(`/projects/${projectId}/user-required-actions`, action)
+
                     $ActivityLogs.addSystemMessageActivityItem(
                         projectId,
                         "To progress to the design phase you need to pay a minimum of 1 third of the quote cost.",
-                        { type: "payment" }
+                        [action.id]
                     )
                 }
             } catch (error) {
