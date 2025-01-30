@@ -26,7 +26,7 @@ declare global {
     }
 
     interface MessageActivityItem extends BaseActivityItem {
-        type: "message"
+        type: "activity-message"
         message: string
     }
 
@@ -48,7 +48,7 @@ declare global {
 
     interface MeetingActivityItem extends BaseActivityItem {
         type: "meeting"
-        update: "changed" | "booked" | "cancelled" | "proposed"
+        meetingId: string
     }
 
     type ActivityItem =

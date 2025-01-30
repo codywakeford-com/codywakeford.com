@@ -1,9 +1,5 @@
 <template>
     <div class="menu" v-if="project">
-        <nuxt-link :to="`/dashboard/chatroom?projectId=${props.project?.id}`" class="menu-item"
-            >Send a message</nuxt-link
-        >
-
         <btn v-if="$Projects.designUrl(props.project.id)" modal="design-modal" class="menu-item">View Design File</btn>
 
         <div class="menu-item">

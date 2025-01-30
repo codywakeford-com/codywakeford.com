@@ -3,6 +3,7 @@ export {}
 declare global {
     interface Meeting {
         id: string
+        projectId: string
 
         meetingUrl: string
         cancelUrl: string
@@ -20,14 +21,13 @@ declare global {
 
         status: MeetingStatus
     }
-    enum MeetingStatus {
-        Scheduled = "Scheduled",
-        InProgress = "In Progress",
-        Completed = "Completed",
-        Cancelled = "Cancelled",
-        Rescheduled = "Rescheduled",
-        Pending = "Pending",
-        NoShow = "No-Show",
-        Postponed = "Postponed",
-    }
+
+    type MeetingStatus =
+        | "scheduled"
+        | "in-progress"
+        | "completed"
+        | "cancelled"
+        | "rescheduled"
+        | "no-show"
+        | "postponed"
 }

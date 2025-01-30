@@ -8,8 +8,6 @@ declare global {
         name: string
         emails: string[]
         phase: ProjectPhase
-        action: Action[]
-        meeting?: Meeting
 
         design: {
             url?: string

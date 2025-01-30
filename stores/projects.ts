@@ -1,7 +1,6 @@
 import axios from "axios"
 import { collection, Firestore, onSnapshot } from "firebase/firestore"
 import { defineStore } from "pinia"
-import { velorisStaffEmails } from "./notifications"
 
 export const useProjectStore = defineStore("projects", {
     state: () => ({
@@ -38,16 +37,6 @@ export const useProjectStore = defineStore("projects", {
             return state.projects[projectIndex].phase
         },
 
-        meeting: (state) => (projectId: Project["id"]) => {
-            const project = state.projects.find((p) => {
-                return p.id === projectId
-            })
-
-            if (!project) throw new Error("Project not found")
-
-            return project.meeting
-        },
-
         amountPaid: (state) => (projectId: Project["id"]) => {
             const project = state.projects.find((project) => {
                 return project.id === projectId
@@ -80,12 +69,10 @@ export const useProjectStore = defineStore("projects", {
 
         getProjectById:
             (state) =>
-            (id: string): Project => {
+            (id: string): Project | undefined => {
                 const project = state.projects.find((project) => {
                     return project.id === id
                 })
-
-                // if (!project) throw new Error("project not found")
 
                 return project
             },
@@ -93,6 +80,12 @@ export const useProjectStore = defineStore("projects", {
         getNextProjectPhase: (state) => (phase: ProjectPhase) => {
             const index = projectPhases.indexOf(phase)
             return projectPhases[index + 1] as ProjectPhase
+        },
+
+        getIds(state) {
+            return state.projects.map((project) => {
+                return project.id
+            })
         },
     },
 
@@ -143,7 +136,7 @@ export const useProjectStore = defineStore("projects", {
         async changePhaseOnPayment(projectId: Project["id"]) {
             const project = this.getProjectById(projectId)
 
-            if (!project.quote) throw new Error("No quote")
+            if (!project?.quote) throw new Error("No quote")
             // Move to design phase on 33% payment
             if (project.phase === "discovery") {
                 if (project.quote.amountPaid >= project.quote.totalAmount * 0.32) {
@@ -223,7 +216,7 @@ export const useProjectStore = defineStore("projects", {
         },
 
         async meetingScheduled(projectId: Project["id"], meetingUrl: string, clientUrl: string) {
-            const meeting = await this.getCalendlyMeetingDetails(meetingUrl, clientUrl)
+            const meeting = await this.getCalendlyMeetingDetails(projectId, meetingUrl, clientUrl)
 
             try {
                 await createObject<Meeting>(`/projects/${projectId}/meetings`, meeting)
@@ -231,13 +224,17 @@ export const useProjectStore = defineStore("projects", {
                 // await updateObject(`/projects/${projectId}`, { meeting })
                 await updateObject(`/projects/${projectId}`, { action: "none" })
 
-                $ActivityLogs.addMeetingActivityItem(projectId, "booked")
+                $ActivityLogs.addMeetingActivityItem(projectId, meeting.id)
             } catch (error) {
                 console.error(error)
             }
         },
 
-        async getCalendlyMeetingDetails(meetingUrl: string, clientUrl: string): Promise<Meeting> {
+        async getCalendlyMeetingDetails(
+            projectId: Project["id"],
+            meetingUrl: string,
+            clientUrl: string
+        ): Promise<Meeting> {
             const config = useRuntimeConfig()
 
             const meetingDetails = await axios.get(meetingUrl, {
@@ -261,13 +258,14 @@ export const useProjectStore = defineStore("projects", {
                 {},
                 {
                     id: uuid(),
+                    projectId: projectId,
                     timestamp: Date.now(),
                     name: calendlyMeeting.resource.name as string,
                     startTime: new Date(calendlyMeeting.resource.start_time).getTime(),
                     meetingUrl: calendlyMeeting.resource.location.join_url as string,
                     cancelUrl: clientDetails.resource.cancel_url as string,
                     rescheduleUrl: clientDetails.resource.reschedule_url as string,
-                    status: MeetingStatus.Scheduled,
+                    status: "scheduled" as MeetingStatus,
 
                     clients: [
                         {
@@ -478,12 +476,6 @@ const DummyProject: Omit<Project, "id"> = {
     design: {
         accepted: false,
     },
-    action: [
-        {
-            type: "meeting",
-            message: "Please book our discovery meeting.",
-        },
-    ],
     domain: "codywakeford.com",
 }
 

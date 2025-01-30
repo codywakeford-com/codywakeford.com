@@ -1,75 +1,50 @@
 <template>
-    <section>
-        <div class="chatroom-selection card">
-            <div
-                class="project-card"
-                @click="selectedProjectId = project.id"
-                v-for="project of chatrooms"
-                :class="{ active: selectedProjectId === project.id }"
+    <section class="chatroom">
+        <div class="messages-container" ref="messagesContainer">
+            <div class="no-messages" v-if="!activitiesAndMessages.length">No messages yet.</div>
+
+            <div v-for="(item, index) of activitiesAndMessages" :key="index">
+                <dashboard-chatroom-message v-if="item.type === 'message'" :message="item" />
+                <dashboard-activity-message :activity="item" v-else />
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-box">
+                <div v-if="messageFiles.length" class="message-files">
+                    <dashboard-file-card-small
+                        @delete="removeFile(file.name)"
+                        :delete="true"
+                        :download="false"
+                        v-for="(file, index) of messageFilesProper"
+                        :key="index"
+                        :file="file"
+                    />
+                </div>
+
+                <div class="input-wrapper" :class="{ files: messageFiles.length }">
+                    <textarea
+                        v-model="message"
+                        type="text"
+                        placeholder="Type a message..."
+                        class="message-input"
+                        :disabled="sending"
+                        @keyup.enter="sendMessage(messageObj, messageFiles)"
+                    />
+                    <label class="file-input-label">
+                        <input type="file" @change="handleFileSelect" class="file-input" :disabled="sending" />
+                        <Icon icon="gravity-ui:paperclip" width="20" />
+                    </label>
+                </div>
+            </div>
+            <button
+                type="button"
+                class="send-button"
+                :disabled="sending"
+                @click="sendMessage(messageObj, messageFiles)"
             >
-                <div class="domain">
-                    {{ project.domain }}
-                </div>
-
-                <div class="phase">{{ project.phase }}</div>
-            </div>
-        </div>
-        <div class="chatroom card">
-            <div class="messages-container" ref="messagesContainer">
-                <div class="no-messages" v-if="!messages.length">No messages yet.</div>
-                <dashboard-chatroom-message v-for="(message, index) of messages" :key="index" :message="message" />
-            </div>
-
-            <div class="input-container">
-                <div class="input-box">
-                    <div v-if="messageFiles.length" class="message-files">
-                        <dashboard-file-card-small
-                            @delete="removeFile(file.name)"
-                            :delete="true"
-                            :download="false"
-                            v-for="(file, index) of messageFilesProper"
-                            :key="index"
-                            :file="file"
-                        />
-                    </div>
-
-                    <div class="input-wrapper" :class="{ files: messageFiles.length }">
-                        <textarea
-                            v-model="message"
-                            type="text"
-                            placeholder="Type a message..."
-                            class="message-input"
-                            :disabled="sending"
-                            @keyup.enter="sendMessage(messageObj, messageFiles)"
-                        />
-                        <label class="file-input-label">
-                            <input type="file" @change="handleFileSelect" class="file-input" :disabled="sending" />
-                            <Icon icon="gravity-ui:paperclip" width="20" />
-                        </label>
-                    </div>
-                </div>
-                <button
-                    type="button"
-                    class="send-button"
-                    :disabled="sending"
-                    @click="sendMessage(messageObj, messageFiles)"
-                >
-                    <Icon icon="f7:paperplane-fill" width="25" />
-                </button>
-            </div>
-        </div>
-        <div class="files-container card">
-            <h2>Project Files</h2>
-            <div class="files">
-                <dashboard-file-card
-                    class="doc-card"
-                    v-for="(file, index) of files"
-                    :key="index"
-                    :file="file"
-                    download
-                    :delete="false"
-                />
-            </div>
+                <Icon icon="f7:paperplane-fill" width="25" />
+            </button>
         </div>
     </section>
 </template>
@@ -77,29 +52,20 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue"
 
-const route = useRoute()
-const { projectId } = route.query
-const selectedProjectId = ref((projectId as string) || "")
+const projectId = useRoute().params.id as string
+
 const messagesContainer = ref<HTMLElement | null>(null)
 const messageFiles = ref<File[]>([])
 const sending = ref(false)
-const hello = "hello"
-const chatrooms = computed(() => {
-    return $Projects.getByEmail($User.email)
-})
 
-watch(
-    chatrooms,
-    (newChatrooms) => {
-        if (newChatrooms.length > 0 && !selectedProjectId.value) {
-            selectedProjectId.value = newChatrooms[0].id
-        }
-    },
-    { immediate: true }
-)
+const activitiesAndMessages = computed(() => {
+    const activities = $ActivityLogs.getByProjectId(projectId).activity
+    const messages = $Chatroom.getChatroomMessages(projectId) || []
+    const sorted = [...messages, ...activities].sort((a, b) => {
+        return a.timestamp - b.timestamp
+    })
 
-const files = computed(() => {
-    return $Files.getFilesByProjectId(selectedProjectId.value)
+    return sorted
 })
 
 const messageFilesProper = computed(() => {
@@ -117,7 +83,6 @@ const messageFilesProper = computed(() => {
     })
 })
 
-const messages = computed(() => $Chatroom.getChatroomMessages(selectedProjectId.value) || [])
 const message = ref("")
 const messageObj = computed(() => {
     return {
@@ -137,20 +102,19 @@ function removeFile(fileName: string) {
     }
 }
 
-watch(messages, () => {
+watch(activitiesAndMessages, () => {
     setTimeout(() => {
         scrollToBottom()
     }, 100)
 })
 
 async function sendMessage(messageObj: Omit<Message, "id" | "timestamp">, messageFiles: File[]) {
-    if (!selectedProjectId) return
     if (messageObj.message.trim() === "" && !messageFiles.length) return
 
     if (messageFiles.length) {
-        messageObj.files = await $Files.saveFiles(selectedProjectId.value, messageFiles, $User.email)
+        messageObj.files = await $Files.saveFiles(projectId, messageFiles, $User.email)
     }
-    $Chatroom.sendMessage(selectedProjectId.value, messageObj)
+    $Chatroom.sendMessage(projectId, messageObj)
 
     message.value = ""
     messageFiles = []
@@ -168,7 +132,7 @@ function scrollToBottom() {
             })
         }
     } else {
-        throw new Error("No message container found")
+        // throw new Error("No message container found")
     }
 }
 
@@ -185,7 +149,7 @@ section {
     display: flex;
     position: relative;
     z-index: 10;
-    height: 100vh;
+    flex: 1;
 }
 
 .card {
@@ -250,7 +214,6 @@ section {
 .chatroom {
     display: flex;
     flex-direction: column;
-    max-width: 50%;
     flex: 2;
     position: relative;
     background: $text-light1;

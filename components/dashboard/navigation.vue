@@ -8,12 +8,6 @@
             <nuxt-link class="nav-item" to="/dashboard/client">
                 <Icon icon="material-symbols:construction" width="30" color="white" />
             </nuxt-link>
-            <nuxt-link class="nav-item" to="/dashboard/chatroom">
-                <!-- <btn> -->
-                <Icon icon="material-symbols:android-messages" width="30" color="white" />
-                <!-- <tooltip right>Messaging</tooltip> -->
-                <!-- </btn> -->
-            </nuxt-link>
 
             <nuxt-link class="nav-item" to="/dashboard/client/documents">
                 <Icon icon="ic:baseline-insert-drive-file" width="30" color="white" />

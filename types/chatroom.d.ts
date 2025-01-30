@@ -7,6 +7,7 @@ declare global {
     }
 
     interface Message {
+        type: "message"
         id: string
         message: string
         sender: string

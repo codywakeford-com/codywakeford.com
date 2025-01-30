@@ -51,7 +51,7 @@ export const useActivityLogStore = defineStore("activityLog", {
                     snapshot.docChanges().forEach((change) => {
                         const activityLogData = change.doc.data()
 
-                        const activityItem = { id: change.doc.id, ...activityLogData } as $ActivityItem
+                        const activityItem = { id: change.doc.id, ...activityLogData } as ActivityItem
 
                         if (change.type === "added") {
                             const log = this.activityLogs.find((log) => {
@@ -119,7 +119,7 @@ export const useActivityLogStore = defineStore("activityLog", {
         ) {
             const item = {
                 sender: sender,
-                type: "message",
+                type: "activity-message",
                 timestamp: Date.now(),
                 message: message,
             } as MessageActivityItem
@@ -144,11 +144,11 @@ export const useActivityLogStore = defineStore("activityLog", {
             await this.create(projectId, item)
         },
 
-        async addMeetingActivityItem(projectId: Project["id"], update: MeetingActivityItem["update"]) {
+        async addMeetingActivityItem(projectId: Project["id"], meetingId: Meeting["id"]) {
             const item: MeetingActivityItem = {
                 id: uuid(),
                 sender: $User.email,
-                update: update,
+                meetingId,
                 type: "meeting",
                 timestamp: Date.now(),
                 actions: [],
@@ -157,11 +157,14 @@ export const useActivityLogStore = defineStore("activityLog", {
             await this.create(projectId, item)
         },
         async addPhaseActivityItem(projectId: Project["id"], phaseTo: ProjectPhase) {
-            const item = {
+            const item: PhaseActivityItem = {
+                id: uuid(),
                 type: "phase",
                 timestamp: Date.now(),
                 phaseTo: phaseTo,
-            } as PhaseActivityItem
+                actions: [],
+                sender: "system",
+            }
 
             await this.create(projectId, item)
         },

@@ -18,16 +18,17 @@
             <dashboard-timeline :project="project" />
         </div>
 
-        <div class="activity-log card">
+        <div class="message-log card">
             <h2>Activity Log</h2>
-            <dashboard-activity-log v-if="project" :project="project" />
+            <dashboard-chatroom />
+            <!-- <dashboard-activity-log v-if="project" :project="project" /> -->
         </div>
 
         <div class="files-container card">
             <h2>Recent Files</h2>
 
             <div class="files">
-                <dashboard-file-card
+                <dashboard-file-card-small
                     v-if="files"
                     class="doc-card"
                     v-for="(file, index) of files"
@@ -37,6 +38,12 @@
                     :delete="false"
                 />
             </div>
+
+            <btn>View All Files</btn>
+        </div>
+
+        <div class="meeting card">
+            <h2>Meetings</h2>
         </div>
 
         <div class="action-menu card">
@@ -48,6 +55,7 @@
 </template>
 
 <script setup lang="ts">
+import { DashboardChatroom } from "#components"
 import dayjs from "dayjs"
 import advancedFormat from "dayjs/plugin/advancedFormat"
 
@@ -89,12 +97,12 @@ main {
     display: grid;
     grid-template-areas:
         "header header header"
-        "timeline activity-log action-menu"
-        "timeline activity-log action-menu"
-        "timeline files files";
+        "timeline message-log action-menu"
+        "timeline message-log files"
+        "meeting message-log files";
 
-    grid-template-rows: auto 10fr 6fr 4fr;
-    grid-template-columns: 5fr 10fr 3fr;
+    grid-template-rows: auto 8fr 6fr 6fr;
+    grid-template-columns: 350px 10fr 300px;
 
     gap: $gap;
 
@@ -102,12 +110,13 @@ main {
         grid-area: timeline;
     }
 
-    .activity-log {
-        grid-area: activity-log;
+    .message-log {
+        grid-area: message-log;
         display: flex;
         flex-direction: column;
         gap: 15px;
         padding-inline: 0;
+        padding-block: 25px 0;
 
         h2 {
             padding-inline: 25px;
@@ -117,14 +126,19 @@ main {
     .files-container {
         display: flex;
         flex-direction: column;
-        gap: 15px;
+        gap: 5px;
 
         grid-area: files;
 
         .files {
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            gap: 0px;
         }
+    }
+
+    .meeting {
+        grid-area: meeting;
     }
 
     .right-container {
