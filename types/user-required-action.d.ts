@@ -3,10 +3,13 @@ export {}
 declare global {
     interface Action {
         id: string
+        projectId: string
+
         timestamp: number
         completedTimestamp?: number
 
-        description?: string
+        priority: number
+        description: string
         status: ActionStatus
         action: Actiontype
     }

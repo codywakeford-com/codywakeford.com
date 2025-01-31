@@ -98,6 +98,8 @@ export const useChatroomStore = defineStore("chatrooms", {
         },
 
         async sendMessage(projectId: string, message: Omit<Message, "id" | "timestamp">) {
+            console.log("hello")
+
             const chatroom = this.chatrooms.find((chatroom) => {
                 return chatroom.projectId === projectId
             })
@@ -108,14 +110,15 @@ export const useChatroomStore = defineStore("chatrooms", {
 
             const optimisticMessage: Message = {
                 ...message,
-                id: `temp-${Date.now()}`,
+                id: uuid(),
+                type: "message",
                 timestamp: Date.now(),
             }
 
             chatroom.messages.push(optimisticMessage)
 
             try {
-                await createObject<Omit<Message, "id" | "timestamp">>(`/projects/${projectId}/messages`, message)
+                await createObject<Message>(`/projects/${projectId}/messages`, optimisticMessage)
             } catch (error) {
                 console.error(error)
                 chatroom.messages.pop()

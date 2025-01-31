@@ -1,5 +1,5 @@
 <template>
-    <main class="container">
+    <main class="container" :class="{ 'actions-active': actions.length > 0 }">
         <header>
             <div class="left">
                 <div class="date">{{ dayjs(date).format("dddd, MMMM Do") }}</div>
@@ -7,48 +7,49 @@
             </div>
 
             <div class="right">
-                <nuxt-link target="_blank" :to="`https://${project.domain}`" class="project-url" v-if="project.domain"
-                    >https://{{ project.domain }}</nuxt-link
+                <nuxt-link target="_blank" :to="`https://${project.domain}`" class="project-url" v-if="project?.domain"
+                    >https://{{ project?.domain }}</nuxt-link
                 >
             </div>
         </header>
 
         <div class="timeline card">
-            <h2>Timeline</h2>
             <dashboard-timeline :project="project" />
         </div>
 
         <div class="message-log card">
-            <h2>Activity Log</h2>
+            <h3>Activity Log</h3>
             <dashboard-chatroom />
             <!-- <dashboard-activity-log v-if="project" :project="project" /> -->
         </div>
 
-        <div class="files-container card">
-            <h2>Recent Files</h2>
+        <div class="files-container">
+            <div class="files-card card">
+                <h3>Recent Files</h3>
 
-            <div class="files">
-                <dashboard-file-card-small
-                    v-if="files"
-                    class="doc-card"
-                    v-for="(file, index) of files"
-                    :key="index"
-                    :file="file"
-                    download
-                    :delete="false"
-                />
+                <div class="files">
+                    <span v-if="!files.length">No files uploaded to this project</span>
+                    <dashboard-file-card-small
+                        class="doc-card"
+                        v-else
+                        v-for="(file, index) of files"
+                        :key="index"
+                        :file="file"
+                    />
+                </div>
             </div>
-
-            <btn>View All Files</btn>
+            <div class="files-actions">
+                <button-primary-m to="/dashboard/client/documents">View All Files</button-primary-m>
+                <button-primary-m>Upload a File</button-primary-m>
+            </div>
         </div>
 
         <div class="meeting card">
-            <h2>Meetings</h2>
+            <dashboard-meetings />
         </div>
 
         <div class="action-menu card">
-            <h2>Action Menu</h2>
-            <dashboard-project-menu v-if="project" :project="project" />
+            <dashboard-action v-if="project" :project="project" />
         </div>
     </main>
     <stripe-payment-modal :project-id="projectId" />
@@ -71,6 +72,10 @@ const date = computed(() => {
     return date
 })
 
+const actions = computed(() => {
+    return $Actions.getPendingByProjectId(projectId)
+})
+
 const route = useRoute()
 const projectId = route.params.id as string
 
@@ -91,49 +96,85 @@ definePageMeta({
 <style lang="scss" scoped>
 $gap: 15px;
 
-main {
-    margin-block: 25px;
-    max-height: 95%;
+.container {
+    padding-block: 25px;
+    height: 100vh;
     display: grid;
     grid-template-areas:
         "header header header"
-        "timeline message-log action-menu"
+        "timeline message-log files"
         "timeline message-log files"
         "meeting message-log files";
 
-    grid-template-rows: auto 8fr 6fr 6fr;
+    grid-template-rows: auto auto 8fr auto;
     grid-template-columns: 350px 10fr 300px;
 
     gap: $gap;
 
+    .action-menu {
+    }
+
+    &.actions-active {
+        grid-template-areas:
+            "header header header"
+            "timeline message-log action-menu"
+            "timeline message-log files"
+            "meeting message-log files";
+
+        .action-menu {
+            display: flex;
+        }
+    }
+
     .timeline {
         grid-area: timeline;
+        padding: 0px;
     }
 
     .message-log {
         grid-area: message-log;
         display: flex;
+        height: 100%;
         flex-direction: column;
-        gap: 15px;
         padding-inline: 0;
-        padding-block: 25px 0;
-
-        h2 {
+        overflow: none;
+        flex: 1;
+        padding-block: 0;
+        h3 {
+            padding-top: 25px;
             padding-inline: 25px;
         }
     }
 
     .files-container {
         display: flex;
+        height: 100%;
         flex-direction: column;
-        gap: 5px;
+        gap: 10px;
 
         grid-area: files;
 
-        .files {
+        .files-card {
             display: flex;
             flex-direction: column;
-            gap: 0px;
+            flex: 1;
+
+            gap: 15px;
+
+            span {
+                font-size: 0.9rem;
+                color: $text-light3;
+            }
+        }
+
+        .files-actions {
+            display: flex;
+            gap: 10px;
+
+            button {
+                flex-grow: 1;
+                min-height: 40px;
+            }
         }
     }
 
@@ -183,16 +224,5 @@ header {
 }
 .actions-required {
     grid-area: actions-required;
-}
-.action-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    grid-area: action-menu;
-    padding-inline: 0;
-
-    h2 {
-        padding-inline: 25px;
-    }
 }
 </style>

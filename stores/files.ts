@@ -68,6 +68,7 @@ export const useFileStore = defineStore("file", {
     actions: {
         async init() {
             let projectIds: string[] = []
+
             try {
                 projectIds = await $fetch<Project["id"][]>(`/api/projects/${$User.email}`)
             } catch (error) {
@@ -96,8 +97,6 @@ export const useFileStore = defineStore("file", {
                     })
                 })
             }
-
-            // this.read()
         },
 
         async read() {

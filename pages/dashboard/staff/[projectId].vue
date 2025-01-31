@@ -2,13 +2,6 @@
     <main class="admin-page">
         <!-- <ProjectPhase :phase="project.phase" /> -->
 
-        <btn @click="$Projects.updatePhase(project.id, $Projects.getNextProjectPhase(project.phase))"
-            >Go to next stage</btn
-        >
-
-        <btn>Request {{ project.phase }} meeting.</btn>
-        <btn @click="$Projects.requestMeeting(project.id)">Request General Meeting</btn>
-
         <button
             @click="
                 $Projects.addDesignDocument(
@@ -19,21 +12,6 @@
         >
             add design doc
         </button>
-        <!-- Meeting Link when generated -->
-        <cflex v-if="project.meeting">
-            <h4>Booked meeting link</h4>
-            <p>
-                Meeting Link:
-                <anchor target="_blank" :to="project.meeting?.meetingUrl" class="meeting-link">
-                    Google Meet Link</anchor
-                >
-            </p>
-            Start time: {{ new Date(project.meeting.startTime).toLocaleString() }}
-
-            <pre>
-                {{ project.meeting }}
-            </pre>
-        </cflex>
 
         <div class="quote">
             <input type="file" @change="handleFileUpload('quoteDoc', $event)" />
@@ -71,12 +49,15 @@ async function uploadQuote(projectId: Project["id"]) {
     const proposalUrl = await $Files.uploadToFirebase(`/projects/${projectId}/proposal`, proposalDoc.value)
     const quoteUrl = await $Files.uploadToFirebase(`/projects/${projectId}/quote`, quoteDoc.value)
 
-    if (!proposalUrl || !quoteUrl) throw new Error("error getting urls")
+    const proposalExtension = proposalDoc.value.name.split(".").pop() || ""
+    const quoteExtension = quoteDoc.value.name.split(".").pop() || ""
 
+    if (!proposalUrl || !quoteUrl) throw new Error("error getting urls")
     const files: Omit<ProjectFile, "id">[] = [
         {
             name: "ProjectProposal",
             projectId: projectId,
+            extension: proposalExtension,
             sender: "codypwakeford@gmail.com",
             timestamp: Date.now(),
             url: proposalUrl,
@@ -85,6 +66,7 @@ async function uploadQuote(projectId: Project["id"]) {
         {
             name: "ProjectQuote",
             projectId: projectId,
+            extension: quoteExtension,
             sender: "codypwakeford@gmail.com",
             timestamp: Date.now(),
             url: quoteUrl,
@@ -113,6 +95,15 @@ async function uploadQuote(projectId: Project["id"]) {
 
     await updateObject(`/projects/${projectId}`, { quote })
     $ActivityLogs.addQuoteActivityItem(projectId)
+    await createObject<Action>(`/projects/${projectId}/user-required-actions`, {
+        id: uuid(),
+        projectId,
+        action: "accept-quote",
+        timestamp: Date.now(),
+        description:
+            "Now that we've had our discovery call, I've prepared a quote for you. You can accept it, message me with any questions, or book a call if you'd like to discuss any changes.",
+        status: "pending",
+    })
 }
 
 const project = computed(() => {

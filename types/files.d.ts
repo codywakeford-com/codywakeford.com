@@ -15,8 +15,9 @@ declare global {
         signed?: boolean
         timestamp: number
         type: "image" | "document"
+
         /**File type extension. E.g pdf, docx */
-        extension?: string
-        projectId?: Project["id"]
+        extension: string
+        projectId: Project["id"]
     }
 }

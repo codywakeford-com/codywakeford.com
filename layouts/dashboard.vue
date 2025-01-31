@@ -23,11 +23,11 @@ const projectId = route.params.projectId as string
 <style lang="scss" scoped>
 .dashboard {
     display: flex;
-    height: 100%;
+    height: 100vh;
 }
 
 .content {
-    max-height: 100vh;
+    height: 100vh;
     max-width: $dashboard-page-width;
     padding-inline: var(--page-gutter-sm);
     position: relative;

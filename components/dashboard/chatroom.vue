@@ -145,47 +145,12 @@ function handleFileSelect(event: Event) {
 </script>
 
 <style lang="scss" scoped>
-section {
-    display: flex;
-    position: relative;
-    z-index: 10;
-    flex: 1;
-}
-
 .card {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     background: $background-light;
     // border-radius: $border-radius;
 }
-.chatroom-selection {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    // overflow-y: scroll;
 
-    .project-card {
-        padding: var(--page-gutter-sm);
-        cursor: pointer;
-        position: relative;
-
-        &.active {
-            background: $secondary;
-
-            &::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                background: $primary;
-                height: 100%;
-                width: 3px;
-                border-top-right-radius: 15px;
-                border-bottom-right-radius: 15px;
-            }
-        }
-    }
-}
 .no-messages {
     position: absolute;
     top: 25px;
@@ -214,9 +179,9 @@ section {
 .chatroom {
     display: flex;
     flex-direction: column;
-    flex: 2;
+    height: 100%;
     position: relative;
-    background: $text-light1;
+    padding-top: 25px;
 
     .messages-container {
         border-bottom: 2px solid $secondary;
@@ -241,6 +206,8 @@ section {
     padding: 15px;
     max-width: 100%;
     background: white;
+    border-radius: $border-radius;
+    margin-bottom: 65px;
 
     .input-box {
         flex: 1;

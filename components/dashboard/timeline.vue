@@ -1,4 +1,5 @@
 <template>
+    <h3>Timeline</h3>
     <section class="phases">
         <div
             class="phase-box"
@@ -92,13 +93,19 @@ const phases: Phase[] = [
 </script>
 
 <style lang="scss" scoped>
+h3 {
+    padding-inline: 25px;
+    padding-block: 25px 0;
+}
+
 .phases {
     display: flex;
     flex-direction: column;
     gap: 50px;
-    padding-inline: 25px;
     overflow-y: auto;
-    overflow-x: visible;
+    padding-inline: 25px;
+    height: 100%;
+    padding-bottom: 25px;
 }
 
 .phase-box {

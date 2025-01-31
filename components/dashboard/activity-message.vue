@@ -22,7 +22,7 @@
         <div class="attachment" v-if="activity.type === 'attachment'">
             <span class="attachment-message" v-if="activity.files.length > 1">
                 <div class="sender">
-                    {{ getFilesForActivity(activity)[0].sender }}
+                    {{ getFilesForActivity(activity)[0]?.sender }}
                 </div>
 
                 uploaded

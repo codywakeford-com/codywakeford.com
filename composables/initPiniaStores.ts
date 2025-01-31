@@ -11,6 +11,7 @@ export type FileStore = ReturnType<typeof useFileStore>
 export type ActivityLogStore = ReturnType<typeof useActivityLogStore>
 export type AppStore = ReturnType<typeof useAppStore>
 export type MeetingStore = ReturnType<typeof useMeetingStore>
+export type ActionStore = ReturnType<typeof useActionStore>
 
 let $User: UserStore
 let $Chatroom: ChatroomStore
@@ -20,7 +21,7 @@ let $Files: FileStore
 let $ActivityLogs: ActivityLogStore
 let $App: AppStore
 let $Meetings: MeetingStore
-
+let $Actions: ActionStore
 export async function initPiniaStores() {
     if (!import.meta.client) return
     $App = useAppStore()
@@ -39,6 +40,9 @@ export async function initPiniaStores() {
     $Files = useFileStore()
     await $Files.init()
 
+    $Actions = useActionStore()
+    $Actions.init()
+
     $Chatroom = useChatroomStore()
     await $Chatroom.init()
 
@@ -48,4 +52,4 @@ export async function initPiniaStores() {
     $App.setInitialized(true)
 }
 
-export { $User, $Projects, $Chatroom, $Notifications, $Files, $ActivityLogs, $App, $Meetings }
+export { $User, $Projects, $Chatroom, $Notifications, $Files, $ActivityLogs, $App, $Meetings, $Actions }

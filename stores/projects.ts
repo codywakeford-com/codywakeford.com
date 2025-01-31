@@ -148,7 +148,9 @@ export const useProjectStore = defineStore("projects", {
                     description: "Book the initial design meeting",
                     timestamp: Date.now(),
                     status: "pending",
+                    priority: 1,
                     action: "book-meeting",
+                    projectId,
                 }
 
                 $ActivityLogs.addSystemMessageActivityItem(
@@ -179,6 +181,9 @@ export const useProjectStore = defineStore("projects", {
 
                 return
             }
+
+            debugger
+            $Actions.markAsComplete($Actions.selectedActionId)
         },
 
         async create(project: Omit<Project, "id">) {
@@ -186,10 +191,13 @@ export const useProjectStore = defineStore("projects", {
                 const projectId = await createObject<Omit<Project, "id">>("/projects", project)
                 const action: Action = {
                     id: uuid(),
+                    priority: 1,
                     timestamp: Date.now(),
                     status: "pending",
                     action: "book-meeting",
-                    description: "Please book a design meeting",
+                    description:
+                        "Welcome to our project. We're glad to have you on board. To kick things of book your discovery meeting using the button below. This helps us define the project outline and allows us to generate you a quote. See you soon! ",
+                    projectId,
                 }
 
                 await createObject(`/projects/${projectId}/user-required-actions`, action)
@@ -197,7 +205,7 @@ export const useProjectStore = defineStore("projects", {
                 await $ActivityLogs.addPhaseActivityItem(projectId, "discovery")
                 await $ActivityLogs.addSystemMessageActivityItem(
                     projectId,
-                    "Welcome to our new project! To kick things off, book the discovery meeting.",
+                    "Welcome to our new project! To kick things off, book the discovery meeting. You can find action buttons at top right of this dashboard.",
                     [action.id]
                 )
             } catch (error) {
@@ -303,12 +311,14 @@ export const useProjectStore = defineStore("projects", {
                     const action: Action = {
                         id: uuid(),
                         action: "book-meeting",
+                        priority: 1,
                         status: "pending",
                         timestamp: Date.now(),
                         description: "Please schedule a design meeting.",
+                        projectId,
                     }
 
-                    await createObject<Action>(`/projects/${projectId}/user-actions`, action)
+                    await createObject<Action>(`/projects/${projectId}/user-required-actions`, action)
                     break
 
                 case "development":
@@ -334,10 +344,12 @@ export const useProjectStore = defineStore("projects", {
 
                     const paymentAction: Action = {
                         id: uuid(),
+                        priority: 10,
                         action: "payment",
                         status: "pending",
                         timestamp: Date.now(),
                         description: "Please make the final payment.",
+                        projectId,
                     }
 
                     await createObject<Action>(`/projects/${projectId}/user-required-actions`, paymentAction)
@@ -372,10 +384,12 @@ export const useProjectStore = defineStore("projects", {
             if (amountPaid <= totalCost * 0.65) {
                 const action: Action = {
                     id: uuid(),
+                    priority: 10,
                     action: "payment",
                     description: "Please make a payment to continue.",
                     timestamp: Date.now(),
                     status: "pending",
+                    projectId,
                 }
 
                 createObject(`/projects/${projectId}/user-required-actions`, action)
@@ -404,10 +418,13 @@ export const useProjectStore = defineStore("projects", {
 
             const action: Action = {
                 id: uuid(),
+                priority: 1,
                 action: "accept-design",
-                description: "Accept the design docuement to move to the development phase",
+                description:
+                    "I have uploaded the design document for you to view. The design needs to be finilized before moving to development. Once your happy with the design click the button below to continue. Once the website it being built you will not be able to change the design.",
                 timestamp: Date.now(),
                 status: "pending",
+                projectId,
             }
 
             createObject<Action>(`/projects/${projectId}/user-required-actions`, action)
@@ -419,15 +436,7 @@ export const useProjectStore = defineStore("projects", {
             )
         },
 
-        // async requestMeeting(projectId: string) {
-
-        //     await createObject<Action>(`/projects/${projectId}/user-required-actions`, {
-        //         type: "meeting",
-        //         message: "Please book a meeting.",
-        //     })
-        // },
-
-        async acceptProjectProposal(projectId: Project["id"]) {
+        async acceptProjectProposal(projectId: Project["id"], actionId: Action["id"]) {
             const quote = this.getProjectById(projectId)?.quote
             if (!quote) throw new Error("Quote not found")
 
@@ -443,10 +452,13 @@ export const useProjectStore = defineStore("projects", {
                 if (quote && quote.amountPaid < quote.totalAmount / 3) {
                     const action: Action = {
                         id: uuid(),
+                        priority: 1,
                         action: "payment",
                         status: "pending",
                         timestamp: Date.now(),
-                        description: "Please make a payment to continue.",
+                        description:
+                            "Great, now the project is underway. Before moving to the design phase I ask you pay a minimum of 1 third of the quote.",
+                        projectId,
                     }
 
                     createObject(`/projects/${projectId}/user-required-actions`, action)
@@ -457,6 +469,8 @@ export const useProjectStore = defineStore("projects", {
                         [action.id]
                     )
                 }
+
+                $Actions.markAsComplete(actionId)
             } catch (error) {
                 console.error(error)
             }
