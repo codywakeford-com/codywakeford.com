@@ -7,9 +7,8 @@
             </div>
 
             <div class="right">
-                <nuxt-link target="_blank" :to="`https://${project.domain}`" class="project-url" v-if="project?.domain"
-                    >https://{{ project?.domain }}</nuxt-link
-                >
+                <nuxt-link target="_blank" :to="`https://${project.domain}`" class="project-url"
+                    v-if="project?.domain">https://{{ project?.domain }}</nuxt-link>
             </div>
         </header>
 
@@ -29,13 +28,8 @@
 
                 <div class="files">
                     <span v-if="!files.length">No files uploaded to this project</span>
-                    <dashboard-file-card-small
-                        class="doc-card"
-                        v-else
-                        v-for="(file, index) of files"
-                        :key="index"
-                        :file="file"
-                    />
+                    <dashboard-file-card-small class="doc-card" v-else v-for="(file, index) of files" :key="index"
+                        :file="file" />
                 </div>
             </div>
             <div class="files-actions">
@@ -111,8 +105,7 @@ $gap: 15px;
 
     gap: $gap;
 
-    .action-menu {
-    }
+    .action-menu {}
 
     &.actions-active {
         grid-template-areas:
@@ -140,6 +133,7 @@ $gap: 15px;
         overflow: none;
         flex: 1;
         padding-block: 0;
+
         h3 {
             padding-top: 25px;
             padding-inline: 25px;
@@ -197,11 +191,13 @@ $gap: 15px;
                 flex: 1;
             }
         }
+
         .file {
             width: 100%;
         }
     }
 }
+
 header {
     grid-area: header;
 }
@@ -211,17 +207,20 @@ header {
     align-items: flex-end;
     justify-content: space-between;
 }
+
 .timeline {
     display: flex;
     flex-direction: column;
     gap: 35px;
 }
+
 .card {
     background: white;
     padding: 25px;
     border-radius: $border-radius;
     box-shadow: 3px 3px 20px lightgrey;
 }
+
 .actions-required {
     grid-area: actions-required;
 }

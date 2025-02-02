@@ -23,8 +23,12 @@
         </div>
 
         <div class="controls">
-            <button-primary-m target="_blank" :to="meeting.meetingUrl">Join Meeting</button-primary-m>
-            <button-primary-m target="_blank" :to="meeting.rescheduleUrl">Reschedule Meeting</button-primary-m>
+            <nuxt-link target="_blank" :to="meeting.meetingUrl">
+                <button-primary-m>Join Meeting</button-primary-m>
+            </nuxt-link>
+            <nuxt-link target="_blank" :to="meeting.rescheduleUrl">
+                <button-primary-m>Reschedule Meeting</button-primary-m>
+            </nuxt-link>
         </div>
     </div>
 </template>

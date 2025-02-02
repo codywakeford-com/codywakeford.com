@@ -23,7 +23,6 @@ const props = defineProps<Props>()
 <style lang="scss" scoped>
 .attachment-item {
     margin-block: 10px;
-    margin-inline: 15px 0px;
     display: flex;
     border: 1px solid $text-dark3;
     width: min-content;
