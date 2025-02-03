@@ -1,4 +1,4 @@
-export {}
+export { }
 
 declare global {
     interface FileFilters {
@@ -10,6 +10,8 @@ declare global {
         id: string
         name: string
         url: string
+        size: string
+        description?: string
         sender: User["email"]
         previewUrl?: string
         signed?: boolean

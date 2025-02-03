@@ -168,13 +168,19 @@ export const useFileStore = defineStore("file", {
                     previewUrl = await $Files.uploadToFirebase(`${path}/preview`, previewImage)
                 }
 
-                const url = await $Files.uploadToFirebase(path, file)
+                if (!previewUrl) throw new Error("No preview generated")
 
+                const url = await $Files.uploadToFirebase(path, file)
+                const fileSize = file.size
                 const document = {
+                    id: uuid(),
                     url: url,
                     previewUrl: previewUrl,
+                    extension: "",
+                    timestamp: Date.now(),
                     name: file.name,
                     sender: sender,
+                    size: file.size,
                     type: fileType,
                     projectId: projectId,
                 } as ProjectFile
