@@ -3,9 +3,7 @@
         <div class="pattern-background light" />
         <div class="dashboard">
             <dashboard-navigation />
-            <content class="content">
-                <nuxt-page />
-            </content>
+            <nuxt-page />
         </div>
     </div>
 
@@ -16,23 +14,15 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const projectId = route.params.projectId as string
+const route = useRoute();
+const projectId = route.params.projectId as string;
 </script>
 
 <style lang="scss" scoped>
 .dashboard {
     display: flex;
     height: 100vh;
-}
-
-.content {
-    height: 100vh;
-    max-width: $dashboard-page-width;
-    padding-inline: var(--page-gutter-sm);
-    position: relative;
-    z-index: 2;
-    overflow: none;
+    width: 100vw;
 }
 
 .container {

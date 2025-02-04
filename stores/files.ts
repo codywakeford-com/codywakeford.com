@@ -15,8 +15,10 @@ export const useFileStore = defineStore("file", {
             return state.files
         },
 
+
         getRecent: (state) => (number: number) => {
             const sortedFiles = state.files.sort((a, b) => {
+
                 return a.timestamp - b.timestamp
             })
 

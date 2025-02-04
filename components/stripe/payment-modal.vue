@@ -1,23 +1,27 @@
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
+import { Icon } from "@iconify/vue";
 import type {
     StripeCardCvcElement,
     StripeCardExpiryElement,
     StripeAddressElement,
     StripeCardNumberElement,
-} from "@stripe/stripe-js"
+} from "@stripe/stripe-js";
 
-import { loadStripe, type Stripe, type StripeCardElement } from "@stripe/stripe-js"
+import {
+    loadStripe,
+    type Stripe,
+    type StripeCardElement,
+} from "@stripe/stripe-js";
 
-const selectedCardIndex = ref<number>(0)
-const card = ref<StripeCardNumberElement | null>(null)
-const cardNumber = ref<StripeCardNumberElement | null>(null)
-const cardExpiry = ref<StripeCardExpiryElement | null>(null)
-const cardCvc = ref<StripeCardCvcElement | null>(null)
-const addressElement = ref<StripeAddressElement | null>(null)
+const selectedCardIndex = ref<number>(0);
+const card = ref<StripeCardNumberElement | null>(null);
+const cardNumber = ref<StripeCardNumberElement | null>(null);
+const cardExpiry = ref<StripeCardExpiryElement | null>(null);
+const cardCvc = ref<StripeCardCvcElement | null>(null);
+const addressElement = ref<StripeAddressElement | null>(null);
 // const card = ref<StripeCardElement | null>(null)
-const stripe = ref<Stripe | null>(null)
-const projectId = ref("")
+const stripe = ref<Stripe | null>(null);
+const projectId = ref("");
 const billingAddress = ref<StripeBillingAddress>({
     name: "",
     line1: "",
@@ -27,109 +31,123 @@ const billingAddress = ref<StripeBillingAddress>({
     city: "",
     state: "",
     postal_code: "",
-})
+});
 
-const newCard = ref(false)
+const newCard = ref(false);
 
 const paymentProfiles = computed(() => {
-    return $User.stripePaymentProfile?.paymentMethods || []
-})
+    return $User.stripePaymentProfile?.paymentMethods || [];
+});
 
 const state = ref({
     successMessage: "",
     errorMessage: "",
     loading: false,
-})
+});
 
-const paymentMultiplyer = ref(0.333)
+const paymentMultiplyer = ref(0.333);
 const amount = computed(() => {
-    const project = $Projects.getProjectById(projectId.value)
-    const total = Number(project?.quote?.totalAmount)
+    const project = $Projects.getProjectById(projectId.value);
+    const total = Number(project?.quote?.totalAmount);
 
-    return total * paymentMultiplyer.value
-})
+    return total * paymentMultiplyer.value;
+});
 const total = computed((): number => {
-    const project = $Projects.getProjectById(projectId.value)
-    const quote = project?.quote
+    const project = $Projects.getProjectById(projectId.value);
+    const quote = project?.quote;
 
-    if (!quote) return 0
+    if (!quote) return 0;
 
-    return quote?.totalAmount
-})
+    return quote?.totalAmount;
+});
 
-interface Props {}
+interface Props { }
 
-const props = defineProps<Props>()
-const loading = ref(false)
+const props = defineProps<Props>();
+const loading = ref(false);
 onMounted(async () => {
-    projectId.value = $Projects.selectedProjectId
+    projectId.value = $Projects.selectedProjectId;
 
-    const config = useRuntimeConfig()
-    stripe.value = await loadStripe(config.public.STRIPE_PUBLISHABLE_KEY)
+    const config = useRuntimeConfig();
+    stripe.value = await loadStripe(config.public.STRIPE_PUBLISHABLE_KEY);
 
-    if (!stripe.value || !cardNumber.value || !cardCvc.value || !cardExpiry.value) {
-        throw new Error("Stripe not init")
+    if (
+        !stripe.value ||
+        !cardNumber.value ||
+        !cardCvc.value ||
+        !cardExpiry.value
+    ) {
+        throw new Error("Stripe not init");
     }
 
-    const elements = stripe.value.elements()
-    const cardNumberElement = elements.create("cardNumber")
-    const cardExpiryElement = elements.create("cardExpiry")
-    const cardCvcElement = elements.create("cardCvc")
+    const elements = stripe.value.elements();
+    const cardNumberElement = elements.create("cardNumber");
+    const cardExpiryElement = elements.create("cardExpiry");
+    const cardCvcElement = elements.create("cardCvc");
     const addressElementInstance = elements.create("address", {
         mode: "billing",
-    })
+    });
 
-    cardNumberElement.mount("#card-number-element")
-    cardExpiryElement.mount("#card-expiry-element")
-    cardCvcElement.mount("#card-cvc-element")
-    addressElementInstance.mount("#address-element")
+    cardNumberElement.mount("#card-number-element");
+    cardExpiryElement.mount("#card-expiry-element");
+    cardCvcElement.mount("#card-cvc-element");
+    addressElementInstance.mount("#address-element");
 
     addressElementInstance.on("change", (event) => {
-        billingAddress.value.name = event.value.name
-        billingAddress.value.city = event.value.address.city
-        billingAddress.value.line1 = event.value.address.line1
-        billingAddress.value.line2 = event.value.address.line2
-        billingAddress.value.country = event.value.address.country
-        billingAddress.value.postal_code = event.value.address.postal_code
-        billingAddress.value.state = event.value.address.state
-    })
+        billingAddress.value.name = event.value.name;
+        billingAddress.value.city = event.value.address.city;
+        billingAddress.value.line1 = event.value.address.line1;
+        billingAddress.value.line2 = event.value.address.line2;
+        billingAddress.value.country = event.value.address.country;
+        billingAddress.value.postal_code = event.value.address.postal_code;
+        billingAddress.value.state = event.value.address.state;
+    });
 
-    card.value = cardNumberElement
-})
+    card.value = cardNumberElement;
+});
 
 async function pay() {
     if (!stripe.value || !cardNumber.value || !card.value) {
-        throw new Error("Stripe not initialized or card element not created!")
+        throw new Error("Stripe not initialized or card element not created!");
     }
 
-    loading.value = true
+    loading.value = true;
 
     try {
-        const selectedPaymentProfile = paymentProfiles.value[selectedCardIndex.value]
+        const selectedPaymentProfile =
+            paymentProfiles.value[selectedCardIndex.value];
 
-        if (!$User.stripePaymentProfile.customerId) throw new Error("No customer id")
+        if (!$User.stripePaymentProfile.customerId)
+            throw new Error("No customer id");
 
         const paymentRecord = await $Stripe.payWithPaymentProfile(
             stripe.value,
             $User.stripePaymentProfile.customerId,
             selectedPaymentProfile,
-            amount.value
-        )
+            amount.value,
+        );
 
-        const projectId = $Projects.selectedProjectId
+        const projectId = $Projects.selectedProjectId;
 
-        if (!paymentRecord) throw new Error("No payment record")
-        if (!projectId) throw new Error("No projectId")
+        if (!paymentRecord) throw new Error("No payment record");
+        if (!projectId) throw new Error("No projectId");
 
-        await $User.addPaymentRecord(projectId, paymentRecord)
-        await $ActivityLogs.addMessageActivityItem(projectId, "has made a payment", $User.email)
-        await $Projects.changePhaseOnPayment(projectId)
+        await $User.addPaymentRecord(projectId, paymentRecord);
+        await $ActivityLogs.addMessageActivityItem(
+            projectId,
+            "has made a payment",
+            $User.email,
+        );
 
-        loading.value = false
+        if (!$Actions.selectedActionId) throw new Error("No action id");
+        await $Actions.markAsComplete($Actions.selectedActionId);
+        await $Projects.incrementPhase(projectId);
+
+        loading.value = false;
     } catch (error) {
-        console.error(error)
+        console.error(error);
 
-        loading.value = false
+        loading.value = false;
     }
 }
 </script>
@@ -152,13 +170,9 @@ async function pay() {
 
             <form @submit.prevent="pay" class="payment-form">
                 <div class="saved-cards">
-                    <stripe-payment-method-sm
-                        v-for="(card, index) of paymentProfiles"
-                        @click="selectedCardIndex = index"
-                        :key="index"
-                        :card="card"
-                        :selected="selectedCardIndex === index"
-                    />
+                    <stripe-payment-method-sm v-for="(card, index) of paymentProfiles"
+                        @click="selectedCardIndex = index" :key="index" :card="card"
+                        :selected="selectedCardIndex === index" />
                 </div>
                 <btn class="loading-button" :disabled="loading" :loading="loading">Make Payment</btn>
             </form>
@@ -184,12 +198,8 @@ async function pay() {
 
                         <div class="form-item">
                             <label for="email">Reciept Email:</label>
-                            <input
-                                class="input-element"
-                                type="email"
-                                placeholder="email"
-                                v-model="billingAddress.email"
-                            />
+                            <input class="input-element" type="email" placeholder="email"
+                                v-model="billingAddress.email" />
                         </div>
                     </div>
 
@@ -216,10 +226,12 @@ async function pay() {
     padding: 25px;
     border-radius: $border-radius;
 }
+
 h2 {
     font-size: 1.25rem;
     margin-bottom: 35px;
 }
+
 form {
     display: flex;
     gap: 25px;
@@ -253,6 +265,7 @@ form {
         }
     }
 }
+
 .loading-button {
     height: 30px;
     color: white;

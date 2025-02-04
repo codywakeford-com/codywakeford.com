@@ -1,12 +1,7 @@
 <template>
     <modal id="design-modal">
-        <iframe
-            style="border: 1px solid rgba(0, 0, 0, 0.1)"
-            width="750px"
-            height="900px"
-            :src="designUrl"
-            allowfullscreen
-        ></iframe>
+        <iframe style="border: 1px solid rgba(0, 0, 0, 0.1)" width="750px" height="900px" :src="designUrl"
+            allowfullscreen></iframe>
     </modal>
 </template>
 
@@ -14,13 +9,12 @@
 definePageMeta({
     layout: "dashboard",
     middleware: "dashboard",
-})
+});
 
 const designUrl = computed(() => {
-    if (!$Projects.selectedProjectId) return ""
-
-    return $Projects.designUrl($Projects.selectedProjectId)
-})
+    console.log($Projects.selectedProjectId);
+    return $Projects.designUrl($Projects?.selectedProjectId);
+});
 </script>
 
 <style lang="scss" scoped></style>
