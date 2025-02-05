@@ -3,7 +3,9 @@
         <div class="pattern-background light" />
         <div class="dashboard">
             <dashboard-navigation />
-            <nuxt-page />
+            <content>
+                <nuxt-page />
+            </content>
         </div>
     </div>
 
@@ -23,6 +25,10 @@ const projectId = route.params.projectId as string;
     display: flex;
     height: 100vh;
     width: 100vw;
+}
+
+.content {
+    max-width: 1800px;
 }
 
 .container {

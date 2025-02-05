@@ -1,5 +1,5 @@
-import { collection, onSnapshot } from "firebase/firestore"
-import { defineStore } from "pinia"
+import { collection, onSnapshot } from "firebase/firestore";
+import { defineStore } from "pinia";
 
 export const useMeetingStore = defineStore("meetings", {
     state: () => ({
@@ -8,73 +8,85 @@ export const useMeetingStore = defineStore("meetings", {
 
     getters: {
         get(state) {
-            return state.meetings
+            return state.meetings;
         },
 
         getById:
             (state) =>
-            (meetingId: Meeting["id"]): Meeting | undefined => {
-                return state.meetings.find((m) => {
-                    return m.id === meetingId
-                })
-            },
+                (meetingId: Meeting["id"]): Meeting | undefined => {
+                    return state.meetings.find((m) => {
+                        return m.id === meetingId;
+                    });
+                },
 
         getByProjectId:
             (state) =>
-            (projectId: Project["id"]): Meeting[] => {
-                const meetings = state.meetings.filter((m) => {
-                    return m.projectId === projectId
-                })
+                (projectId: Project["id"]): Meeting[] => {
+                    const meetings = state.meetings.filter((m) => {
+                        return m.projectId === projectId;
+                    });
 
-                return meetings
-            },
+                    return meetings;
+                },
+
+        getLengthByProjectId: (state) => (projectId: Project["id"]) => {
+            const meetings = state.meetings.filter((m) => {
+                return m.projectId === projectId;
+            });
+
+            if (!meetings) throw new Error("No project found");
+
+            return meetings.length;
+        },
     },
 
     actions: {
         async init() {
             const ids = $Projects.getProjects.map((p) => {
-                return p.id
-            })
+                return p.id;
+            });
 
             for (let id of ids) {
-                const colRef = collection(useDb(), `/projects/${id}/meetings`)
+                const colRef = collection(useDb(), `/projects/${id}/meetings`);
 
                 onSnapshot(colRef, (snapshot) => {
                     snapshot.docChanges().forEach((change) => {
-                        const meetingData = change.doc.data()
+                        const meetingData = change.doc.data();
 
                         const meeting = {
                             id: change.doc.id,
                             ...meetingData,
-                        } as Meeting
+                        } as Meeting;
 
                         if (change.type === "added") {
-                            const index = this.meetings.findIndex((m) => m.id === meeting.id)
+                            const index = this.meetings.findIndex((m) => m.id === meeting.id);
                             if (index === -1) {
-                                this.meetings.push(meeting)
+                                this.meetings.push(meeting);
                             }
-                            return
+                            return;
                         }
 
                         if (change.type === "modified") {
-                            const index = this.meetings.findIndex((m) => m.id === meeting.id)
+                            const index = this.meetings.findIndex((m) => m.id === meeting.id);
 
                             if (index === -1) {
-                                return
+                                return;
                             }
 
-                            this.meetings[index] = meeting
+                            this.meetings[index] = meeting;
 
-                            return
+                            return;
                         }
 
                         if (change.type === "removed") {
                             // Remove deleted projects from the state
-                            this.meetings = this.meetings.filter((m) => m.id !== change.doc.id)
+                            this.meetings = this.meetings.filter(
+                                (m) => m.id !== change.doc.id,
+                            );
                         }
-                    })
-                })
+                    });
+                });
             }
         },
     },
-})
+});

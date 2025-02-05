@@ -1,7 +1,9 @@
 <template>
     <section class="chatroom">
         <div class="messages-container" ref="messagesContainer">
-            <div class="no-messages" v-if="!activitiesAndMessages.length">No messages yet.</div>
+            <div class="no-messages" v-if="!activitiesAndMessages.length">
+                No messages yet.
+            </div>
 
             <div v-for="(item, index) of activitiesAndMessages" :key="index">
                 <dashboard-chatroom-message v-if="item.type === 'message'" :message="item" />
@@ -12,37 +14,21 @@
         <div class="input-container">
             <div class="input-box">
                 <div v-if="messageFiles.length" class="message-files">
-                    <dashboard-file-card-small
-                        @delete="removeFile(file.name)"
-                        :delete="true"
-                        :download="false"
-                        v-for="(file, index) of messageFilesProper"
-                        :key="index"
-                        :file="file"
-                    />
+                    <dashboard-file-card-small @delete="removeFile(file.name)" :delete="true" :download="false"
+                        v-for="(file, index) of messageFilesProper" :key="index" :file="file" />
                 </div>
 
                 <div class="input-wrapper" :class="{ files: messageFiles.length }">
-                    <textarea
-                        v-model="message"
-                        type="text"
-                        placeholder="Type a message..."
-                        class="message-input"
-                        :disabled="sending"
-                        @keyup.enter="sendMessage(messageObj, messageFiles)"
-                    />
+                    <textarea v-model="message" type="text" placeholder="Type a message..." class="message-input"
+                        :disabled="sending" @keyup.enter="sendMessage(messageObj, messageFiles)" />
                     <label class="file-input-label">
                         <input type="file" @change="handleFileSelect" class="file-input" :disabled="sending" />
                         <Icon icon="gravity-ui:paperclip" width="20" />
                     </label>
                 </div>
             </div>
-            <button
-                type="button"
-                class="send-button"
-                :disabled="sending"
-                @click="sendMessage(messageObj, messageFiles)"
-            >
+            <button type="button" class="send-button" :disabled="sending"
+                @click="sendMessage(messageObj, messageFiles)">
                 <Icon icon="f7:paperplane-fill" width="25" />
             </button>
         </div>
@@ -50,28 +36,28 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
+import { Icon } from "@iconify/vue";
 
-const projectId = useRoute().params.id as string
+const projectId = useRoute().params.id as string;
 
-const messagesContainer = ref<HTMLElement | null>(null)
-const messageFiles = ref<File[]>([])
-const sending = ref(false)
+const messagesContainer = ref<HTMLElement | null>(null);
+const messageFiles = ref<File[]>([]);
+const sending = ref(false);
 
 const activitiesAndMessages = computed(() => {
-    const activities = $ActivityLogs.getByProjectId(projectId).activity
-    const messages = $Chatroom.getChatroomMessages(projectId) || []
+    const activities = $ActivityLogs.getByProjectId(projectId).activity;
+    const messages = $Chatroom.getChatroomMessages(projectId) || [];
     const sorted = [...messages, ...activities].sort((a, b) => {
-        return a.timestamp - b.timestamp
-    })
+        return a.timestamp - b.timestamp;
+    });
 
-    return sorted
-})
+    return sorted;
+});
 
 const messageFilesProper = computed(() => {
     return messageFiles.value.map((file) => {
-        const url = URL.createObjectURL(file)
-        const type = file.type.startsWith("image/") ? "image" : "document"
+        const url = URL.createObjectURL(file);
+        const type = file.type.startsWith("image/") ? "image" : "document";
 
         return {
             id: "",
@@ -79,57 +65,64 @@ const messageFilesProper = computed(() => {
             timestamp: Date.now(),
             url: url,
             type: type,
-        } as ProjectFile
-    })
-})
+        } as ProjectFile;
+    });
+});
 
-const message = ref("")
+const message = ref("");
 const messageObj = computed(() => {
     return {
         message: message.value,
         sender: $User.email,
         files: [],
-    }
-})
+    };
+});
 
 function removeFile(fileName: string) {
     const index = messageFiles.value.findIndex((file) => {
-        return file.name === fileName
-    })
+        return file.name === fileName;
+    });
 
     if (index !== -1) {
-        messageFiles.value.splice(index, 1)
+        messageFiles.value.splice(index, 1);
     }
 }
 
 watch(activitiesAndMessages, () => {
     setTimeout(() => {
-        scrollToBottom()
-    }, 100)
-})
+        scrollToBottom();
+    }, 100);
+});
 
-async function sendMessage(messageObj: Omit<Message, "id" | "timestamp">, messageFiles: File[]) {
-    if (messageObj.message.trim() === "" && !messageFiles.length) return
+async function sendMessage(
+    messageObj: Omit<Message, "id" | "timestamp">,
+    messageFiles: File[],
+) {
+    if (messageObj.message.trim() === "" && !messageFiles.length) return;
 
     if (messageFiles.length) {
-        messageObj.files = await $Files.saveFiles(projectId, messageFiles, $User.email)
+        messageObj.files = await $Files.saveFiles(
+            projectId,
+            messageFiles,
+            $User.email,
+        );
     }
-    $Chatroom.sendMessage(projectId, messageObj)
+    $Chatroom.sendMessage(projectId, messageObj);
 
-    message.value = ""
-    messageFiles = []
+    message.value = "";
+    messageFiles = [];
 }
 
 function scrollToBottom() {
-    const container = messagesContainer.value
+    const container = messagesContainer.value;
     if (container) {
-        const lastMessage = container.lastElementChild
+        const lastMessage = container.lastElementChild;
 
         if (lastMessage) {
             lastMessage.scrollIntoView({
                 behavior: "smooth",
                 block: "end",
-            })
+            });
         }
     } else {
         // throw new Error("No message container found")
@@ -137,16 +130,18 @@ function scrollToBottom() {
 }
 
 function handleFileSelect(event: Event) {
-    const input = event.target as HTMLInputElement
+    const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-        messageFiles.value.push(input.files[0])
+        messageFiles.value.push(input.files[0]);
     }
 }
 </script>
 
 <style lang="scss" scoped>
 .card {
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px 0 rgba(0, 0, 0, 0.06);
     background: $background-light;
     // border-radius: $border-radius;
 }
@@ -158,6 +153,7 @@ function handleFileSelect(event: Event) {
     left: 50%;
     transform: translateX(-50%);
 }
+
 .files-container {
     display: flex;
     flex-direction: column;
@@ -190,6 +186,7 @@ function handleFileSelect(event: Event) {
         display: flex;
         flex-direction: column;
         overflow-y: auto;
+        height: 1000px;
         flex: 1;
         padding: 15px;
 
@@ -207,7 +204,6 @@ function handleFileSelect(event: Event) {
     max-width: 100%;
     background: white;
     border-radius: $border-radius;
-    margin-bottom: 65px;
 
     .input-box {
         flex: 1;
@@ -257,12 +253,14 @@ function handleFileSelect(event: Event) {
         margin-top: auto;
     }
 }
+
 .message-files {
     display: flex;
     gap: 25px;
     flex-wrap: wrap;
     padding: 15px 15px;
 }
+
 .file-input-label {
     cursor: pointer;
     display: flex;

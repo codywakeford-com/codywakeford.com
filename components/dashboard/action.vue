@@ -22,7 +22,10 @@
 
             <button-primary-m v-modal="'design-modal'" v-if="action.action === 'accept-design'">View
                 Design</button-primary-m>
-            <button-primary-m v-if="action.action === 'accept-design'">Accept Design</button-primary-m>
+            <button-primary-m v-if="action.action === 'accept-design'" @click="
+            ($Projects.clientAcceptsDesign(projectId),
+                $Actions.markAsComplete(action.id))
+                ">Accept Design</button-primary-m>
         </div>
     </div>
 

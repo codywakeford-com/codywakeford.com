@@ -1,51 +1,53 @@
 <template>
-    <h3>Timeline</h3>
-    <section class="phases">
-        <div
-            class="phase-box"
-            v-for="(phase, index) in phases"
-            :key="index"
-            :class="{
-                complete: phaseIndex > index || phases[phaseIndex].phaseName === 'live',
-                active: phaseIndex === index && phases[phaseIndex].phaseName !== 'live',
+    <div>
+        <h3>Timeline</h3>
+        <section class="phases">
+            <div class="phase-box" v-for="(phase, index) in phases" :key="index" :class="{
+                complete:
+                    phaseIndex > index || phases[phaseIndex].phaseName === 'live',
+                active:
+                    phaseIndex === index && phases[phaseIndex].phaseName !== 'live',
                 incomplete: phaseIndex < index,
-            }"
-        >
-            <div class="left">
-                <div class="number">{{ index + 1 }}</div>
-                <div class="name">{{ phase.name }}</div>
-            </div>
+            }">
+                <div class="left">
+                    <div class="number">{{ index + 1 }}</div>
+                    <div class="name">{{ phase.name }}</div>
+                </div>
 
-            <div class="right">
-                <div class="short-description">{{ phase?.shortDescription }}</div>
-                <!-- <div class="full-description">{{ phase?.description }}</div> -->
+                <div class="right">
+                    <div class="short-description">{{ phase?.shortDescription }}</div>
+                    <!-- <div class="full-description">{{ phase?.description }}</div> -->
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 </template>
 
 <script setup lang="ts">
 interface Phase {
-    name: string
-    shortDescription: string
-    description: string
-    phaseName: ProjectPhase
+    name: string;
+    shortDescription: string;
+    description: string;
+    phaseName: ProjectPhase;
 }
 
 interface Props {
-    project: Project | undefined
+    project: Project | undefined;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const phaseIndex = computed(() => {
-    return phases.findIndex((phase) => phase.phaseName === props.project?.phase) || 0
-})
+    return (
+        phases.findIndex((phase) => phase.phaseName === props.project?.phase) || 0
+    );
+});
 const phases: Phase[] = [
     {
         name: "Discovery",
         phaseName: "discovery",
-        shortDescription: "In this phase, we define the project scope, goals, and requirements.",
+        shortDescription:
+            "In this phase, we define the project scope, goals, and requirements.",
         description:
             "The Discovery phase is where we work closely with the client to gather detailed requirements, understand their goals, and define the project’s scope. We aim to establish a clear direction for the project and ensure alignment between all stakeholders.",
     },
@@ -89,7 +91,7 @@ const phases: Phase[] = [
         description:
             "The Live phase is where the product is in full operation. We provide ongoing support, monitor its performance, and address any issues that arise. Additionally, we assist the client with updates and new features, ensuring that the product continues to meet their needs as their business evolves.",
     },
-]
+];
 </script>
 
 <style lang="scss" scoped>
@@ -99,13 +101,9 @@ h3 {
 }
 
 .phases {
-    display: flex;
-    flex-direction: column;
-    gap: 50px;
     overflow-y: auto;
-    padding-inline: 25px;
-    height: 100%;
-    padding-bottom: 25px;
+    max-height: 100%;
+    width: 100%;
 }
 
 .phase-box {
@@ -117,20 +115,6 @@ h3 {
     margin-inline: 10px;
     border-radius: 10px;
     position: relative;
-
-    // .full-description {
-    //     display: none;
-    // }
-
-    // &:hover {
-    //     .full-description {
-    //         display: block;
-    //     }
-
-    //     .short-description {
-    //         display: none;
-    //     }
-    // }
 
     &:nth-child(odd) {
         &::before {
@@ -190,15 +174,19 @@ h3 {
 
     &:last-child {
         &::before {
-            content: none; /* Remove content */
+            content: none;
+            /* Remove content */
         }
 
         &::after {
-            content: none; /* Remove content */
+            content: none;
+            /* Remove content */
         }
     }
+
     &.complete {
         border: 3px solid $primary;
+
         .number {
             background: $primary;
             color: $text-light1;
@@ -244,6 +232,7 @@ h3 {
             color: $text-light3;
         }
     }
+
     .left {
         display: flex;
         flex-direction: column;

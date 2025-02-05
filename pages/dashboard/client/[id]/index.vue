@@ -15,11 +15,16 @@
         <div class="page-content">
             <div class="left-content">
                 <div class="timeline card">
-                    <dashboard-timeline :project="project" />
+                    <!-- <dashboard-timeline :project="project" /> -->
                 </div>
 
                 <div class="meeting card">
-                    <dashboard-meetings />
+                    <dashboard-meetings v-if="$Meetings.getLengthByProjectId(projectId)" />
+
+                    <div class="no-meetings-message" v-else>
+                        <h3>Meetings</h3>
+                        <p>You have no meetings booked for this project at the moment.</p>
+                    </div>
                 </div>
             </div>
 
@@ -34,7 +39,7 @@
             <div class="right-content">
                 <div class="action-menu card">
                     <dashboard-action :project="project" v-if="actions.length && project" />
-                    <div class="no-actions-message">
+                    <div class="no-actions-message" v-else>
                         <h3>Actions</h3>
                         <p>Nothing to do at the moment!</p>
                     </div>
@@ -115,27 +120,27 @@ definePageMeta({
 $gap: 15px;
 
 main {
-    max-height: 100vh;
-}
-
-.container {
+    overflow: auto;
+    padding-block: 25px;
     height: 100vh;
     display: flex;
+    gap: $gap;
     flex-direction: column;
 
     .page-content {
         display: grid;
-        max-height: 40%;
+        flex-grow: 1;
+
         gap: $gap;
-        grid-template-columns: 1fr 5fr 2fr;
+        grid-template-columns: 350px auto 350px;
         box-sizing: border-box;
     }
 
     .right-content {
         display: flex;
         flex-direction: column;
+        flex: 1;
         max-height: 100%;
-
         gap: $gap;
 
         .no-actions-message {
@@ -209,23 +214,31 @@ main {
         display: flex;
         flex-direction: column;
         gap: $gap;
-        flex: 1;
-        height: 100%;
 
         .timeline {
+            position: relative;
             grid-area: timeline;
+            overflow: hidden;
             padding: 0px;
-            display: flex;
-            flex-direction: column;
-            gap: 35px;
+            height: 500px;
+            width: 100%;
+            flex: 1;
         }
 
         .meeting {
             grid-area: meeting;
+
+            .no-meetings-message {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     }
 
     .center-content {
+        height: 100%;
+
         .message-log {
             grid-area: message-log;
             display: flex;

@@ -1,6 +1,6 @@
 <template>
     <main class="admin-page">
-        <!-- <ProjectPhase :phase="project.phase" /> -->
+        <pre>Project.phase : {{ $Projects.getPhaseById(projectId) }}</pre>
         <button @click="deleteProject()">Delete Project</button>
         <button @click="
             $Projects.addDesignDocument(
@@ -9,6 +9,9 @@
             )
             ">
             add design doc
+        </button>
+        <button @click="$Projects.incrementPhase(projectId)">
+            Increment phase
         </button>
 
         <div class="quote">
@@ -69,6 +72,7 @@ async function uploadQuote(projectId: Project["id"]) {
             projectId: projectId,
             extension: proposalExtension,
             sender: "codypwakeford@gmail.com",
+            size: proposalDoc.value.size,
             timestamp: Date.now(),
             url: proposalUrl,
             type: "document",
@@ -79,6 +83,7 @@ async function uploadQuote(projectId: Project["id"]) {
             extension: quoteExtension,
             sender: "codypwakeford@gmail.com",
             timestamp: Date.now(),
+            size: quoteDoc.value.size,
             url: quoteUrl,
             type: "document",
         },

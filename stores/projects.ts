@@ -107,9 +107,11 @@ export const useProjectStore = defineStore("projects", {
 
           if (change.type === "added") {
             const index = this.projects.findIndex((p) => p.id === project.id);
+
             if (index === -1) {
               this.projects.push(project);
             }
+
             return;
           }
 
@@ -266,7 +268,7 @@ export const useProjectStore = defineStore("projects", {
       const amountPaidDecimal = quote.amountPaid / quote.totalAmount;
 
       switch (project.phase) {
-        case "development":
+        case "discovery":
           if (amountPaidDecimal < 0.33) {
             const paymentAction: Action = {
               id: uuid(),
@@ -292,7 +294,7 @@ export const useProjectStore = defineStore("projects", {
             status: "pending",
             timestamp: Date.now(),
             description:
-              "Welcome to our project. We're glad to have you on board. To kick things of book your discovery meeting using the button below. This helps us define the project outline and allows us to generate you a quote. See you soon! ",
+              "Welcome to our project. We're glad to have you on board. To kick things of book your design meeting using the button below. Here we will gather all the infomation we need to generate the structure of the website, and from that we can build out the design in your vision.",
             projectId,
           };
 
@@ -308,7 +310,8 @@ export const useProjectStore = defineStore("projects", {
               id: uuid(),
               timestamp: Date.now(),
               projectId,
-              description: "  ",
+              description:
+                "Great, were glad your happy with the design, not long to go now. Next we bring it to life! To move foward to the development stage plase pay up to a minimum of 66% of the project quote. ",
               priority: 1000,
               action: "payment",
               status: "pending",
@@ -332,12 +335,35 @@ export const useProjectStore = defineStore("projects", {
           );
 
           break;
-
-        case "testing":
+        case "development":
           await $ActivityLogs.addSystemMessageActivityItem(
             projectId,
-            "Were ready to show you what we have built. Everything has been thouroughly tested and is ready to go. Be sure to book a call so we can hand show you around!",
+            "I have done the majority of the work now. Everything has been built, now I just need to go through and thouroughly test everything. I'll make sure the website is accessable on every device and make sure the code is secure.",
           );
+          break;
+
+        case "testing":
+          const meetingAction: Action = {
+            id: uuid(),
+            priority: 10,
+            action: "book-meeting",
+            status: "pending",
+            timestamp: Date.now(),
+            description:
+              "The website has been built out, we have run all of our tests on it and it works seemlessly on all devices. I'm ready to show you what we have done. Book a meeting so I can show your new website!",
+            projectId,
+          };
+
+          await createObject(
+            `/projects/${projectId}/user-required-actions`,
+            meetingAction,
+          );
+
+          await $ActivityLogs.addSystemMessageActivityItem(
+            projectId,
+            "I'm ready to show you what I've have built. Everything has been thouroughly tested and is ready to go. Be sure to book a call so I can show you around!",
+          );
+
           break;
 
         case "launch":
@@ -348,7 +374,8 @@ export const useProjectStore = defineStore("projects", {
               action: "payment",
               status: "pending",
               timestamp: Date.now(),
-              description: "Please make the final payment.",
+              description:
+                "Just before we put the website onto your live public domain we ask you make the final payment. After that your webiste will be up and running within a few hours!",
               projectId,
             };
 
@@ -359,7 +386,7 @@ export const useProjectStore = defineStore("projects", {
 
             $ActivityLogs.addSystemMessageActivityItem(
               projectId,
-              "Once the final payment is done we will put the website onto your custom domain.",
+              "Please pay the remaining balance on the project so we can launch your new website!",
               [paymentAction.id],
             );
 
@@ -373,7 +400,7 @@ export const useProjectStore = defineStore("projects", {
           break;
 
         default:
-          return;
+          break;
       }
 
       await this.updatePhase(
@@ -389,6 +416,7 @@ export const useProjectStore = defineStore("projects", {
         },
       };
       await updateObject<Project>(`/projects/${projectId}`, update);
+
       await this.incrementPhase(projectId);
     },
 
