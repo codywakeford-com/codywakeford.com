@@ -91,7 +91,7 @@ function removeFile(fileName: string) {
 watch(activitiesAndMessages, () => {
     setTimeout(() => {
         scrollToBottom();
-    }, 100);
+    }, 0);
 });
 
 async function sendMessage(
@@ -119,13 +119,8 @@ function scrollToBottom() {
         const lastMessage = container.lastElementChild;
 
         if (lastMessage) {
-            lastMessage.scrollIntoView({
-                behavior: "smooth",
-                block: "end",
-            });
+            container.scrollTop = container.scrollHeight;
         }
-    } else {
-        // throw new Error("No message container found")
     }
 }
 
@@ -175,9 +170,9 @@ function handleFileSelect(event: Event) {
 .chatroom {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex-grow: 1;
+    max-height: calc(100vh - 200px);
     position: relative;
-    padding-top: 25px;
 
     .messages-container {
         border-bottom: 2px solid $secondary;
@@ -185,11 +180,9 @@ function handleFileSelect(event: Event) {
         position: relative;
         display: flex;
         flex-direction: column;
-        overflow-y: auto;
-        height: 1000px;
         flex: 1;
-        padding: 15px;
-
+        padding-inline: 15px;
+        padding-block: 25px 50px;
         scroll-behavior: smooth;
         gap: 25px;
         max-width: 100%;

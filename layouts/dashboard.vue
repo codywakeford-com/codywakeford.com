@@ -12,6 +12,7 @@
     <dashboard-loading-screen v-if="false" />
     <stripe-payment-modal />
     <stripe-save-card-modal />
+    <upload-file-modal />
     <dashboard-design-modal />
 </template>
 

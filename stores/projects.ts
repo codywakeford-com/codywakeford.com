@@ -392,7 +392,6 @@ export const useProjectStore = defineStore("projects", {
 
             return;
           }
-
           $ActivityLogs.addSystemMessageActivityItem(
             projectId,
             "Your website is now live! View the website at your custom domain.",

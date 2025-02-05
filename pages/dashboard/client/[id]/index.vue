@@ -30,9 +30,10 @@
 
             <div class="center-content">
                 <div class="message-log card">
-                    <h3>Activity Log</h3>
+                    <h3>Project Log</h3>
+                    <p>A place to find all activity associated with this project.</p>
+
                     <dashboard-chatroom />
-                    <!-- <dashboard-activity-log v-if="project" :project="project" /> -->
                 </div>
             </div>
 
@@ -120,7 +121,6 @@ definePageMeta({
 $gap: 15px;
 
 main {
-    overflow: auto;
     padding-block: 25px;
     height: 100vh;
     display: flex;
@@ -130,6 +130,7 @@ main {
     .page-content {
         display: grid;
         flex-grow: 1;
+        max-height: 100%;
 
         gap: $gap;
         grid-template-columns: 350px auto 350px;
@@ -237,12 +238,12 @@ main {
     }
 
     .center-content {
-        height: 100%;
+        max-height: 100%;
 
         .message-log {
             grid-area: message-log;
             display: flex;
-            height: 100%;
+            max-height: 100%;
             flex-direction: column;
             padding-inline: 0;
             overflow: none;
@@ -253,6 +254,14 @@ main {
             h3 {
                 padding-top: 25px;
                 padding-inline: 25px;
+            }
+
+            p {
+                padding-block: 5px 25px;
+                font-size: 0.9rem;
+                padding-inline: 25px;
+
+                border-bottom: 1px solid $text-light2;
             }
         }
     }

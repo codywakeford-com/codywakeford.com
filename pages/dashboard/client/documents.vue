@@ -54,7 +54,7 @@
                                 <td>
                                     {{ dayjs(file.timestamp).format("dddd Do MMM HH:mma") }}
                                 </td>
-                                <td>{{ file.size }}</td>
+                                <td>{{ (file.size / 1024).toFixed(0) }}kb</td>
                             </tr>
                         </tbody>
                     </table>
@@ -78,12 +78,13 @@
                     <div class="properties">
                         <h4>Properties</h4>
                         <div>Type: {{ previewFile.type }}</div>
-                        <div v-if="previewFile.size">Size: {{ previewFile.size }}</div>
                         <div>
                             Last Modified:
                             {{ dayjs(previewFile.timestamp).format("dddd Do MMM HH:mma") }}
                         </div>
-                        <div>Size: {{ previewFile.size }}</div>
+                        <div v-if="previewFile.size">
+                            Size: {{ (previewFile.size / 1024).toFixed(0) }}kb
+                        </div>
                     </div>
 
                     <!-- <pre>{{ previewFile }} </pre> -->
@@ -210,16 +211,28 @@ header {
             width: 100%;
 
             thead {
-                border-bottom: 2px solid black;
+                border-collapse: collapse;
+
+                th {
+                    border-bottom: 1px solid black;
+                }
+
+                tr {
+                    border-collapse: collapse;
+                }
 
                 th,
                 td {
+                    margin: 0;
+                    border-collapse: collapse;
                     padding-right: 25px;
                 }
             }
 
             th,
             td {
+                border-bottom: 1px solid $secondary;
+                border-collapse: collapse;
                 padding-inline: 10px 50px;
                 padding-block: 10px 10px;
             }
