@@ -1,44 +1,49 @@
-export {}
+export {};
 
 declare global {
-    type ProjectPhase = "discovery" | "design" | "development" | "testing" | "launch" | "live"
+  type ProjectPhase =
+    | "discovery"
+    | "design"
+    | "development"
+    | "testing"
+    | "launch"
+    | "live";
 
-    interface Project {
-        id: string
-        name: string
-        emails: string[]
-        phase: ProjectPhase
+  interface Project {
+    id: string;
+    emails: string[];
+    phase: ProjectPhase;
 
-        design: {
-            url?: string
-            accepted: boolean
-        }
+    design: {
+      url?: string;
+      accepted: boolean;
+    };
 
-        domain?: string
-        quote?: ProjectQuote
-    }
+    domain?: string;
+    quote?: ProjectQuote;
+  }
 
-    interface ProjectQuote {
-        files: ProjectFile[]
+  interface ProjectQuote {
+    files: ProjectFile[];
 
-        /**Total of all the payment type items. E.g subscriptions not included. */
-        totalAmount: number
+    /**Total of all the payment type items. E.g subscriptions not included. */
+    totalAmount: number;
 
-        /**Total amount paid. */
-        amountPaid: number
+    /**Total amount paid. */
+    amountPaid: number;
 
-        /**Quote has been accepted by the client */
-        accepted?: boolean
-    }
+    /**Quote has been accepted by the client */
+    accepted?: boolean;
+  }
 
-    interface ProjectQuoteItem {
-        /**Name of the product or service */
-        name: "website"
+  interface ProjectQuoteItem {
+    /**Name of the product or service */
+    name: "website";
 
-        /**Amount in pence */
-        amount: number
+    /**Amount in pence */
+    amount: number;
 
-        /**Type of payment for the transaction */
-        paymentType: "payment" | "subscription"
-    }
+    /**Type of payment for the transaction */
+    paymentType: "payment" | "subscription";
+  }
 }
