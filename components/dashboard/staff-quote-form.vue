@@ -21,15 +21,17 @@
   </div>
 
   <button @click="createQuoteDoc()">make doc</button>
-
-  <embed v-if="quoteUrl" :src="quoteUrl" type="application/pdf" />
+  {{ quoteUrl }}
+  <nuxt-link v-if="quoteUrl" :to="quoteUrl">Download PDF</nuxt-link>
 </template>
 
 <script setup lang="ts">
 import { uuid } from "~/utils/uuid";
 
 const quoteItems = ref<QuoteItem[]>([]);
-const quoteUrl = ref<null | string>(null);
+const quoteUrl = ref<null | string>(
+  "https://firebasestorage.googleapis.com/v0/b/portfolio-1953f.firebasestorage.app/o/quotes%2F1740087356381%2Fquote.pdf?alt=media&token=4a1a2425-1a17-41d5-83d6-9087fb669e37",
+);
 const newQuoteItem = ref<QuoteItem>({
   name: "",
   quantity: 0,
@@ -59,6 +61,49 @@ function addQuoteItem() {
   };
 }
 
+
+async function uploadQuote(projectId: Project["id"]) {
+  const proposalUrl = quoteUrl.value
+
+  const files: Omit<ProjectFile, "id">[] = [
+    {
+      name: "ProjectProposal",
+      projectId: projectId,
+      extension: "pdf",
+      sender: "codypwakeford@gmail.com",
+      size: 15,
+      timestamp: Date.now(),
+      url: proposalUrl,
+      type: "document",
+    },
+    {
+      name: "ProjectQuote",
+      projectId: projectId,
+      extension: "pdf",
+      sender: "codypwakeford@gmail.com",
+      timestamp: Date.now(),
+      size: 15 ,
+      url: quoteUrl.value,
+      type: "document",
+    },
+  ];
+
+  const newFiles: ProjectFile[] = [];
+
+  for (let i = 0; i < files.length; i++) {
+    const id = await createObject<Omit<ProjectFile, "id">>(
+      `/projects/${projectId}/files`,
+      files[i],
+    );
+
+    if (!id) return;
+
+    newFiles.push({
+      id: id,
+      ...files[i],
+    });
+  }
+
 interface Props {
   projectId: string;
 }
@@ -87,8 +132,6 @@ async function createQuoteDoc() {
     method: "POST",
     body: quote,
   })) as string;
-
-  console.log(url);
 
   quoteUrl.value = url;
 }

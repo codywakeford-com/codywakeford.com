@@ -11,8 +11,8 @@
           project is under way!
         </div>
         <dashboard-file-card
-          @click="selectedDoc = file.url"
           v-for="(file, index) of files"
+          @click="selectedDoc = file.url"
           :key="index"
           :file="file"
           :delete="false"
@@ -90,7 +90,11 @@
               v-modal="'doc-preview'"
             />
           </header>
-          <embed :src="previewFile.url" type="application/pdf" />
+          <embed
+            v-if="previewFile.url"
+            :src="previewFile.url"
+            type="application/pdf"
+          />
           <h3 class="file-name">
             {{ previewFile.name }}.{{ previewFile.extension }}
           </h3>
@@ -116,9 +120,9 @@
         </section>
 
         <modal class="doc-modal" id="doc-preview">
-          <div class="content">
-            <embed :src="previewFile.url" type="application/pdf" />
-          </div>
+          <!-- <div class="content" v-if="previewFile.url"> -->
+          <!--   <embed :src="previewFile.url" type="application/pdf" /> -->
+          <!-- </div> -->
         </modal>
       </div>
     </div>
@@ -149,8 +153,6 @@ const files = computed(() => {
 });
 
 const selectedDoc = ref("");
-
-onMounted(() => {});
 
 definePageMeta({
   layout: "dashboard",

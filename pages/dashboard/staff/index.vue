@@ -3,10 +3,16 @@
     <dashboard-project-list interface="staff" />
 
     <div class="action-buttons">
-      <btn @click="$Projects.createDummy()" class="action-btn"
-        >Create Dummy Project</btn
+      <btn @click="$Projects.createProject('full')" class="action-btn"
+        >Create Full Project</btn
       >
+
+      <btn @click="$Projects.createProject('build')" class="action-btn"
+        >Create Development Project</btn
+      >
+
       <btn to="/admin/clients/chatroom" class="action-btn">Chatroom</btn>
+
       <btn
         preset="dark"
         @click="openModal('createProject')"
@@ -28,4 +34,10 @@ definePageMeta({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  padding-block: 25px;
+}
+</style>

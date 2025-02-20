@@ -132,10 +132,6 @@ const files = computed(() => {
   return $Files.getRecent(5);
 });
 
-onMounted(() => {
-  openModal("files-modal");
-});
-
 definePageMeta({
   layout: "dashboard",
   middleware: "dashboard",

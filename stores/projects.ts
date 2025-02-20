@@ -506,19 +506,38 @@ export const useProjectStore = defineStore("projects", {
     },
 
     /**A testing function */
-    async createDummy() {
-      this.create(DummyProject);
+    async createProject(type: Project["type"]) {
+      let project: Project = {
+        id: uuid(),
+        emails: ["codypwakeford@gmail.com"],
+        phase: "discovery",
+        design: {
+          accepted: false,
+        },
+
+        type: "full",
+        domain: "codywakeford.com",
+      };
+
+      if (type === "build") {
+        project.phase = "development";
+        project.type = "build";
+      }
+
+      this.create(project);
     },
   },
 });
 
-const DummyProject: Omit<Project, "id"> = {
-  name: "Test Project",
+const DummyProject: Project = {
+  id: uuid(),
   emails: ["codypwakeford@gmail.com"],
   phase: "discovery",
   design: {
     accepted: false,
   },
+
+  type: "full",
   domain: "codywakeford.com",
 };
 

@@ -17,7 +17,6 @@
 
       <div class="right">
         <div class="short-description">{{ phase?.shortDescription }}</div>
-        <!-- <div class="full-description">{{ phase?.description }}</div> -->
       </div>
     </div>
   </section>
