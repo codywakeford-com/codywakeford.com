@@ -26,6 +26,7 @@
         "nuxt": "^3.15.1",
         "nuxt-calendly": "^0.1.21",
         "pinia": "^2.3.0",
+        "puppeteer": "^24.2.1",
         "vue": "latest",
         "vue-router": "latest"
     },

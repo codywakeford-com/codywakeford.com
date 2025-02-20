@@ -14,6 +14,12 @@ declare global {
     emails: string[];
     phase: ProjectPhase;
 
+    /** 
+    Full - Discovery, design and building of the website 
+    Build - Build from existing design doc.
+    */
+    type: "full" | "build";
+
     design: {
       url?: string;
       accepted: boolean;
