@@ -9,3 +9,11 @@ useHead({
     title: "Web Professional",
 })
 </script>
+
+<style lang="scss">
+.selector {
+}
+
+embed {
+}
+</style>
