@@ -29,7 +29,7 @@ export default eventHandler(async (event) => {
 
   await browser.close();
 
-  const fileRef = ref(storage, `receipts/${Date.now()}/receipt.pdf`);
-  await uploadBytes(fileRef, buffer);
+  const fileRef = ref(storage, `receipts/${Date.now()}.receipt.pdf`);
+  await uploadBytes(fileRef, buffer, { contentType: "application/pdf" });
   return await getDownloadURL(fileRef);
 });

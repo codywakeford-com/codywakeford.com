@@ -1,144 +1,121 @@
 <template>
-  <div class="quote-form">
-    <div class="quote-items">
-      <div class="add-item">
-        <label for="">Name</label>
-        <input type="text" v-model="newQuoteItem.name" />
-        <label for="">Quantity</label>
-        <input type="text" v-model="newQuoteItem.quantity" />
-        <label for="">Unit Price</label>
-        <input type="text" v-model="newQuoteItem.unitPrice" />
-      </div>
-      <button @click="addQuoteItem()">Add item</button>
-    </div>
+    <section>
+        <div class="quote-form">
+            <div class="form-item">
+                <label for="">Name</label>
+                <input type="text" v-model="newQuoteItem.name" />
+            </div>
 
-    <div class="item" v-for="(item, index) in quoteItems">
-      <div>Item: {{ item.name }}</div>
-      <div>Quantity: {{ item.quantity }}</div>
-      <div>Unit Price: {{ item.unitPrice }}</div>
-      <button @click="removeQuoteItem(index)">Delete</button>
-    </div>
-  </div>
+            <div class="form-item">
+                <label for="">Quantity</label>
+                <input type="text" v-model="newQuoteItem.quantity" />
+            </div>
 
-  <button @click="createQuoteDoc()">make doc</button>
-  {{ quoteUrl }}
-  <nuxt-link v-if="quoteUrl" :to="quoteUrl">Download PDF</nuxt-link>
+            <div class="form-item">
+                <label for="">Unit Price</label>
+                <input type="text" v-model="newQuoteItem.unitPrice" />
+            </div>
+
+            <div class="item" v-for="(item, index) in quoteItems">
+                <div>Item: {{ item.name }}</div>
+                <div>Quantity: {{ item.quantity }}</div>
+                <div>Unit Price: {{ item.unitPrice }}</div>
+                <button @click="removeQuoteItem(index)">Delete</button>
+            </div>
+
+            <button @click="addQuoteItem()">Add item</button>
+        </div>
+        <button @click="createQuoteDoc()">make doc</button>
+        {{ quoteUrl }}
+
+        <nuxt-link v-if="quoteUrl" :to="quoteUrl">Download PDF</nuxt-link>
+
+        <button v-if="quoteUrl" @click="$Projects.addQuoteToProject(projectId, quoteUrl, quoteUrl)">Upload Quote</button>
+    </section>
 </template>
 
 <script setup lang="ts">
-import { uuid } from "~/utils/uuid";
+import { uuid } from "~/utils/uuid"
 
-const quoteItems = ref<QuoteItem[]>([]);
-const quoteUrl = ref<null | string>(
-  "https://firebasestorage.googleapis.com/v0/b/portfolio-1953f.firebasestorage.app/o/quotes%2F1740087356381%2Fquote.pdf?alt=media&token=4a1a2425-1a17-41d5-83d6-9087fb669e37",
-);
+const quoteItems = ref<QuoteItem[]>([])
+const quoteUrl = ref<null | string>(null)
 const newQuoteItem = ref<QuoteItem>({
-  name: "",
-  quantity: 0,
-  unitPrice: 0,
-  paymentType: "single",
-  get subtotal() {
-    return this.quantity * this.unitPrice;
-  },
-});
-
-function addQuoteItem() {
-  for (let value of Object.values(newQuoteItem.value)) {
-    if (!value) return;
-  }
-
-  quoteItems.value.push(newQuoteItem.value);
-
-  newQuoteItem.value = {
     name: "",
     quantity: 0,
     unitPrice: 0,
     paymentType: "single",
-
     get subtotal() {
-      return this.quantity * this.unitPrice;
+        return this.quantity * this.unitPrice
     },
-  };
+})
+
+function addQuoteItem() {
+    for (let value of Object.values(newQuoteItem.value)) {
+        if (!value) return
+    }
+
+    quoteItems.value.push(newQuoteItem.value)
+
+    newQuoteItem.value = {
+        name: "",
+        quantity: 0,
+        unitPrice: 0,
+        paymentType: "single",
+
+        get subtotal() {
+            return this.quantity * this.unitPrice
+        },
+    }
 }
-
-
-async function uploadQuote(projectId: Project["id"]) {
-  const proposalUrl = quoteUrl.value
-
-  const files: Omit<ProjectFile, "id">[] = [
-    {
-      name: "ProjectProposal",
-      projectId: projectId,
-      extension: "pdf",
-      sender: "codypwakeford@gmail.com",
-      size: 15,
-      timestamp: Date.now(),
-      url: proposalUrl,
-      type: "document",
-    },
-    {
-      name: "ProjectQuote",
-      projectId: projectId,
-      extension: "pdf",
-      sender: "codypwakeford@gmail.com",
-      timestamp: Date.now(),
-      size: 15 ,
-      url: quoteUrl.value,
-      type: "document",
-    },
-  ];
-
-  const newFiles: ProjectFile[] = [];
-
-  for (let i = 0; i < files.length; i++) {
-    const id = await createObject<Omit<ProjectFile, "id">>(
-      `/projects/${projectId}/files`,
-      files[i],
-    );
-
-    if (!id) return;
-
-    newFiles.push({
-      id: id,
-      ...files[i],
-    });
-  }
 
 interface Props {
-  projectId: string;
+    projectId: string
 }
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
 async function createQuoteDoc() {
-  const total = quoteItems.value.reduce((sum: number, item: QuoteItem) => {
-    return sum + item.subtotal;
-  }, 0);
+    const total = quoteItems.value.reduce((sum: number, item: QuoteItem) => {
+        return sum + item.subtotal
+    }, 0)
 
-  const quote: Quote = {
-    id: uuid(),
-    discount: 0,
-    items: quoteItems.value,
-    projectId: props.projectId,
-    timestamp: Date.now(),
-    currency: "gbp",
+    const quote: Quote = {
+        id: uuid(),
+        discount: 0,
+        items: quoteItems.value,
+        projectId: props.projectId,
+        timestamp: Date.now(),
+        currency: "gbp",
 
-    taxRate: 0,
-    status: "sent",
-    totalAmount: total,
-  };
+        taxRate: 0,
+        status: "sent",
+        totalAmount: total,
+    }
 
-  const url = (await $fetch("/api/pdf/quote", {
-    method: "POST",
-    body: quote,
-  })) as string;
+    const url = (await $fetch("/api/pdf/quote", {
+        method: "POST",
+        body: quote,
+    })) as string
 
-  quoteUrl.value = url;
+    console.log(url)
+
+    $Projects.total = total
+    $Projects.quoteUrl = url
+    quoteUrl.value = url
 }
 
 function removeQuoteItem(i: number) {
-  quoteItems.value.splice(i, 1);
+    quoteItems.value.splice(i, 1)
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+section {
+    display: flex;
+    flex-direction: column;
+}
+.quote-form {
+    display: flex;
+    flex-direction: column;
+}
+</style>

@@ -1,45 +1,44 @@
-import puppeteer from "puppeteer";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import puppeteer from "puppeteer"
+import fs from "fs"
+import path from "path"
+import { fileURLToPath } from "url"
 import {
-  ref,
-  getStorage,
-  uploadBytes,
-  getDownloadURL,
-  FirebaseStorage,
-} from "firebase/storage";
+    ref,
+    getStorage,
+    uploadBytes,
+    getDownloadURL,
+    FirebaseStorage,
+} from "firebase/storage"
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export default eventHandler(async (event) => {
-  const storage = event.context.storage as FirebaseStorage;
-  const quote = await readBody(event);
-  console.log(quote);
+    const storage = event.context.storage as FirebaseStorage
+    const quote = await readBody(event)
+    console.log(quote)
 
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
+    const browser = await puppeteer.launch()
+    const page = await browser.newPage()
 
-  await page.setViewport({ width: 1240, height: 1754 });
-  const encodedQuote = encodeURIComponent(JSON.stringify(quote));
+    await page.setViewport({ width: 1240, height: 1754 })
 
-  await page.goto(`http://localhost:3000/pdf/quote?quote=${encodedQuote}`, {
-    waitUntil: "networkidle2",
-  });
+    const encodedQuote = encodeURIComponent(JSON.stringify(quote))
 
-  const filePath = path.resolve("./pagequote.pdf");
-  const buffer = await page.pdf({
-    path: filePath,
-    format: "A4",
-    printBackground: true,
-  });
+    await page.goto(`http://localhost:3000/pdf/quote?quote=${encodedQuote}`, {
+        waitUntil: "networkidle2",
+    })
 
-  await browser.close();
+    const buffer = await page.pdf({
+        format: "A4",
+        printBackground: true,
+    })
 
-  const fileRef = ref(storage, `quotes/${Date.now()}/quote.pdf`);
-  await uploadBytes(fileRef, buffer);
-  const url = await getDownloadURL(fileRef);
+    await browser.close()
 
-  return url;
-});
+    const fileRef = ref(storage, `quotes/${Date.now()}.quote.pdf`)
+    await uploadBytes(fileRef, buffer, { contentType: "application/pdf" })
+    const url = await getDownloadURL(fileRef)
+
+    return url
+})
