@@ -1,9 +1,11 @@
 {
   "functions": {
-    "source": ".output/server"
+    "source": ".output/server",
+    "runtime": "nodejs18"
   },
   "hosting": {
     "public": ".output/public",
+    "redirects": [{"**": "source"}]
     "ignore": [
       "firebase.json",
       "**/.*",

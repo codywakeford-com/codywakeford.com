@@ -21,7 +21,7 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Type</th>
+                            <!-- <th>Type</th> -->
                             <th>Unit Price</th>
                             <th>Quantity</th>
                             <th>Subtotal</th>
@@ -31,14 +31,13 @@
                     <tbody>
                         <tr v-for="item in quote.items">
                             <td>{{ item.name }}</td>
-                            <td>{{ item.paymentType }}</td>
+                            <!-- <td>{{ item.paymentType }}</td> -->
                             <td>£{{ item.unitPrice }}</td>
                             <td>{{ item.quantity }}</td>
                             <td>£{{ item.subtotal }}</td>
                         </tr>
 
-                        <tr class="empty-row" v-for="_ in 9 - quote.items.length">
-                            <td></td>
+                        <tr class="empty-row" v-for="_ in 7 - quote.items.length">
                             <td></td>
                             <td></td>
                             <td></td>
