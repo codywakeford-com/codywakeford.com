@@ -12,8 +12,10 @@
                     <Icon icon="mingcute:happy-line" width="50" />
                     <h3>User Experience Focused</h3>
                     <p>
-                        By focusing on the needs and behaviors of your users, I create websites that
-                        not only look great but also drive engagement and conversions.
+                        By focusing on the needs and behaviors of your users, I create websites that not only look great
+                        but also
+                        drive engagement and
+                        conversions.
                     </p>
                 </div>
 
@@ -21,39 +23,41 @@
                     <Icon icon="fluent:cursor-click-20-regular" width="50" />
                     <h3>Conversion Optimised</h3>
                     <p>
-                        I know the little tricks that can push people to convert from a visitor to a
-                        customer. I help make your site pay for itself by optimizing the little
-                        details.
+                        I know the little tricks that can push people to convert from a visitor to a customer. I help
+                        make your site
+                        pay for itself by
+                        optimizing the little details.
                     </p>
                 </div>
 
                 <div class="card">
                     <Icon icon="material-symbols:mobile-friendly" width="40" />
                     <h3>Mobile Optimised</h3>
-                    <p>
-                        52% of people are viewing websites on a phone. So it's imperative that
-                        websites are pixel perfect for all screen sizes.
-                    </p>
+                    <p>52% of people are viewing websites on a phone. So it's imperative that websites are pixel perfect
+                        for all
+                        screen sizes.</p>
                 </div>
 
                 <div class="card">
                     <Icon icon="material-symbols:screen-search-desktop-outline" width="50" />
                     <h3>Search Engine Optimised</h3>
                     <p>
-                        Your site will follow the best SEO practices to begin its ranking including
-                        meta data, proper markup, sitemaps, image names, accessibility, and more!
+                        Your site will follow the best SEO practices to begin its ranking including meta data, proper
+                        markup,
+                        sitemaps, image names,
+                        accessibility, and more!
                     </p>
                 </div>
 
                 <div class="card">
-                    <Icon
-                        icon="streamline:interface-layout-2-column-header-layout-layouts-masthead-sidebar"
-                        width="40"
-                    />
+                    <Icon icon="streamline:interface-layout-2-column-header-layout-layouts-masthead-sidebar"
+                        width="40" />
                     <h3>Beautifully Designed</h3>
                     <p>
-                        Your website won’t be from a cookie-cutter layout. It will be designed to
-                        beautifully fit the style of your brand from fonts, icons, colors, and more!
+                        Your website won’t be from a cookie-cutter layout. It will be designed to beautifully fit the
+                        style of your
+                        brand from fonts, icons,
+                        colors, and more!
                     </p>
                 </div>
 
@@ -61,8 +65,10 @@
                     <Icon icon="material-symbols:speed-outline" width="50" />
                     <h3>Speed Optimised</h3>
                     <p>
-                        Your site will be developed with speed optimisation in mind and performance
-                        in mind. No site should be slow for its users losing out on customers.
+                        Your site will be developed with speed optimisation in mind and performance in mind. No site
+                        should be slow
+                        for its users losing out on
+                        customers.
                     </p>
                 </div>
 
@@ -70,9 +76,10 @@
                     <Icon icon="emojione-monotone:nerd-face" width="50" />
                     <h3>One-Stop-Shop Support</h3>
                     <p>
-                        It won’t be just a website, I'll be one email away for any website support
-                        you need. I often help out for free if it's a quick change, or for a
-                        compatible cheap rate.
+                        It won’t be just a website, I'll be one email away for any website support you need. I often
+                        help out for
+                        free if it's a quick change,
+                        or for a compatible cheap rate.
                     </p>
                 </div>
             </div>
@@ -82,8 +89,6 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue"
-
-$Mailer
 </script>
 
 <style lang="scss" scoped>

@@ -36,12 +36,14 @@ onMounted(() => {
     right: 0;
     z-index: 100;
 }
+
 .background-light {
     background: white !important;
 }
 
 $blue-bar-height: 40px;
 $nav-height: 50px;
+
 .mobile {
     display: none;
 }
@@ -96,6 +98,16 @@ $nav-height: 50px;
 
     .desktop {
         display: none;
+    }
+}
+
+@media (max-width: 440px) {
+    .content {
+        a {
+            &:last-child {
+                display: none;
+            }
+        }
     }
 }
 </style>

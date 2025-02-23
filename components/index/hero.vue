@@ -5,9 +5,9 @@
             <div class="hero-text">
                 <h1>High Quality Websites for Small Businesses</h1>
                 <h2>
-                    I make superb, budget-friendly websites for small to medium-sized businesses
-                    that want effective, user-friendly, and beautiful websites their customers will
-                    love.
+                    I make superb, budget-friendly websites for small to medium-sized businesses that want effective,
+                    user-friendly, and beautiful websites
+                    their customers will love.
                 </h2>
             </div>
             <img class="hero-image" src="/assets/hero-image.png" alt="cody wakeford" />
@@ -50,10 +50,12 @@ section {
         line-height: 1.6;
     }
 }
+
 .content {
     display: flex;
     align-items: center;
 }
+
 .hero-image {
     position: absolute;
     bottom: 0px;
@@ -81,14 +83,21 @@ section {
 
 @media (max-width: 880px) {
     .hero-text {
-        margin-block: 100px auto;
+        margin-block: 150px auto;
 
         h1 {
             max-width: 100% !important;
         }
     }
+
     .hero-image {
         width: 20%;
+    }
+}
+
+@media (max-width: 390px) {
+    .hero-text {
+        margin-block: 100px auto;
     }
 }
 </style>

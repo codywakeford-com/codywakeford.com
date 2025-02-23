@@ -28,9 +28,15 @@
                     </rflex>
                 </drop>
             </btn>
+
+            <nuxt-link class="nav-item" to="/dashboard/staff/pdf">
+                <Icon icon="ci:file-pdf" width="30" color="white" />
+            </nuxt-link>
+
             <nuxt-link class="nav-item" to="/dashboard/staff">
                 <Icon icon="material-symbols:design-services-outline-sharp" width="30" color="white" />
             </nuxt-link>
+
             <nuxt-link class="nav-item" to="/#hero">
                 <Icon icon="material-symbols:arrow-back" width="30" color="white" />
             </nuxt-link>

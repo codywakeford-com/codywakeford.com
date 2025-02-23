@@ -1,0 +1,1 @@
+/home/cody/git/nuxt-website-template/jest.config.js

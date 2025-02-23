@@ -1,8 +1,3 @@
-// import { useUserStore } from "~/stores/user"
-// import { useProjectStore } from "../stores/projects"
-// import { useChatroomStore } from "../stores/chatroom"
-// import { useNotificationStore } from "../stores/notifications"
-
 export type ProjectStore = ReturnType<typeof useProjectStore>
 export type UserStore = ReturnType<typeof useUserStore>
 export type ChatroomStore = ReturnType<typeof useChatroomStore>
@@ -22,6 +17,7 @@ let $ActivityLogs: ActivityLogStore
 let $App: AppStore
 let $Meetings: MeetingStore
 let $Actions: ActionStore
+
 export async function initPiniaStores() {
     if (!import.meta.client) return
     $App = useAppStore()

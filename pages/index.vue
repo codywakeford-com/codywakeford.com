@@ -3,11 +3,15 @@
         <index-hero />
         <index-services />
         <index-why />
-        <index-reviews />
+        <testimonials />
         <contact />
     </main>
 </template>
 
 <script setup lang="ts"></script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+main {
+    overflow-x: hidden;
+}
+</style>

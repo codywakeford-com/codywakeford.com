@@ -89,5 +89,4 @@ const cards: Card[] = [
 //         width: 300px;
 //         background: $secondary;
 //     }
-// }
-</style>
+// }</style>

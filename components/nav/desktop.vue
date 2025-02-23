@@ -43,6 +43,7 @@ nav {
         }
     }
 }
+
 .logo {
     height: 40px;
     filter: invert(1);
@@ -54,6 +55,7 @@ nav {
 
 a,
 button {
+    font-size: 0.9rem;
     cursor: pointer;
 }
 </style>

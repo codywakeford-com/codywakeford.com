@@ -194,7 +194,7 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 main {
-    min-height: calc(100vh - 110px);
+    min-height: calc(100vh - 75px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -207,15 +207,16 @@ section {
     position: relative;
     z-index: 10;
     background: white;
-    padding: 25px;
+    padding-block: 35px 25px;
+    padding-inline: 25px;
     gap: 20px;
     border-radius: 15px;
     border: 1px solid $text-light1;
 }
 
-h2 {
-    font-size: 1.25rem;
-    margin-bottom: 35px;
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 25px;
 }
 
 form {
@@ -279,11 +280,12 @@ form {
     flex-direction: column;
     justify-content: center;
 
-    .submit-button {
+    button {
         padding: 10px 20px;
-        border-radius: 10px;
+        border-radius: 5px;
         margin-inline: auto;
         margin-top: 35px;
+        width: fit-content;
     }
 
     .error-message {

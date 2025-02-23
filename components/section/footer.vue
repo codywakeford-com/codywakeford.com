@@ -4,9 +4,7 @@
             <nuxt-link class="left" to="#hero">
                 <img src="/assets/cw-logo.webp" alt="Cody Wakeford Logo" />
             </nuxt-link>
-            <div class="center">
-                <p>As always, built with care.</p>
-            </div>
+            <div class="center"></div>
             <div class="right">
                 <socials />
             </div>
