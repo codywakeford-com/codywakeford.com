@@ -4,12 +4,8 @@
         <aside class="chat-sidebar">
             <h2 class="sidebar-title">Project Chatrooms</h2>
             <div class="chatroom-list">
-                <button
-                    v-for="project in $Projects.get"
-                    :key="project.id"
-                    @click="selectChatroom(project)"
-                    :class="['chatroom-btn', { active: activeChatroomId === project.id }]"
-                >
+                <button v-for="project in $Projects.get" :key="project.id" @click="selectChatroom(project)"
+                    :class="['chatroom-btn', { active: activeChatroomId === project.id }]">
                     <span class="project-name">{{ project.name }}</span>
                     <span v-if="unreadCounts[project.id]" class="unread-badge">
                         {{ unreadCounts[project.id] }}
@@ -50,7 +46,7 @@ function selectChatroom(project: any) {
 
 definePageMeta({
     layout: "dashboard",
-    middleware: "admin-auth",
+    middleware: "staff-dashboard",
 })
 </script>
 

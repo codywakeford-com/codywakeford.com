@@ -10,6 +10,12 @@ export const useUserStore = defineStore("userStore", {
     }),
 
     getters: {
+        isStaff(state): boolean {
+            if (!state.user) return false
+
+            return !!(state.user.role === "staff")
+        },
+
         getReciepts(state) {
             return state.reciepts
         },
@@ -93,8 +99,14 @@ export const useUserStore = defineStore("userStore", {
                     localStorage.setItem("jwt", jwt)
                     this.writeCache(payload)
                 }
+
+                return navigateTo("/")
             } catch (error) {
-                return error
+                if (error.status === 401) {
+                    throw new Error("Email or password incorrect.")
+                } else {
+                    throw new Error("An unknown error has occured.")
+                }
             }
         },
 

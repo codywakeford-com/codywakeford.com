@@ -1,9 +1,8 @@
 import { defineStore } from "pinia"
 
-export const useMeetingStore = defineStore("meetings", {
+// TODO: create domain reseller
+export const useDomainStore = defineStore("meetings", {
     state: () => ({}),
-
     getters: {},
-
     actions: {},
 })

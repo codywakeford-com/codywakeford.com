@@ -7,9 +7,8 @@
 
       <btn @click="$Projects.createProject('build')" class="action-btn">Create Development Project</btn>
 
-      <btn to="/admin/clients/chatroom" class="action-btn">Chatroom</btn>
-
-      <btn preset="dark" @click="openModal('createProject')" class="action-btn create-project-btn">Create Project</btn>
+      <nuxt-link to="/dashboard/staff/forms/add-project" class="action-btn create-project-btn">Create
+        Project</nuxt-link>
     </div>
   </mpage>
 </template>

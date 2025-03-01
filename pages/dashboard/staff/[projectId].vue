@@ -3,8 +3,7 @@
         <pre>Project.phase : {{ $Projects.getPhaseById(projectId) }}</pre>
         <button @click="deleteProject()">Delete Project</button>
         <button
-            @click="$Projects.addDesignDocument(projectId, 'https://embed.figma.com/design/zsQCMXcnNfevRquVE5JwG1/Gourmai-Mobile?node-id=0-1&embed-host=share')"
-        >
+            @click="$Projects.addDesignDocument(projectId, 'https://embed.figma.com/design/zsQCMXcnNfevRquVE5JwG1/Gourmai-Mobile?node-id=0-1&embed-host=share')">
             add design doc
         </button>
         <button @click="$Projects.incrementPhase(projectId)">Increment phase</button>
@@ -19,7 +18,8 @@
             <embed v-if="$Projects.proposalUrl" :src="$Projects.proposalUrl" type="application/pdf" />
         </div>
 
-        <button v-if="$Projects.quoteUrl && $Projects.proposalUrl" @click="$Projects.addQuoteToProject(projectId)">Upload Quote</button>
+        <button v-if="$Projects.quoteUrl && $Projects.proposalUrl"
+            @click="$Projects.addQuoteToProject(projectId)">Upload Quote</button>
     </main>
 </template>
 
@@ -121,7 +121,7 @@ const project = computed(() => {
 
 definePageMeta({
     layout: "dashboard",
-    // middleware: "admin-auth",
+    middleware: "staff-dashboard",
 })
 </script>
 
@@ -129,6 +129,7 @@ definePageMeta({
 .flex {
     display: flex;
 }
+
 .quote {
     background: white;
     padding: 25px;

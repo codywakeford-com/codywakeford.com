@@ -10,10 +10,4 @@ useHead({
 })
 </script>
 
-<style lang="scss">
-.selector {
-}
-
-embed {
-}
-</style>
+<style lang="scss"></style>

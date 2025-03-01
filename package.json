@@ -32,6 +32,7 @@
         "nuxt": "^3.15.1",
         "nuxt-calendly": "^0.1.21",
         "pinia": "^2.3.0",
+        "resend": "^4.1.2",
         "vue": "latest",
         "vue-router": "latest"
     },

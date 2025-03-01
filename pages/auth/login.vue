@@ -8,38 +8,36 @@
 
             <cflex>
                 <label for="email">Email Address</label>
-                <input class="nova-input" type="text" name="email" v-model="email" />
+                <input @input="errors.email = false" :class="{ error: errors.email }" class="nova-input" type="text"
+                    name="email" v-model="email" />
             </cflex>
 
             <cflex>
                 <label for="password">Password</label>
-                <input class="nova-input" type="password" name="password" v-model="password" />
+                <input class="nova-input" @input="((errors.password = false), (errorMessage = ''))"
+                    :class="{ error: errors.password }" type="password" name="password" v-model="password" />
             </cflex>
 
             <anchor to="/auth/forgot-password" class="forgot-password-link">Forgot Password?</anchor>
-
-            <p v-if="errorMessage" class="error-message">
-                {{ errorMessage }}
-            </p>
 
             <button type="submit" class="submit-button">
                 <loader v-if="loading" color="white" />
                 <div v-else>Sign In</div>
             </button>
 
+            <p v-if="errorMessage" class="error-message">
+                {{ errorMessage }}
+            </p>
+
             <p class="no-account-p">
                 Don't have an account?
                 <nuxt-link to="/auth/register">Sign Up</nuxt-link>
             </p>
         </form>
-
-        <pre>{{ user }}</pre>
     </main>
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
-
 definePageMeta({
     layout: "auth",
 })
@@ -49,17 +47,25 @@ const email = ref("")
 const password = ref("")
 const errorMessage = ref("")
 
-const user = computed(() => {
-    return $User.user
+const errors = ref({
+    email: false,
+    password: false,
 })
 
 async function handleSignIn(email: string, password: string) {
+    if (!email) errors.value.email = true
+    if (!password) errors.value.password = true
+    if (errors.value.password || errors.value.email) {
+        errorMessage.value = "All fields are required."
+        return
+    }
+
     loading.value = true
 
     try {
         await $User.login(email, password)
-        return navigateTo("/")
     } catch (e) {
+        errorMessage.value = String(e)
     } finally {
         loading.value = false
     }
@@ -78,5 +84,9 @@ async function handleSignIn(email: string, password: string) {
     &:hover {
         text-decoration: underline;
     }
+}
+
+.error-message {
+    color: $danger1;
 }
 </style>

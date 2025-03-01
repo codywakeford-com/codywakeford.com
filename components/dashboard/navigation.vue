@@ -1,56 +1,56 @@
 <template>
     <nav>
-        <div class="logo-box">
-            <img src="/assets/cw-logo.webp" alt="" />
-        </div>
+        <nuxt-link to="/" class="logo-box">
+            <img src="/assets/cw-logo.webp" alt="logo" />
+        </nuxt-link>
 
         <cflex class="links">
             <nuxt-link class="nav-item" to="/dashboard/client">
-                <Icon icon="material-symbols:construction" width="30" color="white" />
+                <Icon name="material-symbols:construction" size="30" />
             </nuxt-link>
 
             <nuxt-link class="nav-item" to="/dashboard/client/documents">
-                <Icon icon="ic:baseline-insert-drive-file" width="30" color="white" />
+                <Icon name="ic:baseline-insert-drive-file" size="30" />
             </nuxt-link>
 
             <nuxt-link class="nav-item" to="/dashboard/client/billing">
-                <Icon icon="fluent:wallet-credit-card-16-filled" width="30" color="white" />
+                <Icon name="fluent:wallet-credit-card-16-filled" size="30" />
             </nuxt-link>
 
             <nuxt-link to="/dashboard/domains" class="nav-item">
-                <Icon icon="healthicons:market-stall" width="30" color="white" />
+                <Icon name="healthnames:market-stall" size="30" />
             </nuxt-link>
         </cflex>
 
         <cflex class="bottom-links">
-            <btn class="nav-item">
-                <Icon icon="material-symbols:person" width="30" color="white" />
-                <drop right class="profile-menu">
-                    <rflex class="menu-item" @click="$User.logout()">
-                        <Icon icon="material-symbols:person-2-outline" width="25" color="red" />
-                        <span>Logout</span>
-                    </rflex>
-                </drop>
-            </btn>
+            <!-- <nuxt-l class="nav-item"> -->
+            <!--     <Icon name="material-symbols:person" size="30" color="white" /> -->
+            <!--     <drop right class="profile-menu"> -->
+            <!--         <rflex class="menu-item" @click="$User.logout()"> -->
+            <!--             <Icon name="material-symbols:person-2-outline" size="25" color="red" /> -->
+            <!--             <span>Logout</span> -->
+            <!--         </rflex> -->
+            <!--     </drop> -->
+            <!-- </btn> -->
 
-            <nuxt-link class="nav-item" to="/dashboard/staff/pdf">
-                <Icon icon="ci:file-pdf" width="30" color="white" />
+            <nuxt-link @click="$User.logout()" class="nav-item"> l o </nuxt-link>
+
+            <nuxt-link v-if="$User.isStaff" class="nav-item" to="/dashboard/staff/pdf">
+                <Icon name="ci:file-pdf" size="30" />
             </nuxt-link>
 
-            <nuxt-link class="nav-item" to="/dashboard/staff">
-                <Icon icon="material-symbols:design-services-outline-sharp" width="30" color="white" />
+            <nuxt-link v-if="$User.isStaff" class="nav-item" to="/dashboard/staff">
+                <Icon name="material-symbols:design-services-outline-sharp" size="30" />
             </nuxt-link>
 
             <nuxt-link class="nav-item" to="/#hero">
-                <Icon icon="material-symbols:arrow-back" width="30" color="white" />
+                <Icon name="material-symbols:arrow-back" size="30" />
             </nuxt-link>
         </cflex>
     </nav>
 </template>
 
-<script setup lang="ts">
-import { Icon } from "@iconify/vue"
-</script>
+<script setup lang="ts"></script>
 
 <style lang="scss" scoped>
 nav {
@@ -64,6 +64,10 @@ nav {
     gap: 50px;
     padding-block: 25px;
     z-index: 5;
+}
+
+a {
+    color: white;
 }
 
 .nav-item {

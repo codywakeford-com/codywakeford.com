@@ -21,10 +21,12 @@ export default defineNuxtConfig({
     scripts: {
         registry: {
             stripe: true,
+            googleAnalytics: { id: process.env.FIREBASE_MEASUREMENT_ID || "" },
         },
     },
 
     runtimeConfig: {
+        RESEND_API_KEY: process.env.RESEND_API_KEY,
         SECRET_KEY: process.env.SECRET_KEY,
         STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
         public: {

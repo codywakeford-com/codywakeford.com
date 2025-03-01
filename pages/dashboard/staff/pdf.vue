@@ -13,6 +13,7 @@
 <script setup lang="ts">
 definePageMeta({
     layout: "dashboard",
+    middleware: "staff-dashboard",
 })
 </script>
 
