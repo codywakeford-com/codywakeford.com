@@ -1,10 +1,11 @@
 /**Generates a uuid */
 export function uuid(): string {
-    const array = new Uint8Array(16)
-    window.crypto.getRandomValues(array)
+    const chars = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    let id = ""
 
-    const base64 = btoa(String.fromCharCode(...array))
-    const uuid = base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "").slice(0, 20)
+    for (let i = 0; i < 16; i++) {
+        id += chars[Math.floor(Math.random() * chars.length)]
+    }
 
-    return uuid
+    return id
 }

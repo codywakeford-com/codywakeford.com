@@ -1,13 +1,14 @@
 import { collection, getDocs, query, where } from "firebase/firestore"
 import bcrypt from "bcryptjs"
-import { apiError, apiSuccess } from "~/utils/api"
+import jwt from "jsonwebtoken"
 
-export default eventHandler(async (event): Promise<ApiResponse<User>> => {
+export default eventHandler(async (event): Promise<ApiAuthLogin.Response> => {
     const db = event.context.db
-    const { email, password } = await readBody(event)
+    const secretKey = useRuntimeConfig().SECRET_KEY
+    const { email, password } = (await readBody(event)) as ApiAuthLogin.Request
 
     if (!email || !password) {
-        return apiError({
+        throw createError({
             statusCode: 400,
             message: "Server expects `email` & `password` in request body.",
         })
@@ -20,8 +21,8 @@ export default eventHandler(async (event): Promise<ApiResponse<User>> => {
         const querySnapshot = await getDocs(q)
 
         if (querySnapshot.empty) {
-            return apiError({
-                statusCode: 400,
+            throw createError({
+                statusCode: 401,
                 message: "Email or password is incorrect",
             })
         }
@@ -34,16 +35,19 @@ export default eventHandler(async (event): Promise<ApiResponse<User>> => {
         if (passwordMatch) {
             const { password, ...userWithoutPassword } = user
 
-            return apiSuccess(userWithoutPassword)
+            const token = jwt.sign(userWithoutPassword, secretKey)
+
+            return token
         } else {
-            return apiError({
-                statusCode: 400,
+            throw createError({
+                statusCode: 401,
                 message: "Email or password is incorrect",
             })
         }
     } catch (error) {
-        return apiError({
-            statusCode: 400,
+        console.log(error)
+        throw createError({
+            statusCode: 500,
             message: "And unknown error occured",
         })
     }

@@ -24,7 +24,7 @@ section {
     height: 100%;
     margin-inline: auto;
     margin-top: 40px;
-    height: 550px;
+    height: 600px;
 }
 
 .hero-text {

@@ -1,3 +1,5 @@
+import { jwtDecode } from "jwt-decode"
+
 export default defineNuxtRouteMiddleware(async (to, from) => {
     if (!import.meta.client) return
 
@@ -11,5 +13,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
     if (!(await $User.validateJwt($User.jwt))) {
         return navigateTo("/auth/login")
+    }
+
+    const user = jwtDecode($User.jwt) as User
+    if (user.role !== "staff") {
+        return navigateTo("/")
     }
 })

@@ -1,17 +1,15 @@
 import { defineStore } from "pinia"
-import { signOut as firebaseSignOut } from "firebase/auth"
+import { jwtDecode } from "jwt-decode"
+
 export const useUserStore = defineStore("userStore", {
     state: () => ({
-        user: {} as User,
+        user: null as User | null,
+        jwt: null as null | string,
         isLoading: true,
         reciepts: [] as PaymentRecord[],
     }),
 
     getters: {
-        get(state) {
-            return state.user
-        },
-
         getReciepts(state) {
             return state.reciepts
         },
@@ -20,72 +18,28 @@ export const useUserStore = defineStore("userStore", {
             return state.user?.stripePaymentProfile?.customerId
         },
 
-        id(state) {
-            if (!state.user.id) throw new Error("User not found")
-
-            return state.user.id
-        },
-
         stripePaymentProfile(state) {
-            return state.user.stripePaymentProfile
-        },
-
-        email(state) {
-            const email = state.user.email
-            if (!email) throw new Error("User not found")
-            return email
-        },
-
-        role(state) {
-            if (!import.meta.client) return "client"
-            const domain = window.location.hostname
-
-            if (state.user && state.user.siteAccess) {
-                const siteRole = state.user.siteAccess.find((site) => site.domain === domain)
-
-                if (!siteRole) return "client"
-                return siteRole.role
-            }
-        },
-
-        isAdmin(state): boolean {
-            const domain = window.location.hostname
-
-            if (!state.user || !state.user.siteAccess) return false
-
-            const siteRole = state.user.siteAccess.find((site) => site.domain === domain)
-
-            if (!siteRole?.role) return false
-            if (siteRole.role === "user") return false
-
-            return true
+            return state.user?.stripePaymentProfile
         },
     },
 
     actions: {
-        /**Await the user object being fufilled if loading. */
-        async isAuthenticated(): Promise<boolean> {
-            while (this.isLoading) {
-                await new Promise((resolve) => setTimeout(resolve, 100))
-            }
-
-            return !!(this.user.id && this.user.email)
-        },
-
         async init() {
-            this.isLoading = true
-            const cachedUser = await this.readCache()
+            this.jwt = localStorage.getItem("jwt")
 
-            if (!cachedUser) {
-                this.isLoading = false
-                return navigateTo("/")
+            if (!this.jwt) return
+
+            const jwtValid = await this.validateJwt(this.jwt)
+
+            if (jwtValid) {
+                const payload = jwtDecode(this.jwt)
+                this.user = payload as User
             }
 
-            this.user = cachedUser
             this.isLoading = false
 
             try {
-                const reciepts = await readArray<PaymentRecord>(`/users/${this.user.id}/payment-records`)
+                const reciepts = await readArray<PaymentRecord>(`/users/${this.user?.id}/payment-records`)
 
                 this.reciepts = [...reciepts]
             } catch (error) {
@@ -93,45 +47,54 @@ export const useUserStore = defineStore("userStore", {
             }
         },
 
-        async signUp(provider: AuthProvider, email: string, password: string) {
+        async validateJwt(jwt: string): Promise<boolean> {
             try {
-                const user = await signUp(provider, email, password)
-            } catch (error) {
-                return error
-            }
-        },
+                const { valid, payload } = await $fetch<Api.Auth.ValidateJwt.Response>("/api/auth/validate-jwt", {
+                    method: "POST",
+                    body: { token: jwt } as Api.Auth.ValidateJwt.Request,
+                })
 
-        async signIn(provider: AuthProvider, email: string, password: string) {
-            try {
-                const user = await signIn(provider, email, password)
-                if (user) {
-                    this.user = user
-                    this.writeCache(user)
+                this.user = payload
+                if (valid) return true
+                else {
+                    this.logout()
+                    return false
                 }
+            } catch (e) {
+                this.logout()
+                return false
+            }
+        },
 
-                return navigateTo("/dashboard/client")
+        async register(email: string, password: string) {
+            try {
+                const reponse = await $fetch<Api.Auth.Register.Response>("/api/auth/register", {
+                    method: "POST",
+                    body: { email, password } as Api.Auth.Register.Request,
+                })
             } catch (error) {
                 return error
             }
         },
 
-        async readAccess(id: User["id"]): Promise<User["siteAccess"]> {
-            const data = await $fetch<User["siteAccess"]>(`/api/users/access`, {
-                params: { id: id },
-            })
-
-            return data || []
-        },
-
-        async logout() {
-            const $auth = useAuth()
+        async login(email: string, password: string) {
             try {
-                await firebaseSignOut($auth)
-                this.clearUser()
-                navigateTo("/")
-                console.debug("[Veloris] User logged out, cache cleared.")
+                const jwt = await $fetch<Api.Auth.Login.Response>("/api/auth/login", {
+                    method: "POST",
+                    body: { email, password } as Api.Auth.Login.Request,
+                })
+
+                const payload = jwtDecode(jwt) as User
+
+                console.log(payload)
+
+                if (payload) {
+                    this.user = payload
+                    localStorage.setItem("jwt", jwt)
+                    this.writeCache(payload)
+                }
             } catch (error) {
-                console.error("Logout failed: ", error)
+                return error
             }
         },
 
@@ -151,7 +114,9 @@ export const useUserStore = defineStore("userStore", {
                     body: { stripePaymentProfile },
                 })
 
-                if (!this.user.stripePaymentProfile) {
+                if (!this.user) throw new Error("User not found!")
+
+                if (!this.user?.stripePaymentProfile) {
                     this.user.stripePaymentProfile = { customerId: "", paymentMethods: [] }
                 }
 
@@ -168,7 +133,7 @@ export const useUserStore = defineStore("userStore", {
                     body: { paymentMethod },
                 })
 
-                this.user.stripePaymentProfile.paymentMethods.push(paymentMethod)
+                this.user?.stripePaymentProfile.paymentMethods.push(paymentMethod)
             } catch (error) {
                 console.error(error)
             }
@@ -191,24 +156,24 @@ export const useUserStore = defineStore("userStore", {
         },
 
         async deletePaymentProfile(paymentMethodId: PaymentMethod["paymentMethodId"]) {
-            const paymentProfileIndex = this.user.stripePaymentProfile.paymentMethods.findIndex((profile) => {
+            const paymentProfileIndex = this.user?.stripePaymentProfile.paymentMethods.findIndex((profile) => {
                 return profile.paymentMethodId === paymentMethodId
             })
 
             if (paymentProfileIndex === -1) throw new Error("No profile found")
 
-            const paymentProfile = this.user.stripePaymentProfile.paymentMethods[paymentProfileIndex]
+            const paymentProfile = this.user?.stripePaymentProfile.paymentMethods[paymentProfileIndex]
 
-            this.user.stripePaymentProfile?.paymentMethods?.splice(paymentProfileIndex, 1)
+            this.user?.stripePaymentProfile?.paymentMethods?.splice(paymentProfileIndex, 1)
 
             try {
                 await $fetch(`/api/users/${$User.id}/methods/${paymentMethodId}`, {
                     method: "DELETE",
                 })
 
-                this.writeCache(this.user)
+                this.writeCache(this.user!)
             } catch (error) {
-                this.user.stripePaymentProfile.paymentMethods.push(paymentProfile)
+                this.user?.stripePaymentProfile.paymentMethods.push(paymentProfile)
                 console.error(error)
             }
         },
@@ -234,13 +199,11 @@ export const useUserStore = defineStore("userStore", {
             }
         },
 
-        clearUser() {
-            this.user = {} as User
-            this.removeCache()
-        },
+        logout() {
+            this.user = null
+            localStorage.removeItem("jwt")
 
-        async removeCache() {
-            if (import.meta.client) localStorage.removeItem("user")
+            return navigateTo("/")
         },
     },
 })

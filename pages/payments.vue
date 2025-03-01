@@ -4,6 +4,11 @@
         <section>
             <header>
                 <h1>Make a payment</h1>
+
+                <div class="amount">
+                    <h2 v-if="amount">£{{ (amount / 100).toFixed(2) }}</h2>
+                    <input type="text" v-else />
+                </div>
             </header>
 
             <form>
@@ -67,7 +72,10 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
+const route = useRoute()
+const amount = ref<number>()
+const userInputAmount = ref<number>(0)
+
 import type { StripeCardCvcElement, StripeCardExpiryElement, StripeAddressElement, StripeCardNumberElement } from "@stripe/stripe-js"
 import { loadStripe, type Stripe, type StripeCardElement } from "@stripe/stripe-js"
 
@@ -75,6 +83,28 @@ const cardNumber = ref<StripeCardNumberElement | null>(null)
 const cardExpiry = ref<StripeCardExpiryElement | null>(null)
 const cardCvc = ref<StripeCardCvcElement | null>(null)
 const stripe = ref<Stripe | null>(null)
+const card = ref()
+
+const { onLoaded } = useScriptStripe()
+onMounted(() => {
+    onLoaded(({ Stripe }) => {
+        amount.value = route.query.amount || 1000
+        stripe.value = Stripe(useRuntimeConfig().public.STRIPE_PUBLISHABLE_KEY)
+
+        if (!stripe.value) return
+
+        const elements = stripe.value.elements()
+        cardNumber.value = elements.create("cardNumber")
+        cardExpiry.value = elements.create("cardExpiry")
+        cardCvc.value = elements.create("cardCvc")
+
+        card.value = cardNumber.value // data sent in payment request
+
+        cardNumber.value.mount("#card-number-element")
+        cardExpiry.value.mount("#card-expiry-element")
+        cardCvc.value.mount("#card-cvc-element")
+    })
+})
 
 const address = ref({
     fullName: "Cody Wakeford",
@@ -91,6 +121,7 @@ const errors = ref({
     country: "",
     city: "",
     postcode: "",
+    amount: "",
 })
 
 const state = ref({
@@ -126,6 +157,10 @@ function validate() {
         errors.value.email = "Email field is required"
     }
 
+    if (!amount.value && !userInputAmount.value) {
+        errors.value.amount = "Please specify an amount."
+    }
+
     for (let v of Object.values(errors.value)) {
         if (v) {
             return false
@@ -136,21 +171,26 @@ function validate() {
 }
 
 async function pay() {
-    if (!stripe.value || !cardNumber.value || !cardCvc.value || !cardExpiry.value) return
+    if (!stripe.value || !cardNumber.value || !cardCvc.value || !cardExpiry.value) {
+        throw new Error("Stripe or stripe elements not initialized properly.")
+    }
+
     if (!validate()) return
 
     loading.value = true
 
     try {
         const clientSecret = await getPaymentSecret({
-            amount: 100,
+            amount: amount.value ? amount.value : userInputAmount.value,
             currency: "gbp",
             payment_method_types: ["card"],
         })
 
+        console.log(cardNumber.value)
+
         const result = await stripe.value.confirmCardPayment(clientSecret, {
             payment_method: {
-                card: cardNumber.value,
+                card: card.value,
                 billing_details: {
                     name: address.value.fullName,
                 },
@@ -158,6 +198,7 @@ async function pay() {
         })
 
         if (result.error) {
+            console.log(result.error)
             state.value.errorMessage = "An error has occured"
         } else if (result.paymentIntent.status === "succeeded") {
             state.value.successMessage === "sucess"
@@ -171,25 +212,6 @@ async function pay() {
 }
 
 const loading = ref(false)
-onMounted(async () => {
-    const config = useRuntimeConfig()
-    stripe.value = await loadStripe(config.public.STRIPE_PUBLISHABLE_KEY)
-
-    if (!stripe.value || !cardNumber.value || !cardCvc.value || !cardExpiry.value) {
-        throw new Error("Stripe not init")
-    }
-
-    const elements = stripe.value.elements()
-    const cardNumberElement = elements.create("cardNumber")
-    const cardExpiryElement = elements.create("cardExpiry")
-    const cardCvcElement = elements.create("cardCvc")
-
-    cardNumberElement.mount("#card-number-element")
-    cardExpiryElement.mount("#card-expiry-element")
-    cardCvcElement.mount("#card-cvc-element")
-
-    // card.value = cardNumberElement
-})
 </script>
 
 <style lang="scss" scoped>
@@ -214,9 +236,15 @@ section {
     border: 1px solid $text-light1;
 }
 
-h1 {
-    font-size: 1.5rem;
-    margin-bottom: 25px;
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    h1 {
+        font-size: 1.25rem;
+        margin-bottom: 15px;
+    }
 }
 
 form {

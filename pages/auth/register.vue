@@ -1,6 +1,6 @@
 <template>
     <main class="auth-page">
-        <form class="auth-form" @submit.prevent="handleSignUp('email')">
+        <form class="auth-form" @submit.prevent="handleSignUp(email, password)">
             <lheader>
                 <h1>Sign Up</h1>
                 <p>Fill out the form to create a new account.</p>
@@ -28,16 +28,6 @@
                 <div v-else>Sign Up</div>
             </button>
 
-            <div class="divider">
-                <span>OR CONTINUE WITH</span>
-            </div>
-
-            <rflex class="sign-in-options">
-                <chip @click="handleSignUp('google')">
-                    <Icon icon="logos:google" height="25" />
-                </chip>
-            </rflex>
-
             <p class="no-account-p">
                 Already have an account?
                 <nuxt-link to="/auth/login">Sign In</nuxt-link>
@@ -49,9 +39,7 @@
 <script setup lang="ts">
 definePageMeta({
     layout: "auth",
-    middleware: "dashboard",
 })
-import { Icon } from "@iconify/vue"
 
 const email = ref("")
 const password = ref("")
@@ -59,19 +47,16 @@ const loading = ref(false)
 const errorMessage = ref("")
 const successMessage = ref("")
 
-async function handleSignUp(provider: AuthProvider) {
-    if (provider === "email") loading.value = true
-    const error = await signUp(provider, email.value, password.value)
+async function handleSignUp(email: string, password: string) {
+    loading.value = true
 
-    if (error) {
-        successMessage.value = ""
-        errorMessage.value = error
-    } else {
-        localStorage.setItem("verifyEmail", email.value)
-        navigateTo("/auth/verify-email")
+    try {
+        await $User.register(email, password)
+    } catch (e) {
+        errorMessage.value = String(e)
+    } finally {
+        loading.value = false
     }
-
-    loading.value = false
 }
 </script>
 

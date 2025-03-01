@@ -28,9 +28,13 @@
         <button @click="createQuoteDoc()">make doc</button>
         {{ quoteUrl }}
 
-        <nuxt-link v-if="quoteUrl" :to="quoteUrl">Download PDF</nuxt-link>
+        <nuxt-link v-if="quoteUrl" :to="quoteUrl">Download Quote</nuxt-link>
+        <nuxt-link v-if="invoiceUrl" :to="invoiceUrl">Download Invoice</nuxt-link>
 
-        <button v-if="quoteUrl" @click="$Projects.addQuoteToProject(projectId, quoteUrl, quoteUrl)">Upload Quote</button>
+        <button v-if="quoteUrl" @click="$Projects.addQuoteToProject(projectId)">Upload Quote</button>
+
+        {{ invoiceUrl }}
+        {{ quoteUrl }}
     </section>
 </template>
 
@@ -39,6 +43,7 @@ import { uuid } from "~/utils/uuid"
 
 const quoteItems = ref<QuoteItem[]>([])
 const quoteUrl = ref<null | string>(null)
+const invoiceUrl = ref<null | string>(null)
 const newQuoteItem = ref<QuoteItem>({
     name: "",
     quantity: 0,
@@ -92,16 +97,24 @@ async function createQuoteDoc() {
         totalAmount: total,
     }
 
-    const url = (await $fetch("/api/pdf/quote", {
+    quoteUrl.value = (await $fetch("/api/pdf/quote", {
         method: "POST",
-        body: quote,
+        body: {
+            quote,
+            recipientName: "Name Here",
+        },
     })) as string
 
-    console.log(url)
+    invoiceUrl.value = (await $fetch("/api/pdf/invoice", {
+        method: "POST",
+        body: {
+            quote,
+            recipientName: "Johnny Parker",
+        },
+    })) as string
 
     $Projects.total = total
-    $Projects.quoteUrl = url
-    quoteUrl.value = url
+    $Projects.quoteUrl = quoteUrl.value
 }
 
 function removeQuoteItem(i: number) {
@@ -114,6 +127,7 @@ section {
     display: flex;
     flex-direction: column;
 }
+
 .quote-form {
     display: flex;
     flex-direction: column;

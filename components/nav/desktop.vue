@@ -9,12 +9,14 @@
 
             <div class="right">
                 <nuxt-link to="/#hero">Home</nuxt-link>
+                <nuxt-link to="/payments">Payments</nuxt-link>
                 <nuxt-link to="/#services">Services</nuxt-link>
                 <nuxt-link to="/#why">Why Me?</nuxt-link>
+
                 <nuxt-link to="/#reviews">Reviews</nuxt-link>
                 <nuxt-link to="/#contact">Contact Me</nuxt-link>
 
-                <nuxt-link v-if="!$User.get?.id" to="/auth/login">
+                <nuxt-link v-if="!$User.user?.id" to="/auth/login">
                     <button-primary-m>Sign In</button-primary-m>
                 </nuxt-link>
                 <nuxt-link to="/dashboard/client" v-else>
@@ -29,6 +31,8 @@
 
 <style lang="scss" scoped>
 nav {
+    background-color: white;
+
     .content {
         display: flex;
         align-items: center;
@@ -39,7 +43,7 @@ nav {
         .right {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 25px;
         }
     }
 }

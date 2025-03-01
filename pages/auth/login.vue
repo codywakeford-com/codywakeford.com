@@ -1,6 +1,6 @@
 <template>
     <main class="auth-page">
-        <form class="auth-form" @submit.prevent="handleSignIn('email')">
+        <form class="auth-form" @submit.prevent="handleSignIn(email, password)">
             <lheader>
                 <h1>Sign In</h1>
                 <p>Log in to your account to continue</p>
@@ -27,21 +27,13 @@
                 <div v-else>Sign In</div>
             </button>
 
-            <div class="divider">
-                <span>OR CONTINUE WITH</span>
-            </div>
-
-            <rflex class="sign-in-options">
-                <chip @click="handleSignIn('google')">
-                    <Icon icon="logos:google" height="25" />
-                </chip>
-            </rflex>
-
             <p class="no-account-p">
                 Don't have an account?
                 <nuxt-link to="/auth/register">Sign Up</nuxt-link>
             </p>
         </form>
+
+        <pre>{{ user }}</pre>
     </main>
 </template>
 
@@ -56,13 +48,21 @@ const loading = ref(false)
 const email = ref("")
 const password = ref("")
 const errorMessage = ref("")
+
 const user = computed(() => {
-    return $User.get
+    return $User.user
 })
-async function handleSignIn(provider: AuthProvider) {
-    if (provider === "email") loading.value = true
-    await $User.signIn(provider, email.value, password.value)
-    loading.value = false
+
+async function handleSignIn(email: string, password: string) {
+    loading.value = true
+
+    try {
+        await $User.login(email, password)
+        return navigateTo("/")
+    } catch (e) {
+    } finally {
+        loading.value = false
+    }
 }
 </script>
 

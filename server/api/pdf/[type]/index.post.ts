@@ -1,5 +1,4 @@
 import puppeteer from "puppeteer"
-import fs from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
 import { ref, getStorage, uploadBytes, getDownloadURL, FirebaseStorage } from "firebase/storage"
@@ -13,24 +12,30 @@ export default eventHandler(async (event) => {
     const data = await readBody(event)
     const { type } = event.context.params || {}
 
-    const browser = await puppeteer.launch()
+    const browser = await puppeteer.launch({
+        headless: false,
+    })
     const page = await browser.newPage()
 
     await page.setViewport({ width: 1240, height: 1754 })
     const encodedData = encodeURIComponent(JSON.stringify(data))
 
-    await page.goto(`http://localhost:3000/pdf/${type}?data=${encodedData}`, {
-        waitUntil: "networkidle2",
-    })
+    try {
+        await page.goto(`http://localhost:3000/pdf/${type}?data=${encodedData}`, {
+            waitUntil: "networkidle2",
+        })
 
-    const filePath = path.resolve("./reciept.pdf")
-    const buffer = await page.pdf({
-        path: filePath,
-        format: "A4",
-        printBackground: true,
-    })
+        const filePath = path.resolve(`./${type}.pdf`)
+        const buffer = await page.pdf({
+            path: filePath,
+            format: "A4",
+            printBackground: true,
+        })
 
-    await browser.close()
+        // await browser.close()
+    } catch (e) {
+        console.log(e)
+    }
 
     // const fileRef = ref(storage, `${type}/${Date.now()}.${type}.pdf`)
     // await uploadBytes(fileRef, buffer, { contentType: "application/pdf" })

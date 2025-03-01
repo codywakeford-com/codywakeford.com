@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section id="reviews">
         <section-sub-header color="light">
             <template #sub>HIGHEST QUALITY</template>
             <template #header>Don't Take My Word For It</template>
@@ -13,7 +13,10 @@
                     <flex class="stars">
                         <Icon color="gold" icon="material-symbols:star" width="18" v-for="_ in 5" />
                     </flex>
-                    <h6>{{ item.author }}</h6>
+
+                    <nuxt-link :to="`https://${item.url}`" target="_blank">
+                        <h6>{{ item.author }}</h6>
+                    </nuxt-link>
                 </div>
             </div>
             <div class="controls">
@@ -36,6 +39,7 @@ interface Testimonial {
     text: string
     author: string
     offset: number
+    url: string
     opacity: 0 | 1
 }
 
@@ -43,6 +47,7 @@ let testimonials: Ref<Testimonial[]> = ref([
     {
         text: "Working with Cody was a fantastic experience. He took the time to understand our needs and created a stunning, user-friendly website for Apex Specialists. His professionalism, attention to detail, and dedication were evident throughout the project. We couldn't be happier with the result and highly recommend Cody for anyone looking for top-notch web development.",
         author: "skyguardroofing.co.uk",
+        url: "skyguardroofing.co.uk",
         offset: 0,
         opacity: 1,
     },
@@ -50,24 +55,28 @@ let testimonials: Ref<Testimonial[]> = ref([
     {
         text: "Web designer Cody Wakeford crafted a website for me. It is so stunning and eye catching. I am so thrilled with the site. It is easy to navigate around and the facility to use the admin section to add and remove items, to edit and adjust is really pleasing. Thank you for a brilliant job!",
         author: "yerooumaart.co.uk",
+        url: "yerooumaart.co.uk",
         offset: 0,
         opacity: 1,
     },
     {
         text: "Cody truly understood our vision and turned it into a sleek, functional website that perfectly represents our brand. The process was smooth, communication was great, and the final result has exceeded our expectations. We’ve already received fantastic feedback from our clients. Highly recommend!",
         author: "gravityteam.co",
+        url: "gravityteam.co",
         offset: 0,
         opacity: 1,
     },
     {
         text: "I recently had the pleasure of working with Cody Wakeford to build my website from the ground up, and I can't recommend him highly enough! From the very beginning, Cody demonstrated an incredible understanding of my vision and goals, translating them into a beautifully designed website tailored to my needs.What stood out to me the most was his willingness to incorporate all the features I wanted. He took the time to listen and offered insightful suggestions that enhanced my initial ideas. Every detail was given attention, and the final product turned out even better than I had imagined. Cody's communication skills are exceptional. He kept me updated throughout the entire process, promptly addressing any questions or concerns I had. It truly felt like a collaborative effort, and his positive attitude made the experience enjoyable. If you're looking for someone who is not only talented but also truly invested in delivering outstanding results, Cody is your person. I’m thrilled with my new website and look forward to working with him on future projects!",
         author: "primeproperty.es",
+        url: "primeproperty.codywakeford.com",
         offset: 0,
         opacity: 1,
     },
     {
         text: "Working with Cody was a fantastic experience. He took the time to understand our needs and created a stunning, user-friendly website for Apex Specialists. His professionalism, attention to detail, and dedication were evident throughout the project. We couldn't be happier with the result and highly recommend Cody for anyone looking for top-notch web development.",
         author: "skyguardroofing.co.uk",
+        url: "skyguardroofing.co.uk",
         offset: 0,
         opacity: 1,
     },
@@ -75,12 +84,14 @@ let testimonials: Ref<Testimonial[]> = ref([
     {
         text: "Web designer Cody Wakeford crafted a website for me. It is so stunning and eye catching. I am so thrilled with the site. It is easy to navigate around and the facility to use the admin section to add and remove items, to edit and adjust is really pleasing. Thank you for a brilliant job!",
         author: "yerooumaart.co.uk",
+        url: "yerooumaart.co.uk",
         offset: 0,
         opacity: 1,
     },
     {
         text: "Cody truly understood our vision and turned it into a sleek, functional website that perfectly represents our brand. The process was smooth, communication was great, and the final result has exceeded our expectations. We’ve already received fantastic feedback from our clients. Highly recommend!",
         author: "gravityteam.co",
+        url: "gravityteam.co",
         offset: 0,
         opacity: 1,
     },

@@ -13,10 +13,14 @@
     "dependencies": {
         "@iconify/vue": "^4.3.0",
         "@nuxt/fonts": "^0.10.3",
+        "@nuxt/icon": "^1.10.3",
         "@nuxt/kit": "^3.15.2",
+        "@nuxt/scripts": "0.10.5",
+        "@nuxt/test-utils": "^3.17.0",
         "@pinia/nuxt": "^0.9.0",
         "@stripe/stripe-js": "^5.5.0",
         "@types/bcryptjs": "^2.4.6",
+        "@unhead/vue": "^1",
         "axios": "^1.7.9",
         "bcryptjs": "^2.4.3",
         "browser-image-compression": "^2.0.2",
@@ -24,20 +28,21 @@
         "firebase": "^11.2.0",
         "firebase-functions": "^6.2.0",
         "fuse.js": "^7.0.0",
+        "jwt-decode": "^4.0.0",
         "nuxt": "^3.15.1",
         "nuxt-calendly": "^0.1.21",
         "pinia": "^2.3.0",
-        "puppeteer": "^24.2.1",
         "vue": "latest",
         "vue-router": "latest"
     },
     "devDependencies": {
-        "sass": "^1.83.0",
-        "sass-loader": "^16.0.4",
         "@playwright/test": "^1.50.1",
         "@types/node": "^22.13.5",
         "jest": "^29.7.0",
-        "ts-jest": "^29.2.5",
+        "puppeteer": "^24.2.1",
+        "sass": "^1.83.0",
+        "sass-loader": "^16.0.4",
+        "ts-jest": "^29.2.6",
         "vite": "^6.0.7"
     }
 }

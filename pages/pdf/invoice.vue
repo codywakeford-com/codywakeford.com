@@ -170,9 +170,18 @@ interface Data {
 
 const data = ref<Data | null>(null)
 
+function readCache() {
+    const cache = localStorage.getItem("data")
+
+    if (!cache) return null
+
+    data.value = JSON.parse(cache)
+}
+
 if (route.query.data) {
     try {
         data.value = JSON.parse(route.query.data as string)
+        console.log(data.value)
     } catch (e) {
         console.error("Invalid JSON in query parameter:", e)
         data.value = null

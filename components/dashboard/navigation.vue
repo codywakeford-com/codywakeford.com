@@ -16,6 +16,10 @@
             <nuxt-link class="nav-item" to="/dashboard/client/billing">
                 <Icon icon="fluent:wallet-credit-card-16-filled" width="30" color="white" />
             </nuxt-link>
+
+            <nuxt-link to="/dashboard/domains" class="nav-item">
+                <Icon icon="healthicons:market-stall" width="30" color="white" />
+            </nuxt-link>
         </cflex>
 
         <cflex class="bottom-links">

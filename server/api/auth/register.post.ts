@@ -1,13 +1,13 @@
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore"
 import bcrypt from "bcryptjs"
-import { apiError, apiSuccess } from "~/utils/api"
+import { uuid } from "~/utils/uuid"
 
-export default eventHandler(async (event): Promise<ApiResponse<null>> => {
+export default eventHandler(async (event): Promise<Api.Auth.Register.Response> => {
     const db = event.context.db
-    const { email, password, domain, role } = await readBody(event)
+    const { email, password, role } = (await readBody(event)) as Api.Auth.Register.Request
 
     if (!email || !password) {
-        return apiError({
+        throw createError({
             statusCode: 400,
             message: "Server expects `email` & `password` in request body.",
         })
@@ -21,22 +21,23 @@ export default eventHandler(async (event): Promise<ApiResponse<null>> => {
     const querySnapshot = await getDocs(q)
 
     if (!querySnapshot.empty) {
-        return apiError({
-            statusCode: 401,
+        throw createError({
+            statusCode: 409,
             message: "User already exists",
         })
     }
 
-    const user: Omit<$User, "id"> = {
+    const user: $User = {
+        id: uuid(),
         email: email,
         password: hashedPassword,
-        siteAccess: [{ domain: domain, role: role }],
+        role: role ? role : "user",
     }
 
     try {
         await addDoc(userColRef, user)
 
-        return apiSuccess(null)
+        return null
     } catch (error) {
         throw createError({ statusCode: 500, statusMessage: `Error adding user to db: ${error}` })
     }

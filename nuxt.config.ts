@@ -6,6 +6,7 @@ export default defineNuxtConfig({
         server: true,
         client: true,
     },
+
     ssr: false,
     vite: {
         css: {
@@ -17,8 +18,17 @@ export default defineNuxtConfig({
         },
     },
 
+    scripts: {
+        registry: {
+            stripe: true,
+        },
+    },
+
     runtimeConfig: {
+        SECRET_KEY: process.env.SECRET_KEY,
+        STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
         public: {
+            STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
             CALENDLY_PAT: process.env.CALENDLY_PAT,
             firebaseConfig: {
                 apiKey: process.env.FIREBASE_API_KEY,
@@ -40,5 +50,5 @@ export default defineNuxtConfig({
     ],
 
     css: ["@/style/main.scss"],
-    modules: ["@nuxt/fonts", "@pinia/nuxt", "nuxt-calendly"],
+    modules: ["@nuxt/fonts", "@pinia/nuxt", "nuxt-calendly", "@nuxt/icon", "@nuxt/scripts"],
 })
