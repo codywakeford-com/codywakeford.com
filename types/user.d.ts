@@ -15,8 +15,7 @@ declare global {
         password: string
         email: string
         role: UserRole
-
-        stripePaymentProfile?: StripePaymentProfile
+        stripePaymentProfile: StripePaymentProfile
     }
 
     interface $PaymentRecord extends PaymentRecord {

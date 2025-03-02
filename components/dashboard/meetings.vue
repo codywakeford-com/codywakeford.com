@@ -26,9 +26,8 @@
             <nuxt-link target="_blank" :to="meeting.meetingUrl">
                 <button-primary-m>Join Meeting</button-primary-m>
             </nuxt-link>
-            <nuxt-link target="_blank" :to="meeting.rescheduleUrl">
-                <button-primary-m>Reschedule Meeting</button-primary-m>
-            </nuxt-link>
+            <button-primary-m @click="$Calendly.openReschedule(meeting.rescheduleUrl)">Reschedule
+                Meeting</button-primary-m>
         </div>
     </div>
 </template>

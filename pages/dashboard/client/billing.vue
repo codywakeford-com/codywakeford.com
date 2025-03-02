@@ -11,16 +11,17 @@ definePageMeta({
     middleware: "dashboard",
 })
 </script>
+
 <template>
     <main>
         <h1>Payment Methods</h1>
         <div class="saved-cards">
             <stripe-payment-method v-for="(card, index) in savedCards" :key="index" :card="card" />
 
-            <btn modal="save-card-modal" class="add-card">
+            <button @click="$BillingModal.openAddCardModal" class="add-card">
                 <Icon class="add-icon" icon="material-symbols:add" width="20" />
                 <label for="">Add Payment Method</label>
-            </btn>
+            </button>
         </div>
 
         <dashboard-billing-history />
@@ -35,6 +36,7 @@ main {
         font-size: 1.5rem;
     }
 }
+
 .saved-cards {
     display: flex;
     gap: 15px;

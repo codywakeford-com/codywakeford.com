@@ -72,13 +72,13 @@ export const useProjectStore = defineStore("projects", {
 
         getProjectById:
             (state) =>
-            (id: string): Project | undefined => {
-                const project = state.projects.find((project) => {
-                    return project.id === id
-                })
+                (id: string): Project | undefined => {
+                    const project = state.projects.find((project) => {
+                        return project.id === id
+                    })
 
-                return project
-            },
+                    return project
+                },
 
         getNextProjectPhase: (state) => (phase: ProjectPhase) => {
             const index = projectPhases.indexOf(phase)

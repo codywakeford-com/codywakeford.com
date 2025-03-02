@@ -33,7 +33,7 @@
             <!--     </drop> -->
             <!-- </btn> -->
 
-            <nuxt-link @click="$User.logout()" class="nav-item"> l o </nuxt-link>
+            <nuxt-link @click="$User.logout" class="nav-item"> l o </nuxt-link>
 
             <nuxt-link v-if="$User.isStaff" class="nav-item" to="/dashboard/staff/pdf">
                 <Icon name="ci:file-pdf" size="30" />

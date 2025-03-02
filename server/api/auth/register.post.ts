@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore"
+import { addDoc, collection, doc, getDocs, query, setDoc, where } from "firebase/firestore"
 import bcrypt from "bcryptjs"
 import { uuid } from "~/utils/uuid"
 
@@ -32,10 +32,15 @@ export default eventHandler(async (event): Promise<Api.Auth.Register.Response> =
         email: email,
         password: hashedPassword,
         role: role ? role : "user",
+        stripePaymentProfile: {
+            customerId: "",
+            paymentMethods: [],
+        },
     }
 
     try {
-        await addDoc(userColRef, user)
+        const userRef = doc(userColRef, user.id)
+        await setDoc(userRef, user)
 
         return null
     } catch (error) {

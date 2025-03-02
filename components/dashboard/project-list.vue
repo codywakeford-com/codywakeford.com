@@ -5,12 +5,8 @@
         </header>
 
         <rflex class="cards">
-            <anchor
-                :to="getProjectUrl(project.id)"
-                class="project-card"
-                v-for="project in projects"
-                @click="$Projects.selectedProjectId = project.id"
-            >
+            <anchor :to="getProjectUrl(project.id)" class="project-card" v-for="project in projects"
+                @click="$Projects.selectedProjectId = project.id">
                 <h3>{{ project.name }}</h3>
                 <!-- <p>{{ project.companyName }}</p> -->
                 <p class="project-domain">{{ project?.domain }}</p>
@@ -20,24 +16,10 @@
                 <div class="project-phase">{{ project.phase }}</div>
             </anchor>
 
-            <mflex @click="openModal('createProject')" v-if="props.interface === 'staff'" class="project-add-card">
+            <nuxt-link to="/dashboard/staff/forms/add-project" class="project-add-card">
                 <Icon icon="material-symbols:add" width="25" color="#222" />
-            </mflex>
+            </nuxt-link>
         </rflex>
-
-        <modal id="createProject">
-            <form @submit.prevent="$Projects.create(projectDetails)" class="create-project-form">
-                <div class="form-group">
-                    <label for="name">Project Name:</label>
-                    <input type="text" id="name" name="name" v-model="projectDetails.name" />
-                </div>
-                <div class="form-group">
-                    <label for="emails">Emails:</label>
-                    <input type="text" id="emails" name="emails" v-model="projectDetails.emails" />
-                </div>
-                <btn type="submit" class="submit-btn">Create Project</btn>
-            </form>
-        </modal>
     </section>
 </template>
 
@@ -91,7 +73,12 @@ header {
     border-radius: 5px;
     width: 300px;
     min-height: 300px;
+    display: flex;
+    justify-content: center;
+
+    align-items: center;
 }
+
 .project-card {
     display: flex;
     flex-direction: column;
@@ -122,6 +109,7 @@ header {
         border-bottom-left-radius: 15px;
         background: lightgreen;
     }
+
     .project-description {
         color: #555;
         flex-grow: 1;

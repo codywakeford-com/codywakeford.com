@@ -3,13 +3,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
     await $App.appStart()
 
-    console.log($User.jwt)
-
-    if (!$User.jwt) {
+    if (!$User.state.jwt) {
         return navigateTo("/auth/login")
     }
 
-    if (!(await $User.validateJwt($User.jwt))) {
+    if (!(await $User.validateJwt($User.state.jwt))) {
         return navigateTo("/auth/login")
     }
 })

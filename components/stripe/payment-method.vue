@@ -1,9 +1,12 @@
 <template>
     <div class="saved-card visa">
         <div class="top-row">
-            <Icon icon="brandico:amex" v-if="card.brand === 'amex'" width="25" color="lightblue" />
-            <Icon icon="logos:mastercard" v-if="card.brand === 'mastercard'" />
-            <Icon icon="logos:visa" v-if="card.brand === 'visa'" width="50" />
+            <rflex>
+                <img src="/assets/cw-logo.webp" alt="logo" />
+                <!-- <Icon icon="brandico:amex" v-if="card.brand === 'amex'" width="25" color="lightblue" /> -->
+                <!-- <Icon icon="logos:mastercard" v-if="card.brand === 'mastercard'" /> -->
+                <!-- <Icon icon="logos:visa" v-if="card.brand === 'visa'" width="50" /> -->
+            </rflex>
 
             <btn class="menu-button">
                 <Icon icon="majesticons:dots-horizontal" height="30" />
@@ -58,6 +61,10 @@ const props = defineProps<Props>()
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        img {
+            width: 35px;
+        }
     }
 
     .bottom-row {
@@ -138,7 +145,7 @@ const props = defineProps<Props>()
 
     &.visa {
         // background: $primary-light;
-        background: #687cf4;
+        background: $primary;
     }
 }
 </style>

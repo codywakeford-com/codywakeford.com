@@ -2,7 +2,7 @@
     <main class="auth-page">
         <form class="auth-form" @submit.prevent="handleSignIn(email, password)">
             <lheader>
-                <h1>Sign In</h1>
+                <h1>Login</h1>
                 <p>Log in to your account to continue</p>
             </lheader>
 
@@ -33,6 +33,8 @@
                 Don't have an account?
                 <nuxt-link to="/auth/register">Sign Up</nuxt-link>
             </p>
+
+            {{ $User.state.user }}
         </form>
     </main>
 </template>

@@ -1,221 +1,223 @@
 import { defineStore } from "pinia"
 import { jwtDecode } from "jwt-decode"
 
-export const useUserStore = defineStore("userStore", {
-    state: () => ({
-        user: null as User | null,
-        jwt: null as null | string,
+interface State {
+    user: User | null
+    jwt: string | null
+    isLoading: boolean
+    reciepts: PaymentRecord[]
+}
+
+export const useUserStore = defineStore("userStore", () => {
+    const state = ref<State>({
+        user: null,
+        jwt: null,
         isLoading: true,
-        reciepts: [] as PaymentRecord[],
-    }),
+        reciepts: [],
+    })
 
-    getters: {
-        isStaff(state): boolean {
-            if (!state.user) return false
+    const isStaff = computed<boolean>(() => {
+        if (!state.value.user) return false
+        return state.value.user.role === "staff"
+    })
 
-            return !!(state.user.role === "staff")
-        },
+    const getStripeCustomerId = computed<string | undefined>(() => {
+        return state.value.user?.stripePaymentProfile?.customerId || undefined
+    })
 
-        getReciepts(state) {
-            return state.reciepts
-        },
+    const getReciepts = computed(() => {
+        return state.value.reciepts
+    })
 
-        stripeCustomerId(state) {
-            return state.user?.stripePaymentProfile?.customerId
-        },
+    const stripeCustomerId = computed<string | undefined>(() => {
+        return state.value.user?.stripePaymentProfile?.customerId
+    })
 
-        stripePaymentProfile(state) {
-            return state.user?.stripePaymentProfile
-        },
-    },
+    const stripePaymentProfile = computed(() => {
+        return state.value.user?.stripePaymentProfile
+    })
 
-    actions: {
-        async init() {
-            this.jwt = localStorage.getItem("jwt")
+    const paymentMethods = computed(() => {
+        return state.value.user?.stripePaymentProfile.paymentMethods || []
+    })
 
-            if (!this.jwt) return
+    async function init() {
+        state.value.jwt = localStorage.getItem("jwt")
 
-            const jwtValid = await this.validateJwt(this.jwt)
+        if (!state.value.jwt) return
 
-            if (jwtValid) {
-                const payload = jwtDecode(this.jwt)
-                this.user = payload as User
-            }
+        const jwtValid = await validateJwt(state.value.jwt)
 
-            this.isLoading = false
+        if (jwtValid) {
+            const payload = jwtDecode(state.value.jwt)
+            state.value.user = payload as User
+        }
 
-            try {
-                const reciepts = await readArray<PaymentRecord>(`/users/${this.user?.id}/payment-records`)
+        state.value.isLoading = false
 
-                this.reciepts = [...reciepts]
-            } catch (error) {
-                console.error("failed to fetch reciepts", error)
-            }
-        },
+        try {
+            const reciepts = await readArray<PaymentRecord>(`/users/${state.value.user?.id}/payment-records`)
 
-        async validateJwt(jwt: string): Promise<boolean> {
-            try {
-                const { valid, payload } = await $fetch<Api.Auth.ValidateJwt.Response>("/api/auth/validate-jwt", {
-                    method: "POST",
-                    body: { token: jwt } as Api.Auth.ValidateJwt.Request,
-                })
+            state.value.reciepts = [...reciepts]
+        } catch (error) {
+            console.error("failed to fetch reciepts", error)
+        }
+    }
 
-                this.user = payload
-                if (valid) return true
-                else {
-                    this.logout()
-                    return false
-                }
-            } catch (e) {
-                this.logout()
-                return false
-            }
-        },
-
-        async register(email: string, password: string) {
-            try {
-                const reponse = await $fetch<Api.Auth.Register.Response>("/api/auth/register", {
-                    method: "POST",
-                    body: { email, password } as Api.Auth.Register.Request,
-                })
-            } catch (error) {
-                return error
-            }
-        },
-
-        async login(email: string, password: string) {
-            try {
-                const jwt = await $fetch<Api.Auth.Login.Response>("/api/auth/login", {
-                    method: "POST",
-                    body: { email, password } as Api.Auth.Login.Request,
-                })
-
-                const payload = jwtDecode(jwt) as User
-
-                console.log(payload)
-
-                if (payload) {
-                    this.user = payload
-                    localStorage.setItem("jwt", jwt)
-                    this.writeCache(payload)
-                }
-
-                return navigateTo("/")
-            } catch (error) {
-                if (error.status === 401) {
-                    throw new Error("Email or password incorrect.")
-                } else {
-                    throw new Error("An unknown error has occured.")
-                }
-            }
-        },
-
-        async createStripeCustomer() {
-            try {
-                const customer = await $Stripe.createCustomer($User.email)
-
-                if (!customer) throw new Error("Customer failed to create")
-
-                const stripePaymentProfile: User["stripePaymentProfile"] = {
-                    customerId: customer.id,
-                    paymentMethods: [],
-                }
-
-                await $fetch(`/api/users/${$User.id}`, {
-                    method: "PUT",
-                    body: { stripePaymentProfile },
-                })
-
-                if (!this.user) throw new Error("User not found!")
-
-                if (!this.user?.stripePaymentProfile) {
-                    this.user.stripePaymentProfile = { customerId: "", paymentMethods: [] }
-                }
-
-                this.user.stripePaymentProfile.customerId = customer.id
-            } catch (error) {
-                console.error(error)
-            }
-        },
-
-        async addPaymentMethod(paymentMethod: PaymentMethod) {
-            try {
-                await $fetch(`/api/users/${$User.id}/payment-methods`, {
-                    method: "POST",
-                    body: { paymentMethod },
-                })
-
-                this.user?.stripePaymentProfile.paymentMethods.push(paymentMethod)
-            } catch (error) {
-                console.error(error)
-            }
-        },
-
-        async addPaymentRecord(projectId: Project["id"], paymentRecord: PaymentRecord) {
-            if (!projectId) throw new Error("no prohject id")
-
-            try {
-                await $fetch(`/api/users/${$User.id}/payment-record`, {
-                    method: "POST",
-                    body: {
-                        paymentRecord,
-                        projectId,
-                    },
-                })
-            } catch (error) {
-                console.error(error)
-            }
-        },
-
-        async deletePaymentProfile(paymentMethodId: PaymentMethod["paymentMethodId"]) {
-            const paymentProfileIndex = this.user?.stripePaymentProfile.paymentMethods.findIndex((profile) => {
-                return profile.paymentMethodId === paymentMethodId
+    async function validateJwt(jwt: string): Promise<boolean> {
+        try {
+            const { valid, payload } = await $fetch<Api.Auth.ValidateJwt.Response>("/api/auth/validate-jwt", {
+                method: "POST",
+                body: { token: jwt } as Api.Auth.ValidateJwt.Request,
             })
 
-            if (paymentProfileIndex === -1) throw new Error("No profile found")
-
-            const paymentProfile = this.user?.stripePaymentProfile.paymentMethods[paymentProfileIndex]
-
-            this.user?.stripePaymentProfile?.paymentMethods?.splice(paymentProfileIndex, 1)
-
-            try {
-                await $fetch(`/api/users/${$User.id}/methods/${paymentMethodId}`, {
-                    method: "DELETE",
-                })
-
-                this.writeCache(this.user!)
-            } catch (error) {
-                this.user?.stripePaymentProfile.paymentMethods.push(paymentProfile)
-                console.error(error)
+            state.value.user = payload
+            if (valid) return true
+            else {
+                logout()
+                return false
             }
-        },
+        } catch (e) {
+            logout()
+            return false
+        }
+    }
 
-        writeCache(user: User) {
-            if (!import.meta.client) return
-            localStorage.setItem("user", JSON.stringify(user))
-        },
+    async function register(email: string, password: string) {
+        try {
+            const reponse = await $fetch<Api.Auth.Register.Response>("/api/auth/register", {
+                method: "POST",
+                body: { email, password } as Api.Auth.Register.Request,
+            })
+        } catch (error) {
+            return error
+        }
+    }
 
-        async readCache() {
-            if (!import.meta.client) return
+    async function login(email: string, password: string) {
+        try {
+            const jwt = await $fetch<Api.Auth.Login.Response>("/api/auth/login", {
+                method: "POST",
+                body: { email, password } as Api.Auth.Login.Request,
+            })
 
-            const cachedUser = localStorage.getItem("user")
+            const payload = jwtDecode(jwt) as User
 
-            if (cachedUser) {
-                try {
-                    console.log("User fetched from client localStorage")
-                    return JSON.parse(cachedUser)
-                } catch (error) {
-                    console.error("Failed to parse cached user data:", error)
-                    return {} as User
-                }
+            if (payload) {
+                state.value.user = payload
+                state.value.jwt = jwt
+                localStorage.setItem("jwt", jwt)
             }
-        },
-
-        logout() {
-            this.user = null
-            localStorage.removeItem("jwt")
 
             return navigateTo("/")
-        },
-    },
+        } catch (error) {
+            if (error.status === 401) {
+                throw new Error("Email or password incorrect.")
+            } else {
+                throw new Error("An unknown error has occured.")
+            }
+        }
+    }
+
+    async function createStripeCustomer() {
+        try {
+            if (!state.value.user) throw new Error("User not found")
+
+            const customer = await $Stripe.createCustomer(state.value.user?.email)
+            if (!customer) throw new Error("Customer failed to create")
+
+            const stripePaymentProfile: User["stripePaymentProfile"] = {
+                customerId: customer.id,
+                paymentMethods: [],
+            }
+
+            console.log(state.value.user.id)
+
+            await updateObject<User>(`/users/${state.value.user.id}`, { stripePaymentProfile })
+
+            state.value.user.stripePaymentProfile = stripePaymentProfile
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    async function addPaymentMethod(paymentMethod: PaymentMethod) {
+        try {
+            await $fetch(`/api/users/${state.value.user?.id}/payment-methods`, {
+                method: "POST",
+                body: { paymentMethod },
+            })
+
+            state.value.user?.stripePaymentProfile?.paymentMethods.push(paymentMethod)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    async function addPaymentRecord(projectId: Project["id"], paymentRecord: PaymentRecord) {
+        if (!projectId) throw new Error("no prohject id")
+
+        try {
+            await $fetch(`/api/users/${state.value.user?.id}/payment-record`, {
+                method: "POST",
+                body: {
+                    paymentRecord,
+                    projectId,
+                },
+            })
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    async function deletePaymentProfile(paymentMethodId: PaymentMethod["paymentMethodId"]) {
+        const paymentProfileIndex = state.value.user?.stripePaymentProfile.paymentMethods.findIndex((profile) => {
+            return profile.paymentMethodId === paymentMethodId
+        })
+
+        if (paymentProfileIndex === -1) throw new Error("No profile found")
+        const paymentProfile = state.value.user?.stripePaymentProfile.paymentMethods[paymentProfileIndex]
+        state.value.user?.stripePaymentProfile.paymentMethods.splice(paymentProfileIndex, 1)
+
+        try {
+            await $fetch(`/api/users/${state.value.user?.id}/methods/${paymentMethodId}`, {
+                method: "DELETE",
+            })
+
+            writeCache(state.value.user!)
+        } catch (error) {
+            state.value.user?.stripePaymentProfile.paymentMethods.push(paymentProfile)
+            console.error(error)
+        }
+    }
+
+    function writeCache(user: User) {
+        if (!import.meta.client) return
+        localStorage.setItem("user", JSON.stringify(user))
+    }
+
+    function logout() {
+        state.value.user = null
+        localStorage.removeItem("user")
+        localStorage.removeItem("jwt")
+
+        return navigateTo("/")
+    }
+    return {
+        state, // Keep state to allow mutations
+        isStaff,
+        getStripeCustomerId,
+        getReciepts,
+        stripeCustomerId,
+        stripePaymentProfile,
+        logout,
+        login,
+        register,
+        addPaymentMethod,
+        validateJwt,
+        init,
+        createStripeCustomer,
+        deletePaymentProfile,
+        paymentMethods,
+    }
 })

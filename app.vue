@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 useHead({
-    title: "Web Professional",
+    title: "Cody Wakeford",
 })
 </script>
 

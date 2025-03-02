@@ -2,6 +2,16 @@ export { }
 
 declare global {
     namespace Api {
+        namespace Emails {
+            namespace Invitation {
+                type Response = undefined
+
+                interface Request {
+                    emails: string[]
+                }
+            }
+        }
+
         namespace Auth {
             namespace Login {
                 interface Request {

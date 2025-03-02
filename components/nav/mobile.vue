@@ -23,7 +23,7 @@
             <nuxt-link @click="navActive = false" to="/#reviews">Reviews</nuxt-link>
             <nuxt-link @click="navActive = false" to="/#contact">Contact Me</nuxt-link>
 
-            <nuxt-link @click="navActive = false" v-if="!$User.get?.id" to="/auth/login">
+            <nuxt-link @click="navActive = false" v-if="!$User.state.user?.id" to="/auth/login">
                 <button-primary-m>Sign In</button-primary-m>
             </nuxt-link>
 

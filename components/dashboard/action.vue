@@ -7,25 +7,22 @@
 
         <p>{{ action.description }}</p>
         <div class="action-controls">
-            <button-primary-m v-if="action.action === 'book-meeting'">
-                <CalendlyPopupButton class="calendly-button" v-bind="options" :cancelOptions="cancelOptions"
-                    :root-element="rootElement" />
+            <button-primary-m v-if="action.action === 'book-meeting'" @click="openCalendly()"> Book a call
             </button-primary-m>
 
             <button-primary-m v-if="action.action === 'accept-quote'"
                 @click="$Projects.acceptProjectProposal(projectId, action.id)">Accept Quote</button-primary-m>
 
-            <button-primary-m v-modal="`paymentModal`" @click="$Actions.selectedActionId = action.id"
+            <button-primary-m @click="(showModalById('payment-modal'), ($Actions.selectedActionId = action.id))"
                 v-if="action.action === 'payment'">
                 Make a payment
             </button-primary-m>
 
             <button-primary-m v-modal="'design-modal'" v-if="action.action === 'accept-design'">View
                 Design</button-primary-m>
-            <button-primary-m v-if="action.action === 'accept-design'" @click="
-            ($Projects.clientAcceptsDesign(projectId),
-                $Actions.markAsComplete(action.id))
-                ">Accept Design</button-primary-m>
+            <button-primary-m v-if="action.action === 'accept-design'"
+                @click="($Projects.clientAcceptsDesign(projectId), $Actions.markAsComplete(action.id))">Accept
+                Design</button-primary-m>
         </div>
     </div>
 
@@ -34,43 +31,22 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue";
-const rootElement = ref();
+import { Icon } from "@iconify/vue"
+const rootElement = ref()
 
-const projectId = useRoute().params.id as string;
-
-const options = {
-    url: "https://calendly.com/codypwakeford/meeting",
-    text: "Book a call",
-};
+const projectId = useRoute().params.id as string
 
 const project = computed(() => {
-    return $Projects.getProjectById(projectId) || null;
-});
-
-const cancelOptions = {
-    url: "",
-};
+    return $Projects.getProjectById(projectId) || null
+})
 
 const action = computed(() => {
-    const sortedActions = $Actions
-        .getPendingByProjectId(projectId)
-        .sort((a, b) => {
-            return a.priority - b.priority;
-        });
+    const sortedActions = $Actions.getPendingByProjectId(projectId).sort((a, b) => {
+        return a.priority - b.priority
+    })
 
-    return sortedActions[0];
-});
-
-useCalendlyEventListener({
-    onEventScheduled: (event) => {
-        const staffMeetingUrl = event.data.payload.event.uri;
-        const clientMeetingUrl = event.data.payload.invitee.uri;
-
-        $Projects.meetingScheduled(projectId, staffMeetingUrl, clientMeetingUrl);
-        $Actions.markAsComplete(action.value.id);
-    },
-});
+    return sortedActions[0]
+})
 </script>
 
 <style lang="scss" scoped>

@@ -1,9 +1,9 @@
 <template>
-    <div class="pattern-background"></div>
-    <main>
-        <section>
+    <dialog ref="modal" @click="modal?.close()" id="payment-modal">
+        <section class="modal-body" @click.stop.prevent>
             <header>
-                <h1>Make a payment</h1>
+                <h1 v-if="$BillingModal.type === 'save-card'">Add a card</h1>
+                <h1 v-else>Make a payment</h1>
 
                 <div class="amount">
                     <h2 v-if="amount">£{{ (amount / 100).toFixed(2) }}</h2>
@@ -11,11 +11,19 @@
                 </div>
             </header>
 
-            <form>
+            <form v-if="$BillingModal.type === 'payment' && !useNewCard" @submit.prevent="pay" class="payment-form">
+                <div class="saved-cards">
+                    <stripe-payment-method-sm v-for="(card, index) of $User.stripePaymentProfile?.paymentMethods"
+                        @click="selectedCardIndex = index" :key="index" :card="card"
+                        :selected="selectedCardIndex === index" />
+                    <button @click="useNewCard = true" class="new-card">Use a new card</button>
+                </div>
+            </form>
+            <form v-show="$BillingModal.type === 'payment' && useNewCard">
                 <div class="left">
                     <div class="form-item">
                         <label for="cardNumber">Card Number</label>
-                        <div class="input-element" id="card-number-element1" ref="cardNumber" />
+                        <div class="input-element" id="card-number-element2" ref="cardNumber" />
                     </div>
 
                     <div class="form-item">
@@ -43,6 +51,12 @@
                     </div>
 
                     <div class="form-item">
+                        <label for="">Street</label>
+                        <input class="input-element" type="text" v-model="address.street" />
+                        <div :class="{ active: errors.street }" class="error-message">{{ errors.street }}</div>
+                    </div>
+
+                    <div class="form-item">
                         <label for="">City</label>
                         <input class="input-element" type="text" v-model="address.city" />
                         <div :class="{ active: errors.city }" class="error-message">{{ errors.city }}</div>
@@ -60,22 +74,37 @@
                             v-model="address.country" />
                         <div :class="{ active: errors.country }" class="error-message">{{ errors.country }}</div>
                     </div>
+
+                    <div v-if="$BillingModal.type !== 'save-card'" class="form-item">
+                        <label for="save-card">Save my card for future payments</label>
+                        <input type="checkbox" name="save-card" />
+                    </div>
+
+                    <button v-if="$BillingModal.type !== 'save-card'" @click="useNewCard = false">Use saved
+                        card</button>
                 </div>
             </form>
 
             <div class="button-box">
-                <btn class="loading-button" @click="pay()" :disabled="loading" :loading="loading">Make Payment</btn>
+                <btn class="loading-button" @click="addCard()" v-if="$BillingModal.type === 'save-card'"
+                    :disabled="loading" :loading="loading">Save Card</btn>
+                <btn class="loading-button" @click="pay()" v-else :disabled="loading" :loading="loading">Make Payment
+                </btn>
                 <div class="error-message">{{ state.errorMessage }}</div>
             </div>
         </section>
-    </main>
+    </dialog>
 </template>
 
 <script setup lang="ts">
 const route = useRoute()
 const amount = ref<number>()
 const userInputAmount = ref<number>(0)
+const $BillingModal = useBillingModalStore()
 
+const useNewCard = ref(false) // keeps track if the user wants to use a saved card or not
+
+const modal = ref<HTMLDialogElement | null>(null)
 import type { StripeCardCvcElement, StripeCardExpiryElement, StripeAddressElement, StripeCardNumberElement } from "@stripe/stripe-js"
 import { loadStripe, type Stripe, type StripeCardElement } from "@stripe/stripe-js"
 
@@ -85,13 +114,28 @@ const cardCvc = ref<StripeCardCvcElement | null>(null)
 const stripe = ref<Stripe | null>(null)
 const card = ref()
 
+const paymentProfiles = computed(() => {
+    return $User.stripePaymentProfile?.paymentMethods || []
+})
+
+const selectedCardIndex = ref<number>(0)
+
+interface Props {
+    onComplete?: (setupRecord: PaymentMethod) => void
+    onFailure?: () => void
+}
+
+const props = defineProps<Props>()
+
 const { onLoaded } = useScriptStripe()
 onMounted(() => {
     onLoaded(({ Stripe }) => {
-        amount.value = route.query.amount || 1000
+        amount.value = Number(route.query.amount) || 10000
         stripe.value = Stripe(useRuntimeConfig().public.STRIPE_PUBLISHABLE_KEY)
 
-        if (!stripe.value) return
+        if (!stripe.value || !cardNumber.value || !cardCvc.value || !cardExpiry.value) {
+            throw new Error("Stripe or stripe elements not initialized properly.")
+        }
 
         const elements = stripe.value.elements()
         cardNumber.value = elements.create("cardNumber")
@@ -100,7 +144,7 @@ onMounted(() => {
 
         card.value = cardNumber.value // data sent in payment request
 
-        cardNumber.value.mount("#card-number-element1")
+        cardNumber.value.mount("#card-number-element2")
         cardExpiry.value.mount("#card-expiry-element")
         cardCvc.value.mount("#card-cvc-element")
     })
@@ -122,6 +166,7 @@ const errors = ref({
     city: "",
     postcode: "",
     amount: "",
+    street: "",
 })
 
 const state = ref({
@@ -131,7 +176,7 @@ const state = ref({
 })
 
 function validate() {
-    const { fullName, email, country, city, postcode } = address.value
+    const { fullName, email, street, country, city, postcode } = address.value
 
     if (!fullName) {
         errors.value.fullName = "Name field is required"
@@ -139,6 +184,10 @@ function validate() {
 
     if (!email) {
         errors.value.email = "Email field is required"
+    }
+
+    if (!street) {
+        errors.value.street = "Email field is required"
     }
 
     if (!country) {
@@ -179,28 +228,31 @@ async function pay() {
 
     loading.value = true
 
+    const chargeAmount = amount.value ? amount.value : userInputAmount.value
     try {
-        const clientSecret = await getPaymentSecret({
-            amount: amount.value ? amount.value : userInputAmount.value,
-            currency: "gbp",
-            payment_method_types: ["card"],
-        })
-
-        console.log(cardNumber.value)
-
-        const result = await stripe.value.confirmCardPayment(clientSecret, {
-            payment_method: {
+        let paymentResult
+        if (!useNewCard) {
+            paymentResult = await $Stripe.payWithCardElement({
+                stripe: stripe.value,
                 card: card.value,
-                billing_details: {
-                    name: address.value.fullName,
-                },
-            },
-        })
+                name: address.value.fullName,
+                amount: chargeAmount,
+            })
+        } else if (useNewCard) {
+            if (!$User.getStripeCustomerId) $User.createStripeCustomer()
+            if (!$User.getStripeCustomerId) throw new Error("Customer id not found")
+            paymentResult = await $Stripe.payWithPaymentMethod({
+                stripe: stripe.value,
+                amount: chargeAmount,
+                customerId: $User.getStripeCustomerId,
+                paymentMethod: $User.paymentMethods[selectedCardIndex.value],
+            })
+        }
 
-        if (result.error) {
-            console.log(result.error)
+        if (paymentResult?.error) {
+            console.log(paymentResult?.error)
             state.value.errorMessage = "An error has occured"
-        } else if (result.paymentIntent.status === "succeeded") {
+        } else if (paymentResult?.paymentIntent.status === "succeeded") {
             state.value.successMessage === "sucess"
         }
     } catch (e) {
@@ -211,19 +263,80 @@ async function pay() {
     }
 }
 
+async function addCard() {
+    if (!stripe.value || !cardNumber.value || !card.value) {
+        throw new Error("Stripe not initialized or card element not created!")
+    }
+
+    loading.value = true
+    try {
+        if (!address.value) {
+            throw new Error("No billing address")
+        }
+
+        if (!$User.getStripeCustomerId) {
+            await $User.createStripeCustomer()
+        }
+
+        const customerId = $User.getStripeCustomerId
+
+        if (!customerId) throw new Error("Stripe customer ID not found")
+
+        const stripeAddress: StripeBillingAddress = {
+            name: address.value.fullName,
+            postal_code: address.value.postcode,
+            line1: address.value.street,
+            line2: "",
+            state: "",
+            city: address.value.city,
+            email: address.value.email,
+            country: address.value.country,
+        }
+
+        const paymentMethod = await $Stripe.setupPaymentMethod(stripe.value, card.value, stripeAddress, customerId)
+
+        if (!paymentMethod) throw new Error("Payment method not found")
+
+        if (paymentMethod) {
+            await $User.addPaymentMethod(paymentMethod)
+
+            if (props.onComplete) props.onComplete(paymentMethod)
+        }
+    } catch (error) {
+        console.error("Error in addCard:", error)
+
+        if (props.onFailure) {
+            props.onFailure()
+        }
+    } finally {
+        loading.value = false
+    }
+}
 const loading = ref(false)
 </script>
 
 <style lang="scss" scoped>
-main {
+dialog {
     min-height: calc(100vh - 75px);
-    display: flex;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    background: none;
+    border: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-section {
+dialog[open] {
+    display: flex;
+}
+
+.modal-body {
     display: flex;
     flex-direction: column;
     position: relative;
@@ -234,6 +347,15 @@ section {
     gap: 20px;
     border-radius: 5px;
     border: 1px solid $text-light2;
+}
+
+.new-card {
+    width: 100%;
+    height: 90px;
+    margin-top: 15px;
+    border-radius: 5px;
+    background: white;
+    border: 3px solid $text-light1;
 }
 
 header {

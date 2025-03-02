@@ -10,15 +10,15 @@
     </div>
 
     <dashboard-loading-screen v-if="false" />
-    <stripe-payment-modal />
-    <stripe-save-card-modal />
+    <stripe-payment-dialog />
+    <dashboard-calendly-modal />
     <upload-file-modal />
     <dashboard-design-modal />
 </template>
 
 <script setup lang="ts">
-const route = useRoute();
-const projectId = route.params.projectId as string;
+const route = useRoute()
+const projectId = route.params.projectId as string
 </script>
 
 <style lang="scss" scoped>

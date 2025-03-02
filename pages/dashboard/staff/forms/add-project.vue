@@ -1,13 +1,17 @@
 <template>
     <mpage>
-        <section>
-            <h1>Create Project Invitation</h1>
+        <form class="main-form" @submit.prevent="sendInvitation()">
+            <header>
+                <h1>Create Project Invitation</h1>
+                <p>This form will invite a list of clients to login to the project dashboard.</p>
+            </header>
 
             <h2>Emails</h2>
 
             <div class="input-group">
-                <input type="text" v-model="emailInput" />
-                <button @click="addEmail(emailInput)">Add Email</button>
+                <label for="email-input">Add client emails</label>
+                <input type="text" v-model="emailInput" name="email-input" />
+                <button type="button" @click="addEmail(emailInput)">Add Email</button>
             </div>
 
             <div class="chips">
@@ -17,14 +21,32 @@
                 </div>
             </div>
 
-            <button>Send Email</button>
-        </section>
+            <button-primary-m type="submit" class="submit-button" :disabled="loading">
+                {{ loading ? "Loading" : "SendEmail" }}
+            </button-primary-m>
+        </form>
     </mpage>
 </template>
 
 <script setup lang="ts">
 const emails = ref(["codypwakeford@gmail.com"])
 const emailInput = ref("")
+const loading = ref(false)
+
+async function sendInvitation() {
+    loading.value = true
+
+    try {
+        await $fetch<Api.Emails.Invitation.Response>("/api/emails/invitation", {
+            method: "POST",
+            body: { emails: emails.value } as Api.Emails.Invitation.Request,
+        })
+    } catch (e) {
+        console.log(e)
+    } finally {
+        loading.value = false
+    }
+}
 
 function addEmail(email: string) {
     if (emailInput.value.trim() === "") return
@@ -44,15 +66,5 @@ definePageMeta({
 </script>
 
 <style scoped lang="scss">
-.mpage {
-    height: 100%;
-    max-width: 1100px !important;
-}
-
-section {
-    background-color: white;
-    height: 100%;
-    box-shadow: 3px 3px 20px lightgrey;
-    padding: 50px;
-}
+@use "@/style/forms.scss" as *;
 </style>

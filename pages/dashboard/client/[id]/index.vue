@@ -7,13 +7,8 @@
       </div>
 
       <div class="right">
-        <nuxt-link
-          target="_blank"
-          :to="`https://${project.domain}`"
-          class="project-url"
-          v-if="project?.domain"
-          >https://{{ project?.domain }}</nuxt-link
-        >
+        <nuxt-link target="_blank" :to="`https://${project.domain}`" class="project-url"
+          v-if="project?.domain">https://{{ project?.domain }}</nuxt-link>
       </div>
     </header>
 
@@ -25,9 +20,7 @@
         </div>
 
         <div class="meeting card">
-          <dashboard-meetings
-            v-if="$Meetings.getLengthByProjectId(projectId)"
-          />
+          <dashboard-meetings v-if="$Meetings.getLengthByProjectId(projectId)" />
 
           <div class="no-meetings-message" v-else>
             <h3>Meetings</h3>
@@ -47,10 +40,7 @@
 
       <div class="right-content">
         <div class="action-menu card">
-          <dashboard-action
-            :project="project"
-            v-if="actions.length && project"
-          />
+          <dashboard-action :project="project" v-if="actions.length && project" />
           <div class="no-actions-message" v-else>
             <h3>Actions</h3>
             <p>Nothing to do at the moment!</p>
@@ -65,16 +55,8 @@
             </header>
 
             <div class="files">
-              <span v-if="!files.length"
-                >No files uploaded to this project</span
-              >
-              <div
-                class="file"
-                v-else
-                v-for="(file, index) of files"
-                :key="index"
-                :file="file"
-              >
+              <span v-if="!files.length">No files uploaded to this project</span>
+              <div class="file" v-else v-for="(file, index) of files" :key="index" :file="file">
                 <Icon icon="material-symbols:docs-outline" width="25px" />
                 <div class="name">{{ file.name }}.{{ file.extension }}</div>
               </div>
@@ -86,9 +68,7 @@
               <button-primary-m>View All Files</button-primary-m>
             </nuxt-link>
 
-            <button-primary-m @click="openModal('files-modal')"
-              >Upload a File</button-primary-m
-            >
+            <button-primary-m @click="openModal('files-modal')">Upload a File</button-primary-m>
           </div>
         </div>
       </div>
@@ -96,46 +76,45 @@
   </main>
 
   <dashboard-files-modal :project-id="projectId" />
-  <stripe-payment-modal :project-id="projectId" />
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue";
-import { DashboardChatroom } from "#components";
-import dayjs from "dayjs";
-import advancedFormat from "dayjs/plugin/advancedFormat";
+import { Icon } from "@iconify/vue"
+import { DashboardChatroom } from "#components"
+import dayjs from "dayjs"
+import advancedFormat from "dayjs/plugin/advancedFormat"
 
-dayjs.extend(advancedFormat);
+dayjs.extend(advancedFormat)
 
 const date = computed(() => {
-  let date = Date.now();
+  let date = Date.now()
 
   setTimeout(() => {
-    date = Date.now();
-  }, 1000 * 1800); // 30 mins
+    date = Date.now()
+  }, 1000 * 1800) // 30 mins
 
-  return date;
-});
+  return date
+})
 
 const actions = computed(() => {
-  return $Actions.getPendingByProjectId(projectId);
-});
+  return $Actions.getPendingByProjectId(projectId)
+})
 
-const route = useRoute();
-const projectId = route.params.id as string;
+const route = useRoute()
+const projectId = route.params.id as string
 
 const project = computed(() => {
-  return $Projects.getProjectById(projectId);
-});
+  return $Projects.getProjectById(projectId)
+})
 
 const files = computed(() => {
-  return $Files.getRecent(5);
-});
+  return $Files.getRecent(5)
+})
 
 definePageMeta({
   layout: "dashboard",
   middleware: "dashboard",
-});
+})
 </script>
 
 <style lang="scss" scoped>
@@ -268,6 +247,7 @@ main {
 
   .center-content {
     flex-grow: 1;
+
     .message-log {
       grid-area: message-log;
       display: flex;

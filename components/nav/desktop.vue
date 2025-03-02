@@ -16,7 +16,7 @@
                 <nuxt-link to="/#reviews">Reviews</nuxt-link>
                 <nuxt-link to="/#contact">Contact Me</nuxt-link>
 
-                <nuxt-link v-if="!$User.user?.id" to="/auth/login">
+                <nuxt-link v-if="!$User.state.user?.id" to="/auth/login">
                     <button-primary-m>Sign In</button-primary-m>
                 </nuxt-link>
                 <nuxt-link to="/dashboard/client" v-else>
