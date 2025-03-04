@@ -1,15 +1,10 @@
 <template>
   <section>
-    <div
-      class="phase-box"
-      v-for="(phase, index) in phases"
-      :key="index"
-      :class="{
-        complete: phaseIndex > index || phases[phaseIndex].phaseName === 'live',
-        active: phaseIndex === index && phases[phaseIndex].phaseName !== 'live',
-        incomplete: phaseIndex < index,
-      }"
-    >
+    <div class="phase-box" v-for="(phase, index) in phases" :key="index" :class="{
+      complete: phaseIndex > index || phases[phaseIndex].phaseName === 'live',
+      active: phaseIndex === index && phases[phaseIndex].phaseName !== 'live',
+      incomplete: phaseIndex < index,
+    }">
       <div class="left">
         <div class="number">{{ index + 1 }}</div>
         <div class="name">{{ phase.name }}</div>
@@ -99,6 +94,7 @@ h3 {
   padding-inline: 25px;
   padding-block: 25px 0;
 }
+
 section {
   overflow-y: auto;
   max-height: 100%;

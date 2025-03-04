@@ -1,3 +1,4 @@
+import { useFilesDashboardStore } from "#imports"
 let $User: ReturnType<typeof useUserStore>
 let $Chatroom: ReturnType<typeof useChatroomStore>
 let $Projects: ReturnType<typeof useProjectStore>
@@ -10,6 +11,7 @@ let $Actions: ReturnType<typeof useActionStore>
 let $BillingModal: ReturnType<typeof useBillingModalStore>
 let $Stripe: ReturnType<typeof useStripeStore>
 let $Calendly: ReturnType<typeof useCalendlyStore>
+let $FilesDashboard: ReturnType<typeof useFilesDashboardStore>
 
 export async function initPiniaStores() {
     if (!import.meta.client) return
@@ -34,6 +36,7 @@ export async function initPiniaStores() {
 
     $Stripe = useStripeStore()
     $Calendly = useCalendlyStore()
+    $FilesDashboard = useFilesDashboardStore()
 
     $Chatroom = useChatroomStore()
     await $Chatroom.init()
@@ -46,4 +49,4 @@ export async function initPiniaStores() {
     $App.setInitialized(true)
 }
 
-export { $User, $Projects, $Chatroom, $Notifications, $Files, $ActivityLogs, $App, $Meetings, $Actions, $BillingModal, $Stripe, $Calendly }
+export { $User, $Projects, $Chatroom, $Notifications, $FilesDashboard, $Files, $ActivityLogs, $App, $Meetings, $Actions, $BillingModal, $Stripe, $Calendly }

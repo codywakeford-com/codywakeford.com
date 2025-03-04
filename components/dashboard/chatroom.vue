@@ -172,7 +172,7 @@ function handleFileSelect(event: Event) {
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding-inline: 15px;
+    padding-inline: 35px;
     padding-block: 25px 50px;
     scroll-behavior: smooth;
     max-height: calc(100vh - 325px);

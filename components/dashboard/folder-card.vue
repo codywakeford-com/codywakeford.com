@@ -2,17 +2,14 @@
     <div class="file-card">
         <div class="top">
             <div>
-                <Icon name="ri:file-2-line" size="30px" />
-                <div class="name">{{ file.name }}</div>
+                <Icon name="material-symbols-light:folder" size="30px" />
+                <div class="name">{{ project.id }}</div>
             </div>
-
-            <button @click="menuActive = !menuActive">
-                <Icon name="mage:dots-horizontal" size="25" />
-            </button>
         </div>
+
         <div class="bottom">
-            <div>{{ dayjs(file.timestamp).format("DD MMM") }}</div>
-            <div>{{ (file.size / 1024 / 102).toFixed(2) }} kb</div>
+            <!-- <div>{{ dayjs(file.timestamp).format("DD MMM") }}</div> -->
+            <!-- <div>{{ (file.size / 1024 / 102).toFixed(2) }} kb</div> -->
         </div>
     </div>
 </template>
@@ -21,15 +18,16 @@
 import dayjs from "dayjs"
 const menuActive = ref(false)
 const props = defineProps<{
-    file: ProjectFile
+    project: Project
 }>()
 </script>
 
 <style lang="scss" scoped>
-@use "@/style/file-card.scss" as *;
-
 .file-card {
-    flex-direction: column;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid $text-light2;
+    background: white;
 
     .top {
         display: flex;
@@ -37,7 +35,6 @@ const props = defineProps<{
         align-items: flex-start;
         justify-content: space-between;
         gap: 10px;
-        font-weight: bold;
         min-width: 250px;
         margin-bottom: 5px;
 

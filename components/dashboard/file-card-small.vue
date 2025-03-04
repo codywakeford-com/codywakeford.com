@@ -1,8 +1,8 @@
 <template>
-    <div class="attachment-item">
-        <Icon class="icon" icon="ph:file-pdf-bold" width="30" v-if="file.name.includes('pdf')" color="darkblue" />
-        <Icon class="icon" icon="ph:file-doc-bold" width="30" v-else-if="file.name.includes('doc')" />
-        <Icon class="icon" icon="mdi:document" width="30" v-else />
+    <div class="card">
+        <Icon class="icon" name="ph:file-pdf-bold" size="30" v-if="file.name.includes('pdf')" color="darkblue" />
+        <Icon class="icon" name="ph:file-doc-bold" size="30" v-else-if="file.name.includes('doc')" />
+        <Icon class="icon" name="mdi:document" size="30" v-else />
 
         <div class="right">
             <div class="name">{{ file.name }}</div>
@@ -11,34 +11,28 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
-
 interface Props {
     file: ProjectFile
+    type: "sm" | "m" | "normal"
 }
 
 const props = defineProps<Props>()
 </script>
 
 <style lang="scss" scoped>
-.attachment-item {
+.card {
     margin-block: 10px;
     display: flex;
-    border: 1px solid $text-dark3;
+    border: 1px solid $text-light2;
     width: min-content;
     gap: 5px;
     align-items: center;
     padding: 5px;
-    border-radius: 10px;
+    border-radius: 3px;
     min-width: 250px;
 
-    .icon {
-        border: 1px solid $primary;
-        border-radius: 5px;
-        padding: 5px;
-    }
-
     .name {
+        font-weight: bold;
         white-space: nowrap;
     }
 }

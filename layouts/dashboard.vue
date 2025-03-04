@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="pattern-background" />
+        <div class="pattern-background dark" />
         <div class="dashboard">
             <dashboard-navigation />
             <content>

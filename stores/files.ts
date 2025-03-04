@@ -15,10 +15,8 @@ export const useFileStore = defineStore("file", {
             return state.files
         },
 
-
         getRecent: (state) => (number: number) => {
             const sortedFiles = state.files.sort((a, b) => {
-
                 return a.timestamp - b.timestamp
             })
 
@@ -127,7 +125,6 @@ export const useFileStore = defineStore("file", {
         /** Upload a file to firebase storage */
         async uploadToFirebase(path: string, file: File) {
             const $storage = useStorage()
-
             const fileStorageRef = storageRef($storage, path)
 
             try {
@@ -170,10 +167,8 @@ export const useFileStore = defineStore("file", {
                     previewUrl = await $Files.uploadToFirebase(`${path}/preview`, previewImage)
                 }
 
-                if (!previewUrl) throw new Error("No preview generated")
-
                 const url = await $Files.uploadToFirebase(path, file)
-                const fileSize = file.size
+
                 const document = {
                     id: uuid(),
                     url: url,

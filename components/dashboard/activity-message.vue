@@ -5,8 +5,7 @@
             <div class="top">
                 <div class="divider" />
 
-                <div class="text" v-if="activity.phaseTo === 'discovery'">
-                    Project initiated: Now in the Discovery Phase
+                <div class="text" v-if="activity.phaseTo === 'discovery'">Project initiated: Now in the Discovery Phase
                 </div>
 
                 <div class="text" v-else-if="activity.phaseTo === 'live'">Your website is live!</div>
@@ -36,7 +35,7 @@
             </span>
             <span class="timestamp">{{ dayjs(activity.timestamp).format("dddd Do MMM HH:mma") }}</span>
 
-            <dashboard-file-card-small v-for="file in getFilesForActivity(activity)" :key="file.id" :file="file" />
+            <!-- <dashboard-file-card-small  v-for="file in getFilesForActivity(activity)" :key="file.id" :file="file" /> -->
         </div>
 
         <!-- Action -->
@@ -124,7 +123,8 @@
 
             <div class="system-message">
                 System: This document puts my understanding of the project in writing so we are clear on what is
-                expected. Please review the proposal and let me know if you would like to ammend anything.
+                expected. Please review the proposal and let me
+                know if you would like to ammend anything.
             </div>
 
             <!-- <button-primary-m @click="$Projects.acceptProjectProposal(props.project.id)"
@@ -152,10 +152,6 @@ const meeting = computed((): Meeting | undefined => {
     return $Meetings.getById(props.activity.meetingId)
 })
 
-// function getActivityActions(actionIds: string[]): Action[] {
-//     null!
-// }
-
 const files = computed(() => {
     return $Files.getFilesByProjectId(projectId)
 })
@@ -174,7 +170,6 @@ const props = defineProps<Props>()
 .activity-item {
     width: 100%;
     padding-block: 15px;
-    padding-inline: 25px;
 
     .phase {
         display: flex;
@@ -284,8 +279,6 @@ const props = defineProps<Props>()
 
         .actions {
             margin-block: 10px;
-
-            button {}
         }
     }
 
@@ -293,10 +286,6 @@ const props = defineProps<Props>()
         .rflex {
             gap: 5px;
         }
-    }
-
-    &:hover {
-        background: $secondary;
     }
 }
 
