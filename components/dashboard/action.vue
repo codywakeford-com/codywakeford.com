@@ -7,7 +7,7 @@
 
         <p>{{ action.description }}</p>
         <div class="action-controls">
-            <button-primary-m v-if="action.action === 'book-meeting'" @click="openCalendly()"> Book a call
+            <button-primary-m v-if="action.action === 'book-meeting'" @click="$Calendly.open"> Book a call
             </button-primary-m>
 
             <button-primary-m v-if="action.action === 'accept-quote'"
@@ -31,15 +31,8 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
 const rootElement = ref()
-
 const projectId = useRoute().params.id as string
-
-const project = computed(() => {
-    return $Projects.getProjectById(projectId) || null
-})
-
 const action = computed(() => {
     const sortedActions = $Actions.getPendingByProjectId(projectId).sort((a, b) => {
         return a.priority - b.priority

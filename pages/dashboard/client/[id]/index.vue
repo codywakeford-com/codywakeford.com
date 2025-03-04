@@ -125,7 +125,6 @@ main {
 
   height: 100vh;
   display: flex;
-  gap: 25px;
   flex-direction: column;
 
   .page-content {

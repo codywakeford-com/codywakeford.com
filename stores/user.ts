@@ -16,6 +16,10 @@ export const useUserStore = defineStore("userStore", () => {
         reciepts: [],
     })
 
+    const email = computed<string>(() => {
+        return state.value.user?.email || "No email"
+    })
+
     const isStaff = computed<boolean>(() => {
         if (!state.value.user) return false
         return state.value.user.role === "staff"
@@ -219,5 +223,6 @@ export const useUserStore = defineStore("userStore", () => {
         createStripeCustomer,
         deletePaymentProfile,
         paymentMethods,
+        email,
     }
 })

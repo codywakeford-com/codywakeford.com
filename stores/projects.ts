@@ -126,12 +126,10 @@ export const useProjectStore = defineStore("projects", {
                         }
 
                         this.projects[index] = project
-
                         return
                     }
 
                     if (change.type === "removed") {
-                        // Remove deleted projects from the state
                         this.projects = this.projects.filter((project) => project.id !== change.doc.id)
                     }
                 })

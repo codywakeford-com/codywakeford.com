@@ -5,8 +5,7 @@
             <div class="top">
                 <div class="divider" />
 
-                <div class="text" v-if="activity.phaseTo === 'discovery'">
-                    Project initiated: Now in the Discovery Phase
+                <div class="text" v-if="activity.phaseTo === 'discovery'">Project initiated: Now in the Discovery Phase
                 </div>
 
                 <div class="text" v-else-if="activity.phaseTo === 'live'">Your website is live!</div>
@@ -124,7 +123,8 @@
 
             <div class="system-message">
                 System: This document puts my understanding of the project in writing so we are clear on what is
-                expected. Please review the proposal and let me know if you would like to ammend anything.
+                expected. Please review the proposal and let me
+                know if you would like to ammend anything.
             </div>
 
             <!-- <button-primary-m @click="$Projects.acceptProjectProposal(props.project.id)"

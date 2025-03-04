@@ -5,45 +5,31 @@
         </nuxt-link>
 
         <cflex class="links">
-            <nuxt-link class="nav-item" to="/dashboard/client">
+            <nuxt-link class="nav-item" to="/dashboard/client" data-tooltip="Projects">
                 <Icon name="material-symbols:construction" size="30" />
             </nuxt-link>
 
-            <nuxt-link class="nav-item" to="/dashboard/client/documents">
+            <nuxt-link class="nav-item" to="/dashboard/client/documents" data-tooltip="Files">
                 <Icon name="ic:baseline-insert-drive-file" size="30" />
             </nuxt-link>
 
-            <nuxt-link class="nav-item" to="/dashboard/client/billing">
+            <nuxt-link class="nav-item" to="/dashboard/client/billing" data-tooltip="Billing">
                 <Icon name="fluent:wallet-credit-card-16-filled" size="30" />
             </nuxt-link>
 
-            <nuxt-link to="/dashboard/domains" class="nav-item">
+            <nuxt-link to="/dashboard/domains" class="nav-item" data-tooltip="Market">
                 <Icon name="healthnames:market-stall" size="30" />
             </nuxt-link>
         </cflex>
 
         <cflex class="bottom-links">
-            <!-- <nuxt-l class="nav-item"> -->
-            <!--     <Icon name="material-symbols:person" size="30" color="white" /> -->
-            <!--     <drop right class="profile-menu"> -->
-            <!--         <rflex class="menu-item" @click="$User.logout()"> -->
-            <!--             <Icon name="material-symbols:person-2-outline" size="25" color="red" /> -->
-            <!--             <span>Logout</span> -->
-            <!--         </rflex> -->
-            <!--     </drop> -->
-            <!-- </btn> -->
+            <nuxt-link @click="$User.logout" class="nav-item" data-tooltip="Logout"> l o </nuxt-link>
 
-            <nuxt-link @click="$User.logout" class="nav-item"> l o </nuxt-link>
-
-            <nuxt-link v-if="$User.isStaff" class="nav-item" to="/dashboard/staff/pdf">
-                <Icon name="ci:file-pdf" size="30" />
+            <nuxt-link v-if="$User.isStaff" class="nav-item" to="/dashboard/staff" data-tooltip="staff">
+                <Icon name="eos-icons:admin" size="30" />
             </nuxt-link>
 
-            <nuxt-link v-if="$User.isStaff" class="nav-item" to="/dashboard/staff">
-                <Icon name="material-symbols:design-services-outline-sharp" size="30" />
-            </nuxt-link>
-
-            <nuxt-link class="nav-item" to="/#hero">
+            <nuxt-link class="nav-item" to="/#hero" data-tooltip="Back to homepage">
                 <Icon name="material-symbols:arrow-back" size="30" />
             </nuxt-link>
         </cflex>
@@ -66,20 +52,38 @@ nav {
     z-index: 5;
 }
 
-a {
-    color: white;
-}
-
 .nav-item {
+    position: relative;
     display: flex;
     align-items: center;
+    color: white;
     justify-content: center;
     height: 40px;
     width: 40px;
     border-radius: $border-radius;
 
+    &::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        left: 65px;
+        background-color: #333;
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease-in-out;
+    }
+
     &:hover {
         background: $primary-light;
+
+        &::after {
+            opacity: 1;
+            visibility: visible;
+        }
     }
 }
 
