@@ -12,8 +12,8 @@
     <dashboard-loading-screen v-if="false" />
     <stripe-payment-dialog />
     <dashboard-calendly-modal />
-    <upload-file-modal />
     <dashboard-design-modal />
+    <dashboard-files-modal :project-id="projectId" />
 </template>
 
 <script setup lang="ts">

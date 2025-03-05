@@ -4,17 +4,21 @@
     background: white;
     display: flex;
     min-width: 250px;
-    padding: 25px;
+    padding: 20px;
     border: 1px solid $text-light2;
     border-radius: 5px;
+    cursor: pointer;
 
+    &:hover {
+        border: 1px solid $primary;
+    }
 
     &.large {
-
-    font-weight: bold;
-    gap: 10px;
-    flex-direction: column;
-    align-items: center;
+        font-weight: bold;
+        align-items: center;
+        gap: 10px;
+        padding-block: 25px;
+        flex-direction: column;
     }
 
     &.medium {

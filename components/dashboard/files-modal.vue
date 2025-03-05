@@ -7,16 +7,13 @@
 
       <div class="modal-content">
         <div class="upload-box">
-          <Icon icon="ic:outline-upload-file" width="50" color="grey" />
+          <Icon name="ic:outline-upload-file" size="50" style="color: grey" />
           <h3>Drag and Drop or <span>Click to upload</span></h3>
           <p>Supports all formats | Max Size: 50Mb</p>
         </div>
 
         <div class="controls">
-          <button-primary-m
-            class="cancel-button"
-            @click="closeModal('files-modal')"
-          >
+          <button-primary-m class="cancel-button" @click="closeModal('files-modal')">
             Cancel
           </button-primary-m>
           <button-primary-m>Upload</button-primary-m>
@@ -27,7 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue";
 </script>
 
 <style lang="scss" scoped>

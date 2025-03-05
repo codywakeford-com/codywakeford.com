@@ -10,7 +10,7 @@
             <option value="document">Document</option>
         </select>
 
-        <button-primary-m>Upload File</button-primary-m>
+        <button-primary-m @click="openModal('files-modal')">Upload File</button-primary-m>
     </section>
 </template>
 

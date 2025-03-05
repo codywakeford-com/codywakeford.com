@@ -3,6 +3,8 @@ export default defineNuxtConfig({
     compatibilityDate: "2024-11-01",
     devtools: { enabled: true },
 
+    imports: { dirs: ["@/services"] },
+
     sourcemap: {
         server: true,
         client: true,
@@ -51,5 +53,11 @@ export default defineNuxtConfig({
     ],
 
     css: ["@/style/main.scss", "@/style/modal.scss"],
-    modules: ["@nuxt/fonts", "@pinia/nuxt", "nuxt-calendly", "@nuxt/icon", "@nuxt/scripts"],
+    modules: [
+        "@nuxt/fonts",
+        "@pinia/nuxt",
+        "nuxt-calendly",
+        "@nuxt/icon",
+        "@nuxt/scripts",
+    ],
 })

@@ -16,8 +16,8 @@
             Here you will find all project related documents. Check
             back once the project is under way!
           </div>
-          <dashboard-file-card-large type="large" v-for="(file, index) of files" @click="selectedDoc = file.url"
-            :key="index" :file="file" />
+          <dashboard-file-card-large v-for="(file, index) of files" @click="selectedDoc = file.url" :key="index"
+            :file="file" />
         </div>
       </section>
 
@@ -39,7 +39,7 @@
 
           <section>
             <div class="cards">
-              <dashboard-file-card v-for="(file, index) of $Files.get" :file="file" />
+              <dashboard-file-card v-for="(file, index) of $Files.get" :file="file" :key="index" />
             </div>
           </section>
         </div>
