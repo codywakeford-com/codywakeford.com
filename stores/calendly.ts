@@ -4,36 +4,40 @@ interface State {
     url: string
     rescheduleUrl: string | null
 }
-export const useCalendlyStore = defineStore("calendlyStore", () => {
-    const state = ref<State>({
-        ui: "book",
-        url: "https://calendly.com/codypwakeford/meeting",
-        rescheduleUrl: null,
-    })
+export const useCalendlyStore = defineStore(
+    "calendlyStore",
+    () => {
+        const state = ref<State>({
+            ui: "book",
+            url: "https://calendly.com/codypwakeford/meeting",
+            rescheduleUrl: null,
+        })
 
-    const type = computed(() => state.value.ui)
+        const type = computed(() => state.value.ui)
 
-    function open() {
-        const modal = document.getElementById("calendlyPopupModal") as HTMLElement | null
+        function open() {
+            const modal = document.getElementById("calendlyPopupModal") as HTMLElement | null
 
-        if (!modal) return
+            if (!modal) return
 
-        modal.classList.remove("hidden")
-    }
+            modal.classList.remove("hidden")
+        }
 
-    function openReschedule(url: string) {
-        state.value.rescheduleUrl = url
+        function openReschedule(url: string) {
+            state.value.rescheduleUrl = url
 
-        open()
-    }
+            open()
+        }
 
-    function close() {
-        state.value.rescheduleUrl = null
-        const modal = document.getElementById("calendlyPopupModal") as HTMLElement | null
+        function close() {
+            state.value.rescheduleUrl = null
+            const modal = document.getElementById("calendlyPopupModal") as HTMLElement | null
 
-        if (!modal) return
+            if (!modal) return
 
-        modal.classList.add("hidden")
-    }
-    return { state, type, close, open, openReschedule }
-})
+            modal.classList.add("hidden")
+        }
+        return { state, type, close, open, openReschedule }
+    },
+    { persist: true },
+)

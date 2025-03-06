@@ -5,38 +5,16 @@
         </header>
 
         <rflex class="cards">
-            <anchor :to="getProjectUrl(project.id)" class="project-card" v-for="project in projects"
-                @click="$Projects.selectedProjectId = project.id">
-                <h3>{{ project.name }}</h3>
-                <!-- <p>{{ project.companyName }}</p> -->
-                <p class="project-domain">{{ project?.domain }}</p>
-                <p class="project-description">{{ project?.description }}</p>
-
-                <div v-if="project.action">Action: {{ project.action }}</div>
-                <div class="project-phase">{{ project.phase }}</div>
-            </anchor>
+            <nuxt-link @click="$Projects.state.selectedProjectId = project.id" :to="getProjectUrl(project.id)" class="project-card" v-for="project in $Projects.state.projects">{{ project.id }}</nuxt-link>
 
             <nuxt-link to="/dashboard/staff/forms/add-project" class="project-add-card">
-                <Icon icon="material-symbols:add" width="25" color="#222" />
+                <Icon name="material-symbols:add" size="25" style="color: #222" />
             </nuxt-link>
         </rflex>
     </section>
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
-
-const projects = computed(() => {
-    return $Projects.getByEmail($User.email)
-})
-const projectDetails: Ref<Omit<Project, "id">> = ref({
-    name: "",
-    emails: [""],
-    phase: "discovery",
-    paymentPlan: "noneSelected",
-    companyName: "Random Company",
-})
-
 interface Props {
     interface: "staff" | "client"
 }

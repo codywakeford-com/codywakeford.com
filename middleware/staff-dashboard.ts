@@ -1,4 +1,5 @@
 import { jwtDecode } from "jwt-decode"
+import AuthService from "~/services/AuthService"
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
     if (!import.meta.client) return
@@ -9,7 +10,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         return navigateTo("/auth/login")
     }
 
-    if (!(await $User.validateJwt($User.state.jwt))) {
+    if (!(await AuthService.validateJwt($User.state.jwt))) {
         return navigateTo("/auth/login")
     }
 

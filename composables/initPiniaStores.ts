@@ -1,15 +1,14 @@
-import { useFilesDashboardStore } from "#imports"
+import { InitController, useFilesDashboardStore } from "#imports"
+import DbService from "~/services/DbService"
 let $User: ReturnType<typeof useUserStore>
 let $Chatroom: ReturnType<typeof useChatroomStore>
 let $Projects: ReturnType<typeof useProjectStore>
-let $Notifications: ReturnType<typeof useNotificationStore>
 let $Files: ReturnType<typeof useFileStore>
 let $ActivityLogs: ReturnType<typeof useActivityLogStore>
 let $App: ReturnType<typeof useAppStore>
 let $Meetings: ReturnType<typeof useMeetingStore>
 let $Actions: ReturnType<typeof useActionStore>
 let $BillingModal: ReturnType<typeof useBillingModalStore>
-let $Stripe: ReturnType<typeof useStripeStore>
 let $Calendly: ReturnType<typeof useCalendlyStore>
 let $FilesDashboard: ReturnType<typeof useFilesDashboardStore>
 
@@ -18,35 +17,22 @@ export async function initPiniaStores() {
     $App = useAppStore()
 
     if ($App.initialized) return
-
     $User = useUserStore()
-    await $User.init()
-
     $Projects = useProjectStore()
-    await $Projects.init()
+    $Projects.state.projects = []
 
-    $ActivityLogs = useActivityLogStore()
-    await $ActivityLogs.init()
-
-    $Files = useFileStore()
-    await $Files.init()
-
+    if ($User.state.user) {
+        InitController.initProjectListeners($User.state.user.email)
+    }
     $Actions = useActionStore()
-    $Actions.init()
-
-    $Stripe = useStripeStore()
+    $ActivityLogs = useActivityLogStore()
+    $Files = useFileStore()
     $Calendly = useCalendlyStore()
     $FilesDashboard = useFilesDashboardStore()
-
     $Chatroom = useChatroomStore()
-    await $Chatroom.init()
-
     $Meetings = useMeetingStore()
-    await $Meetings.init()
-
     $BillingModal = useBillingModalStore()
-
     $App.setInitialized(true)
 }
 
-export { $User, $Projects, $Chatroom, $Notifications, $FilesDashboard, $Files, $ActivityLogs, $App, $Meetings, $Actions, $BillingModal, $Stripe, $Calendly }
+export { $User, $Projects, $Chatroom, $FilesDashboard, $Files, $ActivityLogs, $App, $Meetings, $Actions, $BillingModal, $Calendly }

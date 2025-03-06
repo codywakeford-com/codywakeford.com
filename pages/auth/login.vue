@@ -8,14 +8,12 @@
 
             <cflex>
                 <label for="email">Email Address</label>
-                <input @input="errors.email = false" :class="{ error: errors.email }" class="nova-input" type="text"
-                    name="email" v-model="email" />
+                <input @input="errors.email = false" :class="{ error: errors.email }" class="nova-input" type="text" name="email" v-model="email" />
             </cflex>
 
             <cflex>
                 <label for="password">Password</label>
-                <input class="nova-input" @input="((errors.password = false), (errorMessage = ''))"
-                    :class="{ error: errors.password }" type="password" name="password" v-model="password" />
+                <input class="nova-input" @input="((errors.password = false), (errorMessage = ''))" :class="{ error: errors.password }" type="password" name="password" v-model="password" />
             </cflex>
 
             <anchor to="/auth/forgot-password" class="forgot-password-link">Forgot Password?</anchor>
@@ -33,13 +31,13 @@
                 Don't have an account?
                 <nuxt-link to="/auth/register">Sign Up</nuxt-link>
             </p>
-
-            {{ $User.state.user }}
         </form>
     </main>
 </template>
 
 <script setup lang="ts">
+import AuthController from "~/controllers/AuthController"
+
 definePageMeta({
     layout: "auth",
 })
@@ -64,13 +62,9 @@ async function handleSignIn(email: string, password: string) {
 
     loading.value = true
 
-    try {
-        await $User.login(email, password)
-    } catch (e) {
-        errorMessage.value = String(e)
-    } finally {
-        loading.value = false
-    }
+    const response = await AuthController.login(email, password)
+    if (response?.error) errorMessage.value = response.error
+    loading.value = false
 }
 </script>
 

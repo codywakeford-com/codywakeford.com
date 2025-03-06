@@ -18,14 +18,14 @@
             </nuxt-link>
 
             <nuxt-link to="/dashboard/domains" class="nav-item" data-tooltip="Market">
-                <Icon name="healthnames:market-stall" size="30" />
+                <Icon name="healthicons:market-stall" size="30" />
             </nuxt-link>
         </cflex>
 
         <cflex class="bottom-links">
-            <nuxt-link @click="$User.logout" class="nav-item" data-tooltip="Logout"> l o </nuxt-link>
+            <nuxt-link @click="AuthController.logout()" class="nav-item" data-tooltip="Logout"> l o </nuxt-link>
 
-            <nuxt-link v-if="$User.isStaff" class="nav-item" to="/dashboard/staff" data-tooltip="staff">
+            <nuxt-link v-if="true" class="nav-item" to="/dashboard/staff" data-tooltip="staff">
                 <Icon name="eos-icons:admin" size="30" />
             </nuxt-link>
 

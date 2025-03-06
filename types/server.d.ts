@@ -1,7 +1,19 @@
-export { }
+export {}
 
 declare global {
     namespace Api {
+        namespace Projects {
+            namespace Email {
+                interface Request {
+                    email: string
+                }
+
+                interface Return {
+                    ids: string[]
+                }
+            }
+        }
+
         namespace Emails {
             namespace Invitation {
                 type Response = undefined

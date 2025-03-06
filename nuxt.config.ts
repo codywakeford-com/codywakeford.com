@@ -3,7 +3,7 @@ export default defineNuxtConfig({
     compatibilityDate: "2024-11-01",
     devtools: { enabled: true },
 
-    imports: { dirs: ["@/services"] },
+    imports: { dirs: ["./controllers"] },
 
     sourcemap: {
         server: true,
@@ -47,17 +47,8 @@ export default defineNuxtConfig({
         },
     },
 
-    extends: [
-        ["../nova-components", { install: true }],
-        ["../firebase-service", { install: true }],
-    ],
+    extends: [["../nova-components", { install: true }]],
 
     css: ["@/style/main.scss", "@/style/modal.scss"],
-    modules: [
-        "@nuxt/fonts",
-        "@pinia/nuxt",
-        "nuxt-calendly",
-        "@nuxt/icon",
-        "@nuxt/scripts",
-    ],
+    modules: ["@nuxt/fonts", "@pinia/nuxt", "nuxt-calendly", "@nuxt/icon", "@nuxt/scripts", "pinia-plugin-persistedstate/nuxt"],
 })

@@ -14,6 +14,7 @@ declare global {
         timestamp: number
         actions: Action["id"][]
         sender: User["email"] | "system"
+        projectId: Project["id"]
     }
 
     interface ActionActivityItem extends BaseActivityItem {
@@ -37,7 +38,6 @@ declare global {
 
     interface QuoteActivityItem extends BaseActivityItem {
         type: "quote"
-        projectId: Project["id"]
     }
 
     interface SystemMessageActivityItem extends BaseActivityItem {
@@ -51,17 +51,5 @@ declare global {
         meetingId: string
     }
 
-    type ActivityItem =
-        | ActionActivityItem
-        | AttachmentActivityItem
-        | MessageActivityItem
-        | PhaseActivityItem
-        | QuoteActivityItem
-        | MeetingActivityItem
-        | SystemMessageActivityItem
-
-    interface ActivityLog {
-        projectId: string
-        activity: ActivityItem[]
-    }
+    type ActivityItem = ActionActivityItem | AttachmentActivityItem | MessageActivityItem | PhaseActivityItem | QuoteActivityItem | MeetingActivityItem | SystemMessageActivityItem
 }

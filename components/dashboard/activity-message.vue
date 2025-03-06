@@ -1,12 +1,12 @@
 <template>
     <div class="activity-item" v-if="activity">
+        {{ activity }}
         <!-- Phase Update -->
         <div class="phase" v-if="activity.type === 'phase'">
             <div class="top">
                 <div class="divider" />
 
-                <div class="text" v-if="activity.phaseTo === 'discovery'">Project initiated: Now in the Discovery Phase
-                </div>
+                <div class="text" v-if="activity.phaseTo === 'discovery'">Project initiated: Now in the Discovery Phase</div>
 
                 <div class="text" v-else-if="activity.phaseTo === 'live'">Your website is live!</div>
 
@@ -121,11 +121,7 @@
                 <dashboard-file-card-small v-if="quote" v-for="file in quote.files" :file="file" />
             </div>
 
-            <div class="system-message">
-                System: This document puts my understanding of the project in writing so we are clear on what is
-                expected. Please review the proposal and let me
-                know if you would like to ammend anything.
-            </div>
+            <div class="system-message">System: This document puts my understanding of the project in writing so we are clear on what is expected. Please review the proposal and let me know if you would like to ammend anything.</div>
 
             <!-- <button-primary-m @click="$Projects.acceptProjectProposal(props.project.id)"
                 >Accept Proposal</button-primary-m
@@ -155,6 +151,7 @@ const meeting = computed((): Meeting | undefined => {
 const files = computed(() => {
     return $Files.getFilesByProjectId(projectId)
 })
+
 const getFilesForActivity = (activity: AttachmentActivityItem) => {
     return files.value.filter((file) => activity.files.includes(file.id))
 }

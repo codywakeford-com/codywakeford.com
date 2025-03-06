@@ -5,117 +5,59 @@ interface State {
     chatrooms: Chatroom[]
 }
 
-export const useChatroomStore = defineStore("chatrooms", () => {
-    const state = ref<State>({
-        chatrooms: [],
-    })
-
-    const chatrooms = computed(() => state.value.chatrooms)
-
-    const chatroomMessages = (chatroomId: string) => {
-        return computed(() => {
-            const chatroom = state.value.chatrooms.find((chatroom) => chatroom.projectId === chatroomId)
-            return chatroom ? chatroom.messages : []
+export const useChatroomStore = defineStore(
+    "chatrooms",
+    () => {
+        const state = ref<State>({
+            chatrooms: [],
         })
-    }
 
-    const chatroomById = (chatroomId: string) => {
-        return computed(() => {
-            return state.value.chatrooms.find((chatroom) => chatroom.projectId === chatroomId)
-        })
-    }
+        const chatrooms = computed(() => state.value.chatrooms)
 
-    const chatroomNames = computed(() => state.value.chatrooms.map((chatroom) => chatroom.projectId))
-
-    async function init() {
-        await readChatrooms()
-
-        const nuxtApp = useNuxtApp()
-        const $db = nuxtApp.$db as Firestore
-
-        const projectsRef = collection($db, "projects")
-
-        const listenToMessagesAndDocuments = (projectId: string) => {
-            const messagesRef = collection(doc($db, "projects", projectId), "messages")
-
-            onSnapshot(messagesRef, (snapshot) => {
-                const messages = snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                })) as Message[]
-
-                const chatroom = chatroomById(projectId).value
-
-                if (!chatroom) return
-
-                const latestLocalMessageTime = Number(chatroom.messages.at(-1)?.timestamp) || 0
-                const newMessages = messages.filter((message) => Number(message.timestamp) > latestLocalMessageTime)
-                chatroom.messages.push(...newMessages)
+        const chatroomMessages = (chatroomId: string) => {
+            return computed(() => {
+                const chatroom = state.value.chatrooms.find((chatroom) => chatroom.projectId === chatroomId)
+                return chatroom ? chatroom.messages : []
             })
         }
 
-        onSnapshot(projectsRef, (snapshot) => {
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === "added") {
-                    const projectId = change.doc.id
-                    listenToMessagesAndDocuments(projectId)
-                }
+        const chatroomById = (chatroomId: string) => {
+            return computed(() => {
+                return state.value.chatrooms.find((chatroom) => chatroom.projectId === chatroomId)
             })
-        })
-    }
+        }
 
-    async function readChatrooms() {
-        const projectIds = await $fetch<string[]>(`/api/projects/${$User.email}`)
+        const chatroomNames = computed(() => state.value.chatrooms.map((chatroom) => chatroom.projectId))
 
-        let chatrooms = [] as Chatroom[]
+        async function sendMessage(projectId: string, message: Omit<Message, "id" | "timestamp">) {
+            const chatroom = chatroomById(projectId).value
 
-        for (let projectId of projectIds) {
-            let chatroom: Chatroom = {
-                projectId: projectId,
-                messages: [] as Message[],
+            if (!chatroom) throw new Error("Chatroom not found")
+
+            const optimisticMessage: Message = {
+                ...message,
+                id: uuid(),
+                type: "message",
+                timestamp: Date.now(),
             }
 
-            const messages = await readArray<Message>(`/projects/${projectId}/messages`)
-            chatroom.messages = messages
-            chatrooms.push(chatroom)
+            chatroom.messages.push(optimisticMessage)
+
+            try {
+                await createObject<Message>(`/projects/${projectId}/messages`, optimisticMessage)
+            } catch (error) {
+                console.error(error)
+                chatroom.messages.pop()
+            }
         }
 
-        chatrooms.forEach((room) => {
-            room.messages.sort((a, b) => Number(a.timestamp) - Number(b.timestamp))
-        })
-
-        state.value.chatrooms = chatrooms
-    }
-
-    async function sendMessage(projectId: string, message: Omit<Message, "id" | "timestamp">) {
-        const chatroom = chatroomById(projectId).value
-
-        if (!chatroom) throw new Error("Chatroom not found")
-
-        const optimisticMessage: Message = {
-            ...message,
-            id: uuid(),
-            type: "message",
-            timestamp: Date.now(),
+        return {
+            sendMessage,
+            chatroomNames,
+            chatrooms,
+            chatroomMessages,
+            chatroomById,
         }
-
-        chatroom.messages.push(optimisticMessage)
-
-        try {
-            await createObject<Message>(`/projects/${projectId}/messages`, optimisticMessage)
-        } catch (error) {
-            console.error(error)
-            chatroom.messages.pop()
-        }
-    }
-
-    return {
-        sendMessage,
-        readChatrooms,
-        init,
-        chatroomNames,
-        chatrooms,
-        chatroomMessages,
-        chatroomById,
-    }
-})
+    },
+    { persist: true },
+)

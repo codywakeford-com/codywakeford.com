@@ -1,6 +1,6 @@
 <template>
     <mpage>
-        <form class="main-form" @submit.prevent="sendInvitation()">
+        <form class="main-form" @submit.prevent="submit(emails)">
             <header>
                 <h1>Create Project Invitation</h1>
                 <p>This form will invite a list of clients to login to the project dashboard.</p>
@@ -33,19 +33,12 @@ const emails = ref(["codypwakeford@gmail.com"])
 const emailInput = ref("")
 const loading = ref(false)
 
-async function sendInvitation() {
-    loading.value = true
+async function submit(emails: string[]) {
+    if (!emails.length) return
 
-    try {
-        await $fetch<Api.Emails.Invitation.Response>("/api/emails/invitation", {
-            method: "POST",
-            body: { emails: emails.value } as Api.Emails.Invitation.Request,
-        })
-    } catch (e) {
-        console.log(e)
-    } finally {
-        loading.value = false
-    }
+    loading.value = true
+    await ProjectsController.createProject(emails)
+    loading.value = false
 }
 
 function addEmail(email: string) {
