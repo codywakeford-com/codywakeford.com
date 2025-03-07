@@ -22,6 +22,43 @@ export default class ProjectService {
         }
     }
 
+    static async addQuoteToProject(projectId: string, quoteUrl: string, proposalUrl: string, quoteAmount: number) {
+        const files: ProjectFile[] = [
+            {
+                id: uuid(),
+                name: "ProjectProposal",
+                projectId: projectId,
+                extension: "pdf",
+                sender: "codypwakeford@gmail.com",
+                size: 15,
+                timestamp: Date.now(),
+                url: proposalUrl,
+            },
+            {
+                id: uuid(),
+                name: "ProjectQuote",
+                projectId: projectId,
+                extension: "pdf",
+                sender: "codypwakeford@gmail.com",
+                timestamp: Date.now(),
+                size: 15,
+                url: quoteUrl,
+            },
+        ]
+
+        files.forEach((f) => {
+            DbService.createObject<ProjectFile>(`/projects/${projectId}/files`, f)
+        })
+
+        const quote: ProjectQuote = {
+            amountPaid: 0,
+            files: files,
+            totalAmount: quoteAmount,
+        }
+
+        await DbService.updateObject<Project>(`/projects/${projectId}`, { quote: quote })
+    }
+
     static async setDesignDocument(projectId: string, figmaLink: string) {
         const update = {
             design: {

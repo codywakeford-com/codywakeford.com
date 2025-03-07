@@ -7,7 +7,7 @@
             </div>
 
             <div class="right">
-                <nuxt-link target="_blank" :to="`https://${project.domain}`" class="project-url" v-if="project?.domain">https://{{ project?.domain }}</nuxt-link>
+                <!-- <nuxt-link target="_blank" :to="`https://${project.domain}`" class="project-url" v-if="project?.domain">https://{{ project?.domain }}</nuxt-link> -->
             </div>
         </header>
 
@@ -19,7 +19,7 @@
                 </div>
 
                 <div class="meeting card">
-                    <dashboard-meetings v-if="$Meetings.getLengthByProjectId(projectId)" />
+                    <dashboard-meetings v-if="$Meetings.getByProjectId(projectId).length" />
 
                     <div class="no-meetings-message" v-else>
                         <h3>Meetings</h3>
@@ -33,13 +33,13 @@
                     <h3>Project Log</h3>
                     <p>A place to find all activity associated with this project.</p>
 
-                    <dashboard-chatroom />
+                    <dashboard-activity-log />
                 </div>
             </div>
 
             <div class="right-content">
                 <div class="action-menu card">
-                    <dashboard-action :project="project" v-if="$Actions.actions.length && project" />
+                    <dashboard-action :project="project" v-if="$Actions.getPendingByProjectId(projectId).length && project" />
                     <div class="no-actions-message" v-else>
                         <h3>Actions</h3>
                         <p>Nothing to do at the moment!</p>
@@ -222,6 +222,7 @@ main {
             width: 100%;
             overflow: hidden;
             flex: 1;
+            min-width: 350px;
             padding-inline: 0;
             padding-block: 25px 0;
 

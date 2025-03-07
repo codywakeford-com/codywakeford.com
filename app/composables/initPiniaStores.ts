@@ -14,9 +14,7 @@ let $FilesDashboard: ReturnType<typeof useFilesDashboardStore>
 
 export async function initPiniaStores() {
     if (!import.meta.client) return
-    $App = useAppStore()
 
-    if ($App.initialized) return
     $User = useUserStore()
     $Projects = useProjectStore()
     $Projects.state.projects = []
@@ -33,7 +31,6 @@ export async function initPiniaStores() {
     $Chatroom = useChatroomStore()
     $Meetings = useMeetingStore()
     $BillingModal = useBillingModalStore()
-    $App.setInitialized(true)
 }
 
 export { $User, $Projects, $Chatroom, $FilesDashboard, $Files, $ActivityLogs, $App, $Meetings, $Actions, $BillingModal, $Calendly }

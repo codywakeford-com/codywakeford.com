@@ -4,7 +4,7 @@ export default class ActionService {
     static async createUserAction(projectId: string, actionType: Action["action"], description: string) {
         const action: Action = {
             id: uuid(),
-            priority: 1,
+            priority: actionType === "payment" ? 10 : 1,
             timestamp: Date.now(),
             status: "pending",
             action: actionType,

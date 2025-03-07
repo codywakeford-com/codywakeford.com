@@ -12,8 +12,6 @@
                 </div>
             </nav>
 
-            <dashboard-project-list interface="staff" />
-
             <h2>Ongoing Projects</h2>
             <table>
                 <thead>
@@ -24,7 +22,7 @@
                 </thead>
 
                 <tbody>
-                    <tr v-for="(project, index) of projects" :key="index" @click="navigateTo(`/dashboard/staff/${project.id}`)">
+                    <tr v-for="(project, index) of $Projects.state.projects" :key="index" @click="navigateTo(`/dashboard/staff/${project.id}`)">
                         <td>{{ project.id }}</td>
                         <td>{{ project.phase }}</td>
                     </tr>
@@ -32,10 +30,6 @@
             </table>
 
             <div class="action-buttons">
-                <btn @click="$Projects.createProject('full')" class="action-btn">Create Full Project</btn>
-
-                <btn @click="$Projects.createProject('build')" class="action-btn">Create Development Project</btn>
-
                 <nuxt-link to="/dashboard/staff/forms/add-project" class="action-btn create-project-btn">Create Project</nuxt-link>
             </div>
         </section>

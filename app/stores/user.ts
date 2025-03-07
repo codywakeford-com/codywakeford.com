@@ -1,26 +1,34 @@
 import { defineStore } from "pinia"
-import { jwtDecode } from "jwt-decode"
-import AuthService from "~~/services/AuthService"
 
 interface State {
-    user: User | null
+    user: User
     jwt: string | null
     isLoading: boolean
-    reciepts: PaymentRecord[]
+    // reciepts: PaymentRecord[]
 }
 
 export const useUserStore = defineStore(
     "userStore",
     () => {
         const state = ref<State>({
-            user: null,
+            user: {
+                id: "guest-user-id",
+                email: "guest user",
+                role: "user",
+                stripePaymentProfile: {},
+            },
+
             jwt: null,
             isLoading: true,
-            reciepts: [],
+            // reciepts: [],
         })
 
         const email = computed<string>(() => {
             return state.value.user?.email || "No email"
+        })
+
+        const user = computed(() => {
+            return state.value.user
         })
 
         const isStaff = computed<boolean>(() => {
@@ -137,6 +145,7 @@ export const useUserStore = defineStore(
             stripePaymentProfile,
             paymentMethods,
             email,
+            user,
         }
     },
     { persist: true },

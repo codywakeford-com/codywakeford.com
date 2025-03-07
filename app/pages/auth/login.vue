@@ -6,15 +6,22 @@
                 <p>Log in to your account to continue</p>
             </lheader>
 
-            <cflex>
+            <div class="input-group">
                 <label for="email">Email Address</label>
                 <input @input="errors.email = false" :class="{ error: errors.email }" class="nova-input" type="text" name="email" v-model="email" />
-            </cflex>
+            </div>
 
-            <cflex>
+            <div class="input-group">
                 <label for="password">Password</label>
-                <input class="nova-input" @input="((errors.password = false), (errorMessage = ''))" :class="{ error: errors.password }" type="password" name="password" v-model="password" />
-            </cflex>
+                <input
+                    class="nova-input"
+                    @input="((errors.password = false), (errorMessage = ''))"
+                    :class="{ error: errors.password }"
+                    type="password"
+                    name="password"
+                    v-model="password"
+                />
+            </div>
 
             <anchor to="/auth/forgot-password" class="forgot-password-link">Forgot Password?</anchor>
 

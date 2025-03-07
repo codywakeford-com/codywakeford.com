@@ -1,45 +1,28 @@
 import { defineStore } from "pinia"
 
+interface State {
+    meetings: Meeting[]
+}
 export const useMeetingStore = defineStore(
     "meetings",
-    {
-        state: () => ({
-            meetings: [] as Meeting[],
-        }),
+    () => {
+        const state = ref<State>({
+            meetings: [],
+        })
 
-        getters: {
-            get(state) {
-                return state.meetings
-            },
+        const getByMeetingId = computed(() => {
+            return (meetingId: string) => {
+                return state.value.meetings.find((m) => m.id === meetingId)
+            }
+        })
 
-            getById:
-                (state) =>
-                (meetingId: Meeting["id"]): Meeting | undefined => {
-                    return state.meetings.find((m) => {
-                        return m.id === meetingId
-                    })
-                },
+        const getByProjectId = computed(() => {
+            return (projectId: string) => {
+                return state.value.meetings.filter((m) => m.projectId === projectId)
+            }
+        })
 
-            getByProjectId:
-                (state) =>
-                (projectId: Project["id"]): Meeting[] => {
-                    const meetings = state.meetings.filter((m) => {
-                        return m.projectId === projectId
-                    })
-
-                    return meetings
-                },
-
-            getLengthByProjectId: (state) => (projectId: Project["id"]) => {
-                const meetings = state.meetings.filter((m) => {
-                    return m.projectId === projectId
-                })
-
-                if (!meetings) throw new Error("No project found")
-
-                return meetings.length
-            },
-        },
+        return { state, getByProjectId, getByMeetingId }
     },
     { persist: true },
 )

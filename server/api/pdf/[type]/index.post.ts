@@ -13,8 +13,9 @@ export default eventHandler(async (event) => {
     const { type } = event.context.params || {}
 
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
     })
+
     const page = await browser.newPage()
 
     await page.setViewport({ width: 1240, height: 1754 })
@@ -27,19 +28,18 @@ export default eventHandler(async (event) => {
 
         const filePath = path.resolve(`./${type}.pdf`)
         const buffer = await page.pdf({
-            path: filePath,
             format: "A4",
             printBackground: true,
         })
 
-        // await browser.close()
+        await browser.close()
+
+        const fileRef = ref(storage, `${type}/${Date.now()}.${type}.pdf`)
+        await uploadBytes(fileRef, buffer, { contentType: "application/pdf" })
+        const url = await getDownloadURL(fileRef)
+
+        return url
     } catch (e) {
         console.log(e)
     }
-
-    // const fileRef = ref(storage, `${type}/${Date.now()}.${type}.pdf`)
-    // await uploadBytes(fileRef, buffer, { contentType: "application/pdf" })
-    // const url = await getDownloadURL(fileRef)
-    //
-    // return url
 })

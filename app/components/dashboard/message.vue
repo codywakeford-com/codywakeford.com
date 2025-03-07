@@ -1,10 +1,13 @@
 <template>
     <div class="message-container">
-        <div class="message" :class="{
-            contains: message.message.length,
-            sent: message.sender === $User.email,
-            recieved: message.sender !== $User.email,
-        }">
+        <div
+            class="message"
+            :class="{
+                contains: message.message.length,
+                sent: message.sender === $User.email,
+                recieved: message.sender !== $User.email,
+            }"
+        >
             <div v-if="message.message" class="content">
                 {{ message.message }}
             </div>
@@ -16,12 +19,15 @@
                 <Icon name="hugeicons:tick-01" v-else />
             </rflex>
         </div>
-        <div class="files" :class="{
-            sent: message.sender === $User.email,
-            recieved: message.sender !== $User.email,
-        }" v-if="files.length">
-            <dashboard-file-card-small :delete="false" :download="true" v-for="(file, index) of files" :key="index"
-                :file="file" />
+        <div
+            class="files"
+            :class="{
+                sent: message.sender === $User.email,
+                recieved: message.sender !== $User.email,
+            }"
+            v-if="message.files.length"
+        >
+            <dashboard-file-card-small v-for="(file, index) of message.files" :key="index" :file="file" />
         </div>
     </div>
 </template>
@@ -33,9 +39,6 @@ const props = defineProps<{
 }>()
 
 const delivered = true
-const files = computed(() => {
-    return $Files.getFilesByIds(props.message.files)
-})
 </script>
 
 <style lang="scss" scoped>

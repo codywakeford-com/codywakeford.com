@@ -1,7 +1,7 @@
 import { defineStore } from "pinia"
 
 interface State {
-    log: ActivityItem[]
+    log: (ActivityItem | Message)[]
 }
 
 export const useActivityLogStore = defineStore(
@@ -13,15 +13,19 @@ export const useActivityLogStore = defineStore(
 
         const log = computed(() => state.value.log)
 
+        const sortedByTimestamp = computed(() => {
+            return state.value.log.sort((a, b) => a.timestamp - b.timestamp)
+        })
+
         const getByProjectId = computed(() => {
             return (projectId: string) => {
-                return state.value.log.filter((i) => i.projectId === projectId)
+                return sortedByTimestamp.value.filter((i) => i.projectId === projectId)
             }
         })
 
         const getIndexByProjectId = computed(() => {
             return (projectId: Project["id"]) => {
-                return state.value.log.findIndex((log) => log.projectId === projectId)
+                return sortedByTimestamp.value.findIndex((log) => log.projectId === projectId)
             }
         })
 

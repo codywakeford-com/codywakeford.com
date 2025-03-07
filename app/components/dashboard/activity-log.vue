@@ -1,55 +1,55 @@
 <template>
     <section class="chatroom">
         <div class="messages-container" ref="messagesContainer">
-            <!-- <div class="no-messages" v-if="!activitiesAndMessages.length">No messages yet.</div> -->
-
             <div v-for="(item, index) of $ActivityLogs.getByProjectId(projectId)" :key="index">
-                <!-- <dashboard-message v-if="item.type === 'message'" :message="item" /> -->
-                <dashboard-activity-message :activity="item" /> 
+                <dashboard-message v-if="item.type === 'message'" :message="item" />
+                <dashboard-activity-message v-else :activity="item" />
             </div>
         </div>
 
-
-
         <div class="input-container">
             <div class="input-box">
-                <!-- <div v-if="messageFiles.length" class="message-files"> -->
-                <!--     <dashboard-file-card-small @delete="removeFile(file.name)" :delete="true" :download="false" v-for="(file, index) of messageFilesProper" :key="index" :file="file" /> -->
-                <!-- </div> -->
+                <div v-if="messageFiles.length" class="message-files">
+                    <dashboard-file-card-small
+                        @delete="removeFile(file.name)"
+                        :delete="true"
+                        :download="false"
+                        v-for="(file, index) of messageFilesProper"
+                        :key="index"
+                        :file="file"
+                    />
+                </div>
 
-                <!-- <div class="input-wrapper" :class="{ files: messageFiles.length }"> -->
-                <!--     <textarea v-model="message" type="text" placeholder="Type a message..." class="message-input" :disabled="sending" @keyup.enter="sendMessage(messageObj, messageFiles)" /> -->
-                <!--     <label class="file-input-label"> -->
-                <!--         <input type="file" @change="handleFileSelect" class="file-input" :disabled="sending" /> -->
-                <!--         <Icon icon="gravity-ui:paperclip" width="20" /> -->
-                <!--     </label> -->
-                <!-- </div> -->
+                <div class="input-wrapper" :class="{ files: messageFiles.length }">
+                    <textarea
+                        v-model="message"
+                        type="text"
+                        placeholder="Type a message..."
+                        class="message-input"
+                        :disabled="sending"
+                        @keyup.enter="ActivityLogController.sendMessage(projectId, message, messageFiles)"
+                    />
+                    <label class="file-input-label">
+                        <input type="file" @change="handleFileSelect" class="file-input" :disabled="sending" />
+                        <Icon name="gravity-ui:paperclip" size="20" />
+                    </label>
+                </div>
             </div>
-            <button type="button" class="send-button" :disabled="sending" @click="sendMessage(messageObj, messageFiles)">
-                <Icon icon="f7:paperplane-fill" width="25" />
+            <button type="button" class="send-button" :disabled="sending" @click="ActivityLogController.sendMessage(projectId, message, messageFiles)">
+                <Icon name="f7:paperplane-fill" size="25" />
             </button>
         </div>
     </section>
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
+import ActivityLogController from "~~/controllers/ActivityLogController"
 
 const projectId = useRoute().params.id as string
-
+const message = ref("")
 const messagesContainer = ref<HTMLElement | null>(null)
 const messageFiles = ref<File[]>([])
 const sending = ref(false)
-
-// const activitiesAndMessages = computed(() => {
-//     const activities = $ActivityLogs.getByProjectId(projectId).activity
-//     const messages = $Chatroom.chatroomMessages(projectId).value || []
-//     const sorted = [...messages, ...activities].sort((a, b) => {
-//         return a.timestamp - b.timestamp
-//     })
-//
-//     return sorted
-// })
 
 const messageFilesProper = computed(() => {
     return messageFiles.value.map((file) => {
@@ -66,15 +66,6 @@ const messageFilesProper = computed(() => {
     })
 })
 
-const message = ref("")
-const messageObj = computed(() => {
-    return {
-        message: message.value,
-        sender: $User.email,
-        files: [],
-    }
-})
-
 function removeFile(fileName: string) {
     const index = messageFiles.value.findIndex((file) => {
         return file.name === fileName
@@ -85,25 +76,11 @@ function removeFile(fileName: string) {
     }
 }
 
-// watch(activitiesAndMessages, () => {
-//     setTimeout(() => {
-//         scrollToBottom()
-//     }, 0)
-// })
-//
-// async function sendMessage(messageObj: Omit<Message, "id" | "timestamp">, messageFiles: File[]) {
-//     if (messageObj.message.trim() === "" && !messageFiles.length) return
-//
-//     if (messageFiles.length) {
-//         messageObj.files = await $Files.saveFiles(projectId, messageFiles, $User.email)
-//     }
-//
-//     console.log()
-//     $Chatroom.sendMessage(projectId, messageObj)
-//
-//     message.value = ""
-//     messageFiles = []
-// }
+watch($ActivityLogs.state.log, () => {
+    setTimeout(() => {
+        scrollToBottom()
+    }, 0)
+})
 
 function scrollToBottom() {
     const container = messagesContainer.value
@@ -116,12 +93,12 @@ function scrollToBottom() {
     }
 }
 
-// function handleFileSelect(event: Event) {
-//     const input = event.target as HTMLInputElement
-//     if (input.files && input.files.length > 0) {
-//         messageFiles.value.push(input.files[0])
-//     }
-// }
+function handleFileSelect(event: Event) {
+    const input = event.target as HTMLInputElement
+    if (input.files && input.files.length > 0) {
+        messageFiles.value.push(input.files[0])
+    }
+}
 </script>
 
 <style lang="scss" scoped>

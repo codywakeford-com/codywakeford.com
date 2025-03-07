@@ -1,5 +1,6 @@
 import ActionService from "~~/services/ActionService"
 import ActivityLogService from "~~/services/ActivityLogService"
+import DbService from "~~/services/DbService"
 import ProjectService from "~~/services/ProjectService"
 
 export default class ProjectController {
@@ -21,6 +22,13 @@ export default class ProjectController {
         }
     }
 
+    static async deleteProject(projectId: string) {
+        await DbService.deleteObject(`/projects/${projectId}`)
+        $Projects.state.projects = $Projects.state.projects.filter((p) => {
+            return p.id !== projectId
+        })
+    }
+
     static async updatePhase(projectId: string, phase: ProjectPhase) {
         try {
             await updateObject(`/projects/${projectId}`, { phase })
@@ -31,62 +39,16 @@ export default class ProjectController {
         }
     }
 
-    static async addQuoteToProject(projectId: Project["id"]) {
-        if (!this.proposalUrl || !this.quoteUrl || !this.total) return
-        const files: Omit<ProjectFile, "id">[] = [
-            {
-                name: "ProjectProposal",
-                projectId: projectId,
-                extension: "pdf",
-                sender: "codypwakeford@gmail.com",
-                size: 15,
-                timestamp: Date.now(),
-                url: this.proposalUrl,
-                type: "document",
-            },
-            {
-                name: "ProjectQuote",
-                projectId: projectId,
-                extension: "pdf",
-                sender: "codypwakeford@gmail.com",
-                timestamp: Date.now(),
-                size: 15,
-                url: this.quoteUrl,
-                type: "document",
-            },
-        ]
-
-        const newFiles: ProjectFile[] = []
-
-        for (let i = 0; i < files.length; i++) {
-            const id = await createObject<Omit<ProjectFile, "id">>(`/projects/${projectId}/files`, files[i])
-
-            if (!id) return
-
-            newFiles.push({
-                id: id,
-                ...files[i],
-            })
-        }
-
-        const quote: ProjectQuote = {
-            amountPaid: 0,
-            totalAmount: this.total * 100,
-            files: newFiles,
-        }
-
-        await updateObject(`/projects/${projectId}`, { quote })
-        ActivityLogService.addQuoteActivityItem(projectId)
-        await createObject<Action>(`/projects/${projectId}/user-required-actions`, {
-            id: uuid(),
+    static async addQuoteToProject(projectId: string, quoteUrl: string, proposalUrl: string, quoteAmount: number) {
+        await ProjectService.addQuoteToProject(projectId, quoteUrl, proposalUrl, quoteAmount)
+        await ActivityLogService.addQuoteActivityItem(projectId)
+        await ActionService.createUserAction(
             projectId,
-            action: "accept-quote",
-            timestamp: Date.now(),
-            priority: 10,
-            description: "Now that we've had our discovery call, I've prepared a quote for you. You can accept it, message me with any questions, or book a call if you'd like to discuss any changes.",
-            status: "pending",
-        })
+            "accept-quote",
+            "Now that we've had our discovery call, I've prepared a quote for you. You can accept it, message me with any questions, or book a call if you'd like to discuss any changes.",
+        )
     }
+
     static async clientAcceptsDesign(projectId: Project["id"]) {
         const update = {
             design: {
@@ -139,7 +101,11 @@ export default class ProjectController {
 
                 createObject(`/projects/${projectId}/user-required-actions`, action)
 
-                ActivityLogService.addSystemMessageActivityItem(projectId, "To progress to the design phase you need to pay a minimum of 1 third of the quote cost.", [action.id])
+                ActivityLogService.addSystemMessageActivityItem(
+                    projectId,
+                    "To progress to the design phase you need to pay a minimum of 1 third of the quote cost.",
+                    [action.id],
+                )
             }
 
             $Actions.markAsComplete(actionId)

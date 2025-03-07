@@ -67,6 +67,8 @@
                     </div>
                 </div>
 
+                <button-primary-m class="submit-button" @click="addQuoteItem()">Add item</button-primary-m>
+
                 <table>
                     <thead>
                         <tr>
@@ -89,25 +91,30 @@
                 </table>
 
                 <div class="total">Total £{{ total }}</div>
-
-                <button-primary-m class="submit-button" @click="addQuoteItem()">Add item</button-primary-m>
             </div>
+
+            <embed v-if="quoteUrl" :src="quoteUrl" type="application/pdf" />
 
             <nuxt-link v-if="quoteUrl" :to="quoteUrl">Download Quote</nuxt-link>
             <nuxt-link v-if="invoiceUrl" :to="invoiceUrl">Download Invoice</nuxt-link>
-
-            <button v-if="quoteUrl" @click="$Projects.addQuoteToProject(projectId)">Upload Quote</button>
+            {{ projectId }}
+            <button v-if="projectId && quoteUrl" @click="ProjectController.addQuoteToProject(projectId, quoteUrl, proposalUrl, total)">Upload Quote</button>
+            <button-primary-m type="submit">Submit</button-primary-m>
         </form>
     </mpage>
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
+const projectId = route.query.projectId as string | null
+
 definePageMeta({
     layout: "dashboard",
     middleware: "staff-dashboard",
 })
-
-import { uuid } from "~/utils/uuid"
+const proposalUrl = ref("")
+import PdfController from "~~/controllers/PdfController"
+import ProjectController from "~~/controllers/ProjectsController"
 
 const quoteItems = ref<QuoteItem[]>([
     {
@@ -143,6 +150,7 @@ const newQuoteItem = ref<QuoteItem>({
         return this.quantity * this.unitPrice
     },
 })
+
 function addQuoteItem() {
     for (let value of Object.values(newQuoteItem.value)) {
         if (!value) return
@@ -161,17 +169,13 @@ function addQuoteItem() {
         },
     }
 }
+
 const total = computed(() => {
     return quoteItems.value.reduce((sum: number, item: QuoteItem) => {
         return sum + item.subtotal
     }, 0)
 })
 
-interface Props {
-    projectId: string
-}
-
-const url = ref("")
 const deliverableInput = ref("")
 const input = ref<Proposal>({
     scope: "This project aims to design and develop a responsive website for the client. The website will include an e-commerce platform with product listing, cart functionality, and payment gateway integration.",
@@ -191,63 +195,22 @@ function removeItem(index: number) {
 }
 
 const loading = ref(false)
+
 async function submit() {
     loading.value = true
-    try {
-        const promises = [generateProposal(), createQuoteDoc()]
-        await Promise.all(promises)
-    } catch (e) {
-        console.log(e)
-    } finally {
-        loading.value = true
-    }
-}
-async function generateProposal() {
-    for (let a of Object.entries(deliverableInput.value)) {
-        if (!a) return
+
+    const { quoteDocUrl, invoiceDocUrl, proposalDocUrl } = await PdfController.generateQuoteAndProposal(
+        $Projects.state.selectedProjectId,
+        quoteItems.value,
+        total.value,
+        "name",
+    )
+
+    if (quoteDocUrl) {
+        quoteUrl.value = quoteDocUrl
     }
 
-    url.value = await $fetch(`/api/pdf/proposal`, {
-        method: "POST",
-        body: input.value,
-    })
-
-    $Projects.proposalUrl = url.value
-}
-const props = defineProps<Props>()
-
-async function createQuoteDoc() {
-    const quote: Quote = {
-        id: uuid(),
-        discount: 0,
-        items: quoteItems.value,
-        projectId: props.projectId,
-        timestamp: Date.now(),
-        currency: "gbp",
-
-        taxRate: 0,
-        status: "sent",
-        totalAmount: total.value,
-    }
-
-    quoteUrl.value = (await $fetch("/api/pdf/quote", {
-        method: "POST",
-        body: {
-            quote,
-            recipientName: "Name Here",
-        },
-    })) as string
-
-    invoiceUrl.value = (await $fetch("/api/pdf/invoice", {
-        method: "POST",
-        body: {
-            quote,
-            recipientName: "Johnny Parker",
-        },
-    })) as string
-
-    $Projects.total = total.value
-    $Projects.quoteUrl = quoteUrl.value
+    loading.value = false
 }
 
 function removeQuoteItem(i: number) {
@@ -257,4 +220,8 @@ function removeQuoteItem(i: number) {
 
 <style scoped lang="scss">
 @use "@/style/forms.scss" as *;
+
+embed {
+    min-height: 400px;
+}
 </style>

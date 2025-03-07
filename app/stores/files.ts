@@ -1,48 +1,45 @@
 import { defineStore } from "pinia"
 
 import Fuse from "fuse.js"
-import { collection, onSnapshot } from "firebase/firestore"
+
+interface State {
+    files: ProjectFile[]
+}
+
 export const useFileStore = defineStore(
     "file",
-    {
-        state: () => ({
-            files: [] as ProjectFile[],
-            recentFiles: [] as ProjectFile["id"][],
-        }),
+    () => {
+        const state = ref<State>({
+            files: [],
+        })
 
-        getters: {
-            get(state) {
-                return state.files
-            },
+        const getByFileId = computed(() => {
+            return (fileId: string) => {
+                return state.value.files.find((f) => f.id === fileId)
+            }
+        })
 
-            getRecent: (state) => (number: number) => {
-                const sortedFiles = state.files.sort((a, b) => {
-                    return a.timestamp - b.timestamp
-                })
+        const getRecent = computed(() => {
+            return (count: number) => {
+                return state.value.files.slice(0, count)
+            }
+        })
 
-                if (!sortedFiles.length) return []
+        const getByIds = computed(() => {
+            return (fileIds: string[]) => {
+                return state.value.files.filter((f) => fileIds.includes(f.id))
+            }
+        })
 
-                return sortedFiles.slice(0, number)
-            },
+        const getByProjectId = computed(() => {
+            return (projectId: string) => {
+                return state.value.files.filter((f) => f.projectId === projectId)
+            }
+        })
 
-            getFileById: (state) => (fileId: string) => {
-                const file = state.files.find((file) => file.id === fileId)
-
-                if (file) return file
-            },
-
-            getFilesByIds: (state) => (fileIds: string[]) => {
-                return state.files.filter((file) => {
-                    return fileIds.includes(file.id)
-                })
-            },
-
-            getFilesByProjectId: (state) => (projectId: string) => {
-                return state.files.filter((file) => file.projectId === projectId)
-            },
-
-            filterFiles: (state) => (filters: FileFilters) => {
-                let filteredFiles = state.files || []
+        const filterFiles = computed(() => {
+            return (filters: FileFilters) => {
+                let filteredFiles = state.value.files || []
 
                 if (filters.search) {
                     const fuse = new Fuse(filteredFiles, {
@@ -55,63 +52,11 @@ export const useFileStore = defineStore(
                     filteredFiles = results.map((result) => result.item)
                 }
 
-                if (filters.type !== "any") {
-                    filteredFiles = filteredFiles.filter((file) => {
-                        return file.type === filters.type
-                    })
-                }
-
                 return filteredFiles
-            },
-        },
+            }
+        })
 
-        actions: {
-            /**Uploads files to firebase and adds them to a project */
-            async saveFiles(projectId: string, files: File[], sender: User["email"]) {
-                const fileIds: string[] = []
-
-                for (const file of files) {
-                    let fileType: ProjectFile["type"] = "document"
-
-                    const path = `${projectId}/files/${file.name}`
-                    let previewUrl: string | undefined
-
-                    if (file.type.startsWith("image/")) {
-                        fileType = "image"
-                        const previewImage = await this.resizeImage(file, 200, 200)
-                        previewUrl = await $Files.uploadToFirebase(`${path}/preview`, previewImage)
-                    }
-
-                    const url = await $Files.uploadToFirebase(path, file)
-
-                    const document = {
-                        id: uuid(),
-                        url: url,
-                        previewUrl: previewUrl,
-                        extension: "",
-                        timestamp: Date.now(),
-                        name: file.name,
-                        sender: sender,
-                        size: file.size,
-                        type: fileType,
-                        projectId: projectId,
-                    } as ProjectFile
-
-                    const docId = await this.addFileToProject(projectId, document)
-
-                    if (!docId) {
-                        throw new Error("No doc id")
-                    }
-                    fileIds.push(docId)
-                }
-
-                if (fileIds.length) {
-                    $ActivityLogs.addFilesActivityItem(projectId, fileIds)
-                }
-
-                return fileIds
-            },
-        },
+        return { state, getByProjectId, getByFileId, getByIds, filterFiles, getRecent }
     },
-    { persist: true },
+    { persist: false },
 )

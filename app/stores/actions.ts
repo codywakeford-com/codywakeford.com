@@ -38,21 +38,4 @@ export const useActionStore = defineStore("actions", () => {
         getByProjectId,
         getPendingByProjectId,
     }
-
-    // async function markAsComplete(actionId: Action["id"]) {
-    //     const action = this.getByActionId(actionId);
-    //
-    //     if (!action) throw new Error("No action found");
-    //
-    //     const update: Partial<Action> = {
-    //         status: "completed",
-    //     };
-    //
-    //     await updateObject<Action>(
-    //         `/projects/${action.projectId}/user-required-actions/${action.id}`,
-    //         update,
-    //     );
-    //
-    //     this.selectedActionId = null;
-    // }
 })

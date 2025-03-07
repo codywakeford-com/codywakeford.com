@@ -4,6 +4,16 @@ declare global {
     // An activity item can have an action button attatched
     type ActionButton = LinkButton | MeetingButton | OpenDesignButton
 
+    interface Message {
+        type: "message"
+        id: string
+        message: string
+        sender: string
+        timestamp: FieldValue
+        files: string[]
+        projectId: string
+    }
+
     interface OpenDesignButton {
         type: "open-design"
     }

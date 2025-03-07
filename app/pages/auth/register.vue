@@ -6,15 +6,31 @@
                 <p>Fill out the form to create a new account.</p>
             </lheader>
 
-            <cflex>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="">First Name</label>
+                    <input type="text" />
+                </div>
+
+                <div class="input-group">
+                    <label for="">Last Name</label>
+                    <input type="text" />
+                </div>
+            </div>
+            <div class="input-group">
                 <label for="email">Email Address</label>
                 <input class="nova-input" type="text" name="email" v-model="email" />
-            </cflex>
+            </div>
 
-            <cflex>
+            <div class="input-group">
                 <label for="password">Password</label>
                 <input class="nova-input" type="password" name="password" v-model="password" />
-            </cflex>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Confirm Password</label>
+                <input class="nova-input" type="password" name="password" v-model="password" />
+            </div>
 
             <p v-if="successMessage" class="success-message">
                 {{ successMessage }}
@@ -60,4 +76,25 @@ async function handleSignUp(email: string, password: string) {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+input {
+    margin-bottom: 0px;
+}
+.input-group {
+    margin-bottom: 15px;
+}
+
+label {
+    margin-bottom: 0px;
+}
+.input-row {
+    gap: 15px !important;
+    input {
+        max-width: 155px;
+    }
+}
+
+button {
+    margin-top: 25px;
+}
+</style>

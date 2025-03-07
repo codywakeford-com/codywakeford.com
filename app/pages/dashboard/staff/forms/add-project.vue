@@ -29,6 +29,8 @@
 </template>
 
 <script setup lang="ts">
+import ProjectController from "~~/controllers/ProjectsController"
+
 const emails = ref(["codypwakeford@gmail.com"])
 const emailInput = ref("")
 const loading = ref(false)
@@ -37,7 +39,7 @@ async function submit(emails: string[]) {
     if (!emails.length) return
 
     loading.value = true
-    await ProjectsController.createProject(emails)
+    await ProjectController.createProject(emails)
     loading.value = false
 }
 

@@ -1,6 +1,5 @@
 <template>
     <div class="activity-item" v-if="activity">
-        {{ activity }}
         <!-- Phase Update -->
         <div class="phase" v-if="activity.type === 'phase'">
             <div class="top">
@@ -89,7 +88,7 @@
                 </rflex>
                 <rflex class="time">
                     <Icon width="20" icon="uil:calender" />
-                    <span>{{ dayjs(meeting.startTime).format("dddd Do MMMM YYYY, HH:mma ") }}</span>
+                    <span>{{ dayjs(meeting.timestamp).format("dddd Do MMMM YYYY, HH:mma ") }}</span>
                 </rflex>
 
                 <rflex>
@@ -121,7 +120,10 @@
                 <dashboard-file-card-small v-if="quote" v-for="file in quote.files" :file="file" />
             </div>
 
-            <div class="system-message">System: This document puts my understanding of the project in writing so we are clear on what is expected. Please review the proposal and let me know if you would like to ammend anything.</div>
+            <div class="system-message">
+                System: This document puts my understanding of the project in writing so we are clear on what is expected. Please review the proposal and let me know if you would
+                like to ammend anything.
+            </div>
 
             <!-- <button-primary-m @click="$Projects.acceptProjectProposal(props.project.id)"
                 >Accept Proposal</button-primary-m
@@ -142,10 +144,10 @@ interface Props {
     activity: ActivityItem
 }
 
-const meeting = computed((): Meeting | undefined => {
-    if (props.activity.type !== "meeting") return
+const meeting = computed(() => {
+    if (props.activity.type !== "meeting") return null
 
-    return $Meetings.getById(props.activity.meetingId)
+    return $Meetings.getByMeetingId(props.activity.meetingId)
 })
 
 const files = computed(() => {
