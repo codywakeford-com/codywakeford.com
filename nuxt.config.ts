@@ -2,8 +2,9 @@
 export default defineNuxtConfig({
     compatibilityDate: "2024-11-01",
     devtools: { enabled: true },
+    future: { compatibilityVersion: 4 },
 
-    imports: { dirs: ["./controllers"] },
+    imports: { dirs: ["~~/controllers", "~~/services"] },
 
     sourcemap: {
         server: true,
@@ -15,7 +16,7 @@ export default defineNuxtConfig({
         css: {
             preprocessorOptions: {
                 scss: {
-                    additionalData: '@use "@/style/variables.scss" as *;',
+                    additionalData: '@use "~/style/variables.scss" as *;',
                 },
             },
         },
@@ -49,6 +50,6 @@ export default defineNuxtConfig({
 
     extends: [["../nova-components", { install: true }]],
 
-    css: ["@/style/main.scss", "@/style/modal.scss"],
+    css: ["~/style/main.scss", "~/style/modal.scss"],
     modules: ["@nuxt/fonts", "@pinia/nuxt", "nuxt-calendly", "@nuxt/icon", "@nuxt/scripts", "pinia-plugin-persistedstate/nuxt"],
 })

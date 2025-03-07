@@ -1,6 +1,6 @@
-import ActionService from "~/services/ActionService"
-import ActivityLogService from "~/services/ActivityLogService"
-import ProjectService from "~/services/ProjectService"
+import ActionService from "~~/services/ActionService"
+import ActivityLogService from "~~/services/ActivityLogService"
+import ProjectService from "~~/services/ProjectService"
 
 export default class ProjectController {
     static async createProject(emails: string[]) {

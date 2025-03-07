@@ -1,5 +1,5 @@
-import DbService from "~/services/DbService"
-import ProjectService from "~/services/ProjectService"
+import DbService from "~~/services/DbService"
+import ProjectService from "~~/services/ProjectService"
 
 export default class InitController {
     static async initProjectListeners(email: string) {

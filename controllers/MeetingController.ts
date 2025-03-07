@@ -1,6 +1,6 @@
-import ActionService from "~/services/ActionService"
-import ActivityLogService from "~/services/ActivityLogService"
-import MeetingService from "~/services/MeetingService"
+import ActionService from "~~/services/ActionService"
+import ActivityLogService from "~~/services/ActivityLogService"
+import MeetingService from "~~/services/MeetingService"
 
 export default class MeetingController {
     static async onMeetingScheduled(event) {

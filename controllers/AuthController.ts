@@ -1,4 +1,4 @@
-import AuthService from "~/services/AuthService"
+import AuthService from "~~/services/AuthService"
 
 export default class AuthController {
     static async register(email: string, password: string) {

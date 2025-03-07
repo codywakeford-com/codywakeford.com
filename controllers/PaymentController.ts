@@ -1,5 +1,5 @@
 import type { PaymentMethod, Stripe, StripeCardElement } from "@stripe/stripe-js"
-import PaymentService from "~/services/PaymentService"
+import PaymentService from "~~/services/PaymentService"
 
 interface PayWithCardElementInput {
     stripe: Stripe
