@@ -11,6 +11,7 @@ export default class InitController {
             DbService.initCollectionListener(`/projects/${id}/activity-log`, $ActivityLogs.state.log)
             DbService.initCollectionListener(`/projects/${id}/messages`, $ActivityLogs.state.log)
             DbService.initCollectionListener(`/projects/${id}/meetings`, $Meetings.state.meetings)
+            DbService.initCollectionListener(`/projects/${id}/files`, $Files.state.files)
         }
     }
 

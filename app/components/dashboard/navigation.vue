@@ -36,7 +36,9 @@
     </nav>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AuthController from "~~/controllers/AuthController"
+</script>
 
 <style lang="scss" scoped>
 nav {

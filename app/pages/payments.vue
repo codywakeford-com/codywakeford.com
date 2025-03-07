@@ -30,9 +30,9 @@
 
                     <div class="form-item">
                         <label for="email">Reciept Email:</label>
-                        <input class="input-element" type="email" placeholder="email" v-model="address.email" />
-                        <div :class="{ active: errors.email }" class="error-message">
-                            {{ errors.email }}
+                        <input class="input-element" type="email" placeholder="email" v-model="address.email.input" />
+                        <div :class="{ active: address.email.error }" class="error-message">
+                            {{ address.email.error }}
                         </div>
                     </div>
                 </div>
@@ -40,33 +40,33 @@
                 <div class="right">
                     <div class="form-item">
                         <label for="">Full Name</label>
-                        <input class="input-element" type="text" v-model="address.fullName" />
-                        <div :class="{ active: errors.fullName }" class="error-message">
-                            {{ errors.fullName }}
+                        <input class="input-element" type="text" v-model="address.fullName.input" />
+                        <div :class="{ active: address.fullName.error }" class="error-message">
+                            {{ address.fullName.error }}
                         </div>
                     </div>
 
                     <div class="form-item">
                         <label for="">City</label>
-                        <input class="input-element" type="text" v-model="address.city" />
-                        <div :class="{ active: errors.city }" class="error-message">
-                            {{ errors.city }}
+                        <input class="input-element" type="text" v-model="address.city.input" />
+                        <div :class="{ active: address.city.error }" class="error-message">
+                            {{ address.city.error }}
                         </div>
                     </div>
 
                     <div class="form-item">
                         <label for="">Postcode</label>
-                        <input class="input-element" type="text" v-model="address.postcode" />
-                        <div :class="{ active: errors.postcode }" class="error-message">
-                            {{ errors.postcode }}
+                        <input class="input-element" type="text" v-model="address.postcode.input" />
+                        <div :class="{ active: address.postcode.error }" class="error-message">
+                            {{ address.postcode.error }}
                         </div>
                     </div>
 
                     <div class="form-item">
                         <label for="">Country</label>
-                        <input :class="{ error: errors.country }" class="input-element" type="text" v-model="address.country" />
-                        <div :class="{ active: errors.country }" class="error-message">
-                            {{ errors.country }}
+                        <input :class="{ error: address.country.error }" class="input-element" type="text" v-model="address.country.input" />
+                        <div :class="{ active: address.country.error }" class="error-message">
+                            {{ address.country.error }}
                         </div>
                     </div>
                 </div>
@@ -88,6 +88,7 @@ const userInputAmount = ref<number>(0)
 import type { StripeCardCvcElement, StripeCardExpiryElement, StripeAddressElement, StripeCardNumberElement } from "@stripe/stripe-js"
 import { loadStripe, type Stripe, type StripeCardElement } from "@stripe/stripe-js"
 import PaymentController from "~~/controllers/PaymentController"
+import { InputValidationService, required } from "~~/services/InputValidationService"
 
 const cardNumber = ref<StripeCardNumberElement | null>(null)
 const cardExpiry = ref<StripeCardExpiryElement | null>(null)
@@ -116,13 +117,38 @@ onMounted(() => {
     })
 })
 
-const address = ref({
-    fullName: "Cody Wakeford",
-    email: "codypwakeford@gmail.com",
-    country: "England",
-    street: "10 East vale drive",
-    city: "Rotherham",
-    postcode: "S654HS",
+const address = ref<FormInput>({
+    fullName: {
+        input: "",
+        error: [],
+        validators: [required, isValidEmail],
+    },
+    email: {
+        input: "",
+        error: [],
+        validators: [required],
+    },
+
+    country: {
+        input: "",
+        error: [],
+        validators: [required],
+    },
+    street: {
+        input: "",
+        error: [],
+        validators: [required],
+    },
+    city: {
+        input: "",
+        error: [],
+        validators: [required],
+    },
+    postcode: {
+        input: "",
+        error: [],
+        validators: [required],
+    },
 })
 
 const errors = ref({
@@ -185,7 +211,7 @@ async function pay() {
         throw new Error("Stripe or stripe elements not initialized properly.")
     }
 
-    if (!validate()) return
+    if (!InputValidationService.validate(address)) return
 
     loading.value = true
 

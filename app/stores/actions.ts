@@ -11,7 +11,9 @@ export const useActionStore = defineStore("actions", () => {
         selectedActionId: null,
     })
 
-    const actions = computed(() => state.value.actions)
+    const sortedActions = computed(() => {
+        return state.value.actions.sort((a, b) => b.priority - a.priority)
+    })
 
     const getByActionId = computed(() => {
         return (actionId: Action["id"]) => {
@@ -27,13 +29,12 @@ export const useActionStore = defineStore("actions", () => {
 
     const getPendingByProjectId = computed(() => {
         return (projectId: Project["id"]) => {
-            return state.value.actions.filter((a) => a.projectId === projectId && a.status === "pending")
+            return sortedActions.value.filter((a) => a.projectId === projectId && a.status === "pending")
         }
     })
 
     return {
         state,
-        actions,
         getByActionId,
         getByProjectId,
         getPendingByProjectId,

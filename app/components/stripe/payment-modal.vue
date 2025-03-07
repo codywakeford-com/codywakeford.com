@@ -13,9 +13,13 @@
 
             <form v-if="$BillingModal.type === 'payment' && !useNewCard" @submit.prevent="pay" class="payment-form">
                 <div class="saved-cards">
-                    <stripe-payment-method-sm v-for="(card, index) of $User.stripePaymentProfile?.paymentMethods"
-                        @click="selectedCardIndex = index" :key="index" :card="card"
-                        :selected="selectedCardIndex === index" />
+                    <stripe-payment-method-sm
+                        v-for="(card, index) of $User.stripePaymentProfile?.paymentMethods"
+                        @click="selectedCardIndex = index"
+                        :key="index"
+                        :card="card"
+                        :selected="selectedCardIndex === index"
+                    />
                     <button @click="useNewCard = true" class="new-card">Use a new card</button>
                 </div>
             </form>
@@ -70,8 +74,7 @@
 
                     <div class="form-item">
                         <label for="">Country</label>
-                        <input :class="{ error: errors.country }" class="input-element" type="text"
-                            v-model="address.country" />
+                        <input :class="{ error: errors.country }" class="input-element" type="text" v-model="address.country" />
                         <div :class="{ active: errors.country }" class="error-message">{{ errors.country }}</div>
                     </div>
 
@@ -80,16 +83,13 @@
                         <input type="checkbox" name="save-card" />
                     </div>
 
-                    <button v-if="$BillingModal.type !== 'save-card'" @click="useNewCard = false">Use saved
-                        card</button>
+                    <button v-if="$BillingModal.type !== 'save-card'" @click="useNewCard = false">Use saved card</button>
                 </div>
             </form>
 
             <div class="button-box">
-                <btn class="loading-button" @click="addCard()" v-if="$BillingModal.type === 'save-card'"
-                    :disabled="loading" :loading="loading">Save Card</btn>
-                <btn class="loading-button" @click="pay()" v-else :disabled="loading" :loading="loading">Make Payment
-                </btn>
+                <btn class="loading-button" @click="addCard()" v-if="$BillingModal.type === 'save-card'" :disabled="loading" :loading="loading">Save Card</btn>
+                <btn class="loading-button" @click="pay()" v-else :disabled="loading" :loading="loading">Make Payment </btn>
                 <div class="error-message">{{ state.errorMessage }}</div>
             </div>
         </section>
@@ -107,6 +107,7 @@ const useNewCard = ref(false) // keeps track if the user wants to use a saved ca
 const modal = ref<HTMLDialogElement | null>(null)
 import type { StripeCardCvcElement, StripeCardExpiryElement, StripeAddressElement, StripeCardNumberElement } from "@stripe/stripe-js"
 import { loadStripe, type Stripe, type StripeCardElement } from "@stripe/stripe-js"
+import PaymentController from "~~/controllers/PaymentController"
 
 const cardNumber = ref<StripeCardNumberElement | null>(null)
 const cardExpiry = ref<StripeCardExpiryElement | null>(null)
@@ -228,33 +229,15 @@ async function pay() {
 
     loading.value = true
 
-    const chargeAmount = amount.value ? amount.value : userInputAmount.value
     try {
-        let paymentResult
-        if (!useNewCard) {
-            paymentResult = await $Stripe.payWithCardElement({
-                stripe: stripe.value,
-                card: card.value,
-                name: address.value.fullName,
-                amount: chargeAmount,
-            })
-        } else if (useNewCard) {
-            if (!$User.getStripeCustomerId) $User.createStripeCustomer()
-            if (!$User.getStripeCustomerId) throw new Error("Customer id not found")
-            paymentResult = await $Stripe.payWithPaymentMethod({
-                stripe: stripe.value,
-                amount: chargeAmount,
-                customerId: $User.getStripeCustomerId,
-                paymentMethod: $User.paymentMethods[selectedCardIndex.value],
-            })
-        }
+        const amountToPay = amount.value ? amount.value : userInputAmount.value
 
-        if (paymentResult?.error) {
-            console.log(paymentResult?.error)
-            state.value.errorMessage = "An error has occured"
-        } else if (paymentResult?.paymentIntent.status === "succeeded") {
-            state.value.successMessage === "sucess"
-        }
+        const result = await PaymentController.payWithCardElement({
+            stripe: stripe.value,
+            card: card.value,
+            name: address.value.fullName,
+            amount: amountToPay,
+        })
     } catch (e) {
         console.log(e)
         state.value.errorMessage = "An error has occured"

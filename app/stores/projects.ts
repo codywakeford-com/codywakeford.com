@@ -49,7 +49,13 @@ export const useProjectStore = defineStore(
                 return project.quote
             })
 
-        const getProjectById = (id: string) => computed(() => state.value.projects.find((p) => p.id === id))
+        const getByProjectId = computed(() => (id: string) => {
+            const project = state.value.projects.find((p) => p.id === id)
+
+            if (!project) throw new Error("no project")
+
+            return project
+        })
 
         const getNextProjectPhase = (phase: ProjectPhase) =>
             computed(() => {
@@ -59,7 +65,7 @@ export const useProjectStore = defineStore(
 
         const getIds = computed(() => state.value.projects.map((p) => p.id))
 
-        return { state, projects, getByEmail, designUrl, getPhaseById, amountPaid, totalCost, quote, getProjectById, getNextProjectPhase, getIds }
+        return { state, projects, getByEmail, designUrl, getPhaseById, amountPaid, totalCost, quote, getByProjectId, getNextProjectPhase, getIds }
     },
     { persist: true },
 )

@@ -9,8 +9,7 @@
         </div>
     </div>
 
-    <dashboard-loading-screen v-if="false" />
-    <stripe-payment-dialog />
+    <stripe-payment-modal />
     <dashboard-calendly-modal />
     <dashboard-design-modal />
     <dashboard-files-modal :project-id="projectId" />

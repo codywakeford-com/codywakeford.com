@@ -1,6 +1,7 @@
 import ActionService from "~~/services/ActionService"
 import ActivityLogService from "~~/services/ActivityLogService"
 import DbService from "~~/services/DbService"
+import ProjectPhaseService from "~~/services/ProjectPhaseService"
 import ProjectService from "~~/services/ProjectService"
 
 export default class ProjectController {
@@ -29,16 +30,6 @@ export default class ProjectController {
         })
     }
 
-    static async updatePhase(projectId: string, phase: ProjectPhase) {
-        try {
-            await updateObject(`/projects/${projectId}`, { phase })
-
-            ActivityLogService.addPhaseActivityItem(projectId, phase)
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
     static async addQuoteToProject(projectId: string, quoteUrl: string, proposalUrl: string, quoteAmount: number) {
         await ProjectService.addQuoteToProject(projectId, quoteUrl, proposalUrl, quoteAmount)
         await ActivityLogService.addQuoteActivityItem(projectId)
@@ -47,17 +38,6 @@ export default class ProjectController {
             "accept-quote",
             "Now that we've had our discovery call, I've prepared a quote for you. You can accept it, message me with any questions, or book a call if you'd like to discuss any changes.",
         )
-    }
-
-    static async clientAcceptsDesign(projectId: Project["id"]) {
-        const update = {
-            design: {
-                accepted: true,
-            },
-        }
-        await updateObject<Project>(`/projects/${projectId}`, update)
-
-        await this.incrementPhase(projectId)
     }
 
     static async setDesignDocument(projectId: Project["id"], figmaLink: string) {
@@ -75,40 +55,12 @@ export default class ProjectController {
         )
     }
 
-    static async acceptProjectProposal(projectId: Project["id"], actionId: Action["id"]) {
-        const quote = this.getProjectById(projectId)?.quote
-        if (!quote) throw new Error("Quote not found")
-
+    static async acceptProjectProposal(projectId: Project["id"]) {
         try {
-            const update = {
-                quote: { accepted: true },
-            }
-
-            await updateObject(`/projects/${projectId}`, update)
-
-            ActivityLogService.addMessageActivityItem(projectId, "has accepted the project proposal.", $User.email)
-
-            if (quote && quote.amountPaid < quote.totalAmount / 3) {
-                const action: Action = {
-                    id: uuid(),
-                    priority: 1,
-                    action: "payment",
-                    status: "pending",
-                    timestamp: Date.now(),
-                    description: "Great, now the project is underway. Before moving to the design phase I ask you pay a minimum of 1 third of the quote.",
-                    projectId,
-                }
-
-                createObject(`/projects/${projectId}/user-required-actions`, action)
-
-                ActivityLogService.addSystemMessageActivityItem(
-                    projectId,
-                    "To progress to the design phase you need to pay a minimum of 1 third of the quote cost.",
-                    [action.id],
-                )
-            }
-
-            $Actions.markAsComplete(actionId)
+            await DbService.updateObject(`/projects/${projectId}`, { quote: { accepted: true } })
+            await ActivityLogService.addMessageActivityItem(projectId, "has accepted the project proposal.", $User.email)
+            await ProjectPhaseService.incrementPhase($Projects.getByProjectId(projectId))
+            //await ActionService.markActionAsComplete(projctId, $Actions.state.selectedActionId)
         } catch (error) {
             console.error(error)
         }

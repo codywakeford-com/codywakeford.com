@@ -102,7 +102,7 @@ const route = useRoute()
 const projectId = route.params.id as string
 
 const project = computed(() => {
-    return $Projects.getProjectById(projectId)
+    return $Projects.getByProjectId(projectId)
 })
 
 const files = computed(() => {
