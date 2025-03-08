@@ -12,6 +12,7 @@ export default class AuthController {
             return { error: response.error }
         } else {
             localStorage.setItem("jwt", response.jwt)
+            $User.state.jwt = response.jwt
             $User.state.user = response.user
         }
     }
