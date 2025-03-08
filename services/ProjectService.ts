@@ -25,7 +25,7 @@ export default class ProjectService {
         const files: ProjectFile[] = [
             {
                 id: uuid(),
-                name: "ProjectProposal",
+                name: "project-proposal.pdf",
                 projectId: projectId,
                 extension: "pdf",
                 sender: "codypwakeford@gmail.com",
@@ -35,7 +35,7 @@ export default class ProjectService {
             },
             {
                 id: uuid(),
-                name: "ProjectQuote",
+                name: "project-quote.pdf",
                 projectId: projectId,
                 extension: "pdf",
                 sender: "codypwakeford@gmail.com",

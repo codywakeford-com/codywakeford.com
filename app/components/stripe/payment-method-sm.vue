@@ -49,7 +49,7 @@ const props = defineProps<Props>()
     gap: 30px;
     min-width: 300px;
 
-    border: 1px solid $text-dark3;
+    border: 1px solid var(--text6);
     border-radius: $border-radius;
     padding: 20px;
 
@@ -74,7 +74,7 @@ const props = defineProps<Props>()
 
         .radio {
             position: relative;
-            background: $secondary;
+            background: var(--secondary);
             height: 15px;
             width: 15px;
             border-radius: 50%;
@@ -82,17 +82,17 @@ const props = defineProps<Props>()
     }
 
     &.selected {
-        outline: 2px solid $primary;
+        outline: 2px solid var(--primary);
 
         .radio {
             transition: none;
-            outline: 2px solid $primary;
+            outline: 2px solid var(--primary);
             &::after {
                 display: block;
                 content: "";
                 height: 10px;
                 width: 10px;
-                background: $primary;
+                background: var(--primary);
                 border-radius: 50%;
                 transform: translate(25%, 25%);
                 z-index: 5;

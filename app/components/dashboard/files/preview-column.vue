@@ -47,7 +47,7 @@ const previewFile = computed(() => $FilesDashboard.previewFile)
     }
 
     .properties {
-        border-top: 1px solid $text-light2;
+        border-top: 1px solid var(--text2);
         padding-top: 25px;
         margin-top: 25px;
 
@@ -65,7 +65,7 @@ const previewFile = computed(() => $FilesDashboard.previewFile)
         min-height: 450px;
         border-bottom: 2px solid black;
         outline: 2px solid black;
-        background: $secondary;
+        background: var(--secondary);
     }
 }
 </style>

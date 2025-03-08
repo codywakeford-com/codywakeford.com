@@ -22,7 +22,7 @@ const props = defineProps<Props>()
 .card {
     margin-block: 10px;
     display: flex;
-    border: 1px solid $text-light2;
+    border: 1px solid var(--text2);
     width: min-content;
     gap: 5px;
     align-items: center;

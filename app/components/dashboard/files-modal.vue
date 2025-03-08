@@ -28,7 +28,7 @@
 
 <style lang="scss" scoped>
 header {
-  background: $secondary;
+  background: var(--secondary);
   padding-inline: 25px;
   padding-block: 25px;
 }
@@ -39,7 +39,7 @@ header {
   min-width: 500px;
   min-height: 300px;
 
-  background: white;
+  background: var(--background);
   border-radius: $border-radius;
 
   .upload-box {
@@ -49,7 +49,7 @@ header {
     justify-content: center;
     gap: 5px;
 
-    outline: 2px dashed $text-light3;
+    outline: 2px dashed var(--text3);
     height: 250px;
     border-radius: 25px;
 
@@ -66,7 +66,7 @@ header {
 
     p {
       font-size: 0.9rem;
-      color: $text-dark3;
+      color: var(--text6);
     }
   }
 }
@@ -85,8 +85,8 @@ header {
 }
 
 .cancel-button {
-  border: 1px solid $primary;
+  border: 1px solid var(--primary);
   background-color: white;
-  color: $text-dark2;
+  color: var(--text5);
 }
 </style>

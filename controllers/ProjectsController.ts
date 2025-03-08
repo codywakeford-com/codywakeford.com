@@ -18,7 +18,10 @@ export default class ProjectController {
                 "Welcome to our project. We're glad to have you on board. To kick things of book your discovery meeting using the button below. This helps us define the project outline and allows us to generate you a quote. See you soon! ",
             )
             await ActivityLogService.addPhaseActivityItem(projectId, "discovery")
-            // await ActivityLogService.addSystemMessageActivityItem(projectId, "Welcome to our new project! To kick things off, book the discovery meeting. You can find action buttons at top right of this dashboard.", [action.id])
+            await ActivityLogService.addSystemMessageActivityItem(
+                projectId,
+                "Welcome to our new project! To kick things off, book the discovery meeting. You can find action buttons at top right of this dashboard.",
+            )
         } catch (error) {
             console.error(error)
         }
@@ -33,7 +36,7 @@ export default class ProjectController {
 
     static async addQuoteToProject(projectId: string, quoteUrl: string, proposalUrl: string, quoteAmount: number) {
         if ($Projects.getByProjectId(projectId).quote?.accepted) return
-        await ProjectService.addQuoteToProject(projectId, quoteUrl, proposalUrl, quoteAmount)
+        await ProjectService.addQuoteToProject(projectId, quoteUrl, proposalUrl, quoteAmount * 100)
         await ActivityLogService.addQuoteActivityItem(projectId)
         await ActionService.createUserAction(
             projectId,

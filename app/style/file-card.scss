@@ -1,16 +1,16 @@
 @use "~/style/variables.scss" as *;
 
 .file-card {
-    background: white;
+    background: var(--background);
     display: flex;
     min-width: 250px;
     padding: 20px;
-    border: 1px solid $text-light2;
+    border: 1px solid var(--text2);
     border-radius: 5px;
     cursor: pointer;
 
     &:hover {
-        border: 1px solid $primary;
+        border: 1px solid var(--primary);
     }
 
     &.large {

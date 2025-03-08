@@ -73,7 +73,7 @@ const cards: Card[] = [
 <style lang="scss" scoped>
 .content {
     padding-block: var(--page-gutter) calc(var(--page-gutter) * 2);
-    color: $text-dark1;
+    color: var(--text4);
     display: flex;
     flex-direction: column;
     gap: 50px;
@@ -87,6 +87,6 @@ const cards: Card[] = [
 //     .card {
 //         height: 300px;
 //         width: 300px;
-//         background: $secondary;
+//         background: var(--secondary);
 //     }
 // }</style>

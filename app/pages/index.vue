@@ -8,7 +8,11 @@
     </main>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+definePageMeta({
+    colorMode: "light",
+})
+</script>
 
 <style lang="scss" scoped>
 main {

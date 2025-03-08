@@ -1,7 +1,7 @@
 @use "./variables.scss" as *;
 
 .main-form {    
-    background-color: white;
+    background: var(--background);
     height: 100%;
     box-shadow: 3px 3px 20px lightgrey;
     padding: 50px;
@@ -24,13 +24,15 @@ h2 {
     margin-bottom: 10px;
 }
 
-input {
-    border: 1px solid $text-light2;
+input, textarea {
+    border: 1px solid var(--text2);
     padding: 5px;
     border-radius: 5px;
+    background: var(--background);
+    
 
     &:focus {
-        border: 1px solid $primary;
+        border: 1px solid var(--primary);
     }
 }
 
@@ -59,7 +61,7 @@ label {
     padding-block: 15px;
 
     .chip {
-        background: $text-light2;
+        background: var(--text2);
         padding: 5px 15px;
         font-size: 0.9rem;
         border-radius: 25px;
@@ -82,12 +84,12 @@ table {
 th, td {
   padding: 6px;
   font-size: 0.9rem;
-  border: 1px solid $text-light2;
+  border: 1px solid var(--text2);
   text-align: left;
 }
 
 th {
-  background-color: $text-light1;
+  background-color: var(--text1);
 }
 
 

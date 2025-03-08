@@ -26,8 +26,8 @@ const props = defineProps<{
 .file-card {
     padding: 20px;
     border-radius: 5px;
-    border: 1px solid $text-light2;
-    background: white;
+    border: 1px solid var(--text2);
+    background: var(--background);
 
     .top {
         display: flex;
@@ -55,7 +55,7 @@ const props = defineProps<{
             transform: translate(5px, -5px);
 
             &:hover {
-                background: $text-light1;
+                background: var(--text1);
             }
         }
     }
@@ -64,7 +64,7 @@ const props = defineProps<{
         display: flex;
         gap: 15px;
         font-size: 0.8rem;
-        color: $text-dark3;
+        color: var(--text6);
     }
 }
 </style>

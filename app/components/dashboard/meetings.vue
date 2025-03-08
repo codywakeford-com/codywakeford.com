@@ -58,7 +58,7 @@ const meeting = computed(() => {
     .meeting-details {
         display: flex;
         flex-direction: column;
-        background: white;
+        background: var(--background);
         font-size: 1rem;
         gap: 5px;
         max-width: min-content;
@@ -71,7 +71,7 @@ const meeting = computed(() => {
         }
 
         svg {
-            color: $text-dark3;
+            color: var(--text6);
         }
 
         .status {

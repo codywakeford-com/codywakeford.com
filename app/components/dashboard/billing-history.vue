@@ -94,7 +94,7 @@ const reciepts = computed(() => {
 
 <style lang="scss" scoped>
 section {
-    background: white;
+    background: var(--background);
     position: relative;
     padding: 25px;
     margin-top: 25px;
@@ -120,7 +120,7 @@ header {
 
         label {
             font-size: 0.8rem;
-            color: $text-light3;
+            color: var(--text3);
         }
 
         .balance {
@@ -133,7 +133,7 @@ header {
 
     p {
         font-size: 0.9rem;
-        color: $text-dark3;
+        color: var(--text6);
     }
 }
 
@@ -165,7 +165,7 @@ tbody tr {
 
 thead {
     tr {
-        background: $secondary;
+        background: var(--secondary);
     }
 }
 

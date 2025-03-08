@@ -55,7 +55,7 @@ const props = defineProps<Props>()
 
     width: 300px;
     height: 175px;
-    color: $text-light1;
+    color: var(--text1);
 
     .top-row {
         display: flex;
@@ -78,7 +78,7 @@ const props = defineProps<Props>()
 
         label {
             font-size: 0.8rem;
-            color: $text-light2;
+            color: var(--text2);
         }
 
         .name {
@@ -95,7 +95,7 @@ const props = defineProps<Props>()
             display: flex;
             flex-direction: column;
             gap: 5px;
-            background: $text-light1;
+            background: var(--text1);
             padding: 5px;
             border-radius: $border-radius;
             transform: translateX(0%);
@@ -108,13 +108,13 @@ const props = defineProps<Props>()
                 align-items: center;
                 gap: 10px;
                 white-space: nowrap;
-                background: $text-light1;
+                background: var(--text1);
                 border-radius: 3px;
                 padding: 4px 10px;
                 font-weight: 500;
 
                 &:hover {
-                    background: $text-light2;
+                    background: var(--text2);
                 }
 
                 svg {
@@ -139,13 +139,13 @@ const props = defineProps<Props>()
         label {
             font-size: 0.75rem;
 
-            color: $text-light2;
+            color: var(--text2);
         }
     }
 
     &.visa {
-        // background: $primary-light;
-        background: $primary;
+        // background: var(--primary2);
+        background: var(--primary);
     }
 }
 </style>

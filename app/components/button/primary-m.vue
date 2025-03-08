@@ -8,10 +8,10 @@
 
 <style lang="scss" scoped>
 .btn {
-    background: $primary;
+    background: var(--primary);
     padding: 4px 15px;
     border-radius: $border-radius;
     border: none;
-    color: $text-light1;
+    color: var(--text1);
 }
 </style>

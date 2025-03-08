@@ -20,7 +20,7 @@ export default eventHandler(async (event): Promise<Api.Emails.Invitation.Respons
             .container { padding: 20px; }
             .button {
             background-color: #007bff;
-            color: white;
+            color: var(--text1);
             padding: 10px 20px;
             text-decoration: none;
             border-radius: 5px;

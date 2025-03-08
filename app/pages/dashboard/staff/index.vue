@@ -48,8 +48,8 @@ definePageMeta({
 
 .main-content {
     height: 100%;
-    box-shadow: 3px 3px 10px $text-light2;
-    background: white;
+    box-shadow: 3px 3px 10px var(--text2);
+    background: var(--background);
     padding: 25px 50px;
 }
 

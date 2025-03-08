@@ -62,7 +62,7 @@ header {
     flex-direction: column;
     align-items: start;
     position: relative;
-    background: white;
+    background: var(--background);
     min-width: 250px;
     flex-grow: 1;
     border-radius: 10px;

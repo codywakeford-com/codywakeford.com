@@ -61,8 +61,8 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: white;
-    border-bottom: 3px solid $primary;
+    background: var(--background);
+    border-bottom: 3px solid var(--primary);
     padding-block: 10px;
     padding-inline: 25px;
     z-index: 100;
@@ -84,8 +84,8 @@ aside {
     flex-direction: column;
     gap: 10px;
     z-index: -1;
-    background: white;
-    border-bottom: 3px solid $primary;
+    background: var(--background);
+    border-bottom: 3px solid var(--primary);
 
     padding-inline: 25px;
     padding-block: 25px 25px;

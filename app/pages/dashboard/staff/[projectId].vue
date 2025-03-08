@@ -24,7 +24,7 @@ definePageMeta({
 }
 
 .quote {
-    background: white;
+    background: var(--background);
     padding: 25px;
 }
 

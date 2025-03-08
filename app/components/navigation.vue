@@ -38,7 +38,7 @@ onMounted(() => {
 }
 
 .background-light {
-    background: white !important;
+    background: var(--background) !important;
 }
 
 $blue-bar-height: 40px;
@@ -62,7 +62,7 @@ $nav-height: 50px;
 }
 
 .blue-bar {
-    background: $primary;
+    background: var(--primary);
     min-height: $blue-bar-height;
     display: flex;
     align-items: center;
@@ -80,7 +80,7 @@ $nav-height: 50px;
         font-size: 1rem;
         flex-direction: row;
         align-items: center;
-        color: $text-light1;
+        color: var(--text1);
         text-decoration: none;
         gap: 5px;
         line-height: 0;

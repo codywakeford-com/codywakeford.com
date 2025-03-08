@@ -234,7 +234,7 @@ h4 {
 }
 
 .social-box {
-    border-top: 1px solid $secondary;
+    border-top: 1px solid var(--secondary);
     padding-top: 25px;
     margin-top: 10px;
 }
@@ -277,7 +277,7 @@ form {
 
         input,
         textarea {
-            background: $secondary;
+            background: var(--secondary);
             border: none;
             border-radius: $border-radius;
             padding: 10px 5px;
@@ -294,7 +294,7 @@ form {
             }
 
             &:focus {
-                outline: 1px solid $primary;
+                outline: 1px solid var(--primary);
             }
         }
     }

@@ -51,5 +51,26 @@ export default defineNuxtConfig({
     extends: [["../nova-components", { install: true }]],
 
     css: ["~/style/main.scss", "~/style/modal.scss"],
-    modules: ["@nuxt/fonts", "@pinia/nuxt", "nuxt-calendly", "@nuxt/icon", "@nuxt/scripts", "pinia-plugin-persistedstate/nuxt"],
+    modules: [
+        "@nuxt/fonts",
+        "@pinia/nuxt",
+        "nuxt-calendly",
+        "@nuxt/icon",
+        "@nuxt/scripts",
+        "pinia-plugin-persistedstate/nuxt",
+        "@nuxtjs/color-mode",
+    ],
+
+    colorMode: {
+        preference: "system", // default value of $colorMode.preference
+        fallback: "light", // fallback value if not system preference found
+        hid: "nuxt-color-mode-script",
+        globalName: "__NUXT_COLOR_MODE__",
+        componentName: "ColorScheme",
+        classPrefix: "",
+        classSuffix: "-mode",
+        storage: "localStorage", // or 'sessionStorage' or 'cookie'
+        storageKey: "nuxt-color-mode",
+    },
 })
+

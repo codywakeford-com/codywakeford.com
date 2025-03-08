@@ -37,7 +37,7 @@ import { Icon } from "@iconify/vue"
 
 <style lang="scss" scoped>
 section {
-    background: $primary;
+    background: var(--primary);
     padding-block: var(--page-gutter) calc(var(--page-gutter) * 2);
 }
 
@@ -49,7 +49,7 @@ section {
 
 .cards {
     display: flex;
-    color: $text-light1;
+    color: var(--text1);
     gap: 50px;
     justify-content: center;
     flex-wrap: wrap;
@@ -68,7 +68,7 @@ section {
         }
 
         p {
-            color: $text-light2;
+            color: var(--text2);
         }
 
         svg {

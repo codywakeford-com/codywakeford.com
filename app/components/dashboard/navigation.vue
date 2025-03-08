@@ -23,11 +23,20 @@
         </cflex>
 
         <cflex class="bottom-links">
-            <nuxt-link @click="AuthController.logout()" class="nav-item" data-tooltip="Logout"> l o </nuxt-link>
+            <nuxt-link @click="AuthController.logout()" class="nav-item" data-tooltip="Logout">l o</nuxt-link>
 
             <nuxt-link v-if="true" class="nav-item" to="/dashboard/staff" data-tooltip="staff">
                 <Icon name="eos-icons:admin" size="30" />
             </nuxt-link>
+
+            <button class="nav-item" @click="toggleTheme()">
+                <Icon
+                    v-if="$colorMode.preference === 'light'"
+                    name="line-md:moon-filled-to-sunny-filled-loop-transition"
+                    size="30"
+                />
+                <Icon v-else name="line-md:sunny-filled-loop-to-moon-filled-alt-loop-transition" size="30" />
+            </button>
 
             <nuxt-link class="nav-item" to="/#hero" data-tooltip="Back to homepage">
                 <Icon name="material-symbols:arrow-back" size="30" />
@@ -38,12 +47,17 @@
 
 <script setup lang="ts">
 import AuthController from "~~/controllers/AuthController"
+
+const toggleTheme = () => {
+    const colorMode = useColorMode()
+    colorMode.preference = colorMode.preference === "dark" ? "light" : "dark"
+}
 </script>
 
 <style lang="scss" scoped>
 nav {
     min-width: 75px;
-    background: $primary;
+    background: var(--primary);
     height: 100%;
 
     display: flex;
@@ -58,11 +72,16 @@ nav {
     position: relative;
     display: flex;
     align-items: center;
-    color: white;
+    color: var(--text1);
     justify-content: center;
     height: 40px;
     width: 40px;
     border-radius: $border-radius;
+    background: none;
+
+    .iconify {
+        color: var(--text1);
+    }
 
     &::after {
         content: attr(data-tooltip);
@@ -80,7 +99,7 @@ nav {
     }
 
     &:hover {
-        background: $primary-light;
+        background: var(--primary2);
 
         &::after {
             opacity: 1;
@@ -109,13 +128,13 @@ nav {
     }
 
     // padding-block: 0px 20px;
-    // border-bottom: 1px solid $primary-light;
+    // border-bottom: 1px solid var(--primary2);
 }
 
 .profile-menu {
     display: flex;
     flex-direction: column;
-    background: white;
+    background: var(--background);
     padding: 5px;
     border-radius: $border-radius;
     margin-left: 25px;
@@ -127,12 +146,12 @@ nav {
         $border-radius: 3px;
 
         &:hover {
-            background: $text-light1;
+            background: var(--text1);
         }
     }
 }
 
 .router-link-active {
-    background: $primary-light;
+    background: var(--primary2);
 }
 </style>

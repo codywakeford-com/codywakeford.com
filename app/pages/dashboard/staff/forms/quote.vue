@@ -9,8 +9,8 @@
             <h2>Project Proposal</h2>
 
             <div class="input-group">
-                <label for="">Scope Of Work</label>
-                <textarea name="" rows="15" v-model="input.scope" id=""></textarea>
+                <label>Scope Of Work</label>
+                <textarea name="" rows="15" v-model="input.scope" />
             </div>
 
             <div class="input-row">
@@ -27,7 +27,7 @@
                 <div class="input-group">
                     <label for="">Deliverable</label>
                     <input type="text" v-model="deliverableInput" />
-                    <button @click="addItem(deliverableInput)">Add Item</button>
+                    <button type="button" @click="addItem(deliverableInput)">Add Item</button>
                 </div>
             </div>
 
@@ -42,7 +42,7 @@
                     <tr v-for="(item, index) of input.deliverables">
                         <td>{{ item }}</td>
                         <td>
-                            <button @click="removeQuoteItem(index)">Delete</button>
+                            <button type="button" @click="removeDeliverable(index)">Delete</button>
                         </td>
                     </tr>
                 </tbody>
@@ -67,7 +67,7 @@
                     </div>
                 </div>
 
-                <button-primary-m class="submit-button" @click="addQuoteItem()">Add item</button-primary-m>
+                <button-primary-m type="button" @click="addQuoteItem()">Add item</button-primary-m>
 
                 <table>
                     <thead>
@@ -84,7 +84,7 @@
                             <td>{{ item.quantity }}</td>
                             <td>£{{ item.unitPrice }}</td>
                             <td>
-                                <button @click="removeQuoteItem(index)">Delete</button>
+                                <button type="button" @click="removeQuoteItem(index)">Delete</button>
                             </td>
                         </tr>
                     </tbody>
@@ -94,12 +94,19 @@
             </div>
 
             <embed v-if="quoteUrl" :src="quoteUrl" type="application/pdf" />
+            <embed v-if="proposalUrl" :src="proposalUrl" type="application/pdf" />
+            <embed v-if="invoiceUrl" :src="invoiceUrl" type="application/pdf" />
 
-            <nuxt-link v-if="quoteUrl" :to="quoteUrl">Download Quote</nuxt-link>
-            <nuxt-link v-if="invoiceUrl" :to="invoiceUrl">Download Invoice</nuxt-link>
-            {{ projectId }}
-            <button v-if="projectId && quoteUrl" @click="ProjectController.addQuoteToProject(projectId, quoteUrl, proposalUrl, total)">Upload Quote</button>
-            <button-primary-m type="submit">Submit</button-primary-m>
+            <button
+                type="button"
+                v-if="projectId && quoteUrl"
+                @click="ProjectController.addQuoteToProject(projectId, quoteUrl, proposalUrl, total)"
+            >
+                Upload Quote To Project
+            </button>
+            <button-primary-m :disabled="loading" type="submit">
+                {{ loading ? "Loading" : "Generate Documents" }}
+            </button-primary-m>
         </form>
     </mpage>
 </template>
@@ -139,6 +146,7 @@ const quoteItems = ref<QuoteItem[]>([
         paymentType: "single",
     },
 ])
+
 const quoteUrl = ref<null | string>(null)
 const invoiceUrl = ref<null | string>(null)
 const newQuoteItem = ref<QuoteItem>({
@@ -190,7 +198,7 @@ function addItem(item: string) {
     deliverableInput.value = ""
 }
 
-function removeItem(index: number) {
+function removeDeliverable(index: number) {
     input.value.deliverables.splice(index, 1)
 }
 
@@ -202,12 +210,24 @@ async function submit() {
     const { quoteDocUrl, invoiceDocUrl, proposalDocUrl } = await PdfController.generateQuoteAndProposal(
         $Projects.state.selectedProjectId,
         quoteItems.value,
-        total.value,
+        total.value * 100,
         "name",
+        input.value.scope,
+        input.value.nDaysWork,
+        input.value.due,
+        input.value.deliverables,
     )
 
     if (quoteDocUrl) {
         quoteUrl.value = quoteDocUrl
+    }
+
+    if (invoiceDocUrl) {
+        invoiceUrl.value = invoiceDocUrl
+    }
+
+    if (proposalDocUrl) {
+        proposalUrl.value = proposalDocUrl
     }
 
     loading.value = false

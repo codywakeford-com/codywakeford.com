@@ -106,14 +106,14 @@ function handleFileSelect(event: Event) {
     box-shadow:
         0 1px 3px 0 rgba(0, 0, 0, 0.1),
         0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    background: $background-light;
+    background: var(--background);
     // border-radius: $border-radius;
 }
 
 .no-messages {
     position: absolute;
     top: 25px;
-    color: $text-light3;
+    color: var(--text3);
     left: 50%;
     transform: translateX(-50%);
 }
@@ -143,7 +143,7 @@ function handleFileSelect(event: Event) {
     position: relative;
 
     .messages-container {
-        border-bottom: 2px solid $secondary;
+        border-bottom: 2px solid var(--secondary);
         overflow-x: hidden;
         position: relative;
         display: flex;
@@ -163,14 +163,14 @@ function handleFileSelect(event: Event) {
     gap: 10px;
     padding: 15px;
     max-width: 100%;
-    background: white;
+    background: var(--background);
     border-radius: $border-radius;
 
     .input-box {
         flex: 1;
         display: flex;
         justify-content: flex-end;
-        background: $secondary;
+        background: var(--secondary);
         border-radius: $border-radius;
         flex-direction: column;
         margin-top: auto;
@@ -185,7 +185,7 @@ function handleFileSelect(event: Event) {
             align-items: center;
 
             &.files {
-                border-top: 1px solid $text-light3;
+                border-top: 1px solid var(--text3);
             }
 
             .message-input {
@@ -249,13 +249,13 @@ function handleFileSelect(event: Event) {
     justify-content: center;
 
     padding: 5px 20px;
-    background: $primary;
-    color: white;
+    background: var(--primary);
+    color: var(--text1);
     border-radius: $border-radius;
     cursor: pointer;
 
     &:hover:not(:disabled) {
-        background-color: $primary-light;
+        background-color: var(--primary2);
     }
 
     &:disabled {

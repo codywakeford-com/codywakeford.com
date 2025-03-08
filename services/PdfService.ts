@@ -41,10 +41,10 @@ export default class PdfService {
         return { invoiceUrl }
     }
 
-    static async generateProposal(nDaysWork: number, due: string, deliverables: string[]) {
+    static async generateProposal(scope: string, nDaysWork: number, due: string, deliverables: string[]) {
         const proposalDocUrl = await $fetch(`/api/pdf/proposal`, {
             method: "POST",
-            body: { nDaysWork, due, deliverables },
+            body: { scope, nDaysWork, due, deliverables },
         })
 
         return { proposalDocUrl }

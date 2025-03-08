@@ -1,5 +1,5 @@
 <template>
-    <main class="container" :class="{ 'actions-active': actions.length > 0 }">
+    <main class="container" :class="{ 'actions-active': $Actions.getPendingByProjectId(projectId).length > 0 }">
         <header>
             <div class="left">
                 <div class="date">{{ dayjs(date).format("dddd, MMMM Do") }}</div>
@@ -7,6 +7,7 @@
             </div>
 
             <div class="right">
+                {{ $colorMode.value }}
                 <dashboard-staff-project-controls />
                 <!-- <nuxt-link target="_blank" :to="`https://${project.domain}`" class="project-url" v-if="project?.domain">https://{{ project?.domain }}</nuxt-link> -->
             </div>
@@ -40,7 +41,10 @@
 
             <div class="right-content">
                 <div class="action-menu card">
-                    <dashboard-action :project="project" v-if="$Actions.getPendingByProjectId(projectId).length && project" />
+                    <dashboard-action
+                        :project="project"
+                        v-if="$Actions.getPendingByProjectId(projectId).length && project"
+                    />
                     <div class="no-actions-message" v-else>
                         <h3>Actions</h3>
                         <p>Nothing to do at the moment!</p>
@@ -56,10 +60,7 @@
 
                         <div class="files">
                             <span v-if="!files.length">No files uploaded to this project</span>
-                            <div class="file" v-else v-for="(file, index) of files" :key="index" :file="file">
-                                <Icon name="material-symbols:docs-outline" size="25px" />
-                                <div class="name">{{ file.name }}.{{ file.extension }}</div>
-                            </div>
+                            <dashboard-file-card v-else v-for="(file, index) of files" :key="index" :file="file" />
                         </div>
                     </div>
 
@@ -92,11 +93,6 @@ const date = computed(() => {
     }, 1000 * 1800) // 30 mins
 
     return date
-})
-
-const actions = computed(() => {
-    return []
-    return $Actions.getPendingByProjectId(projectId)
 })
 
 const route = useRoute()
@@ -159,17 +155,9 @@ main {
             grid-area: files;
 
             .files {
-                .file {
-                    display: flex;
-                    align-items: flex-end;
-                    padding-block: 15px 20px;
-                    gap: 10px;
-                    border-bottom: 1px solid $text-light3;
-
-                    &:hover {
-                        background: $text-light1;
-                    }
-                }
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
             }
 
             .files-card {
@@ -181,7 +169,7 @@ main {
 
                 span {
                     font-size: 0.9rem;
-                    color: $text-light3;
+                    color: var(--text3);
                 }
 
                 header {
@@ -269,7 +257,7 @@ main {
                 font-size: 0.9rem;
                 padding-inline: 25px;
 
-                border-bottom: 1px solid $text-light2;
+                border-bottom: 1px solid var(--text2);
             }
         }
     }
@@ -305,9 +293,9 @@ header {
 }
 
 .card {
-    background: white;
+    background: var(--background);
     padding: 25px;
     border-radius: $border-radius;
-    box-shadow: 3px 3px 20px lightgrey;
+    box-shadow: 3px 3px 20px var(--shadow-color);
 }
 </style>

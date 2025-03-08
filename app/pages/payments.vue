@@ -21,11 +21,11 @@ section {
     flex-direction: column;
     position: relative;
     z-index: 10;
-    background: white;
+    background: var(--background);
     padding-block: 35px 25px;
     padding-inline: 25px;
     gap: 20px;
     border-radius: 5px;
-    border: 1px solid $text-light2;
+    border: 1px solid var(--text2);
 }
 </style>

@@ -78,8 +78,8 @@ const delivered = true
         margin-left: auto;
 
         .content {
-            background: $primary-light;
-            color: $text-light1;
+            background: var(--primary2);
+            color: var(--text1);
             border-bottom-right-radius: 0px;
             margin-bottom: 5px;
         }
@@ -91,15 +91,15 @@ const delivered = true
 
     &.recieved {
         margin-right: auto;
-        background: white;
+        background: var(--background);
         text-align: left;
 
         border-radius: 20px;
         border-bottom-left-radius: 0;
 
         .content {
-            background: $text-light1;
-            color: $text-dark1;
+            background: var(--text1);
+            color: var(--text4);
             border-bottom-left-radius: 0px;
             margin-bottom: 5px;
         }

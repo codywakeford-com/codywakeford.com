@@ -2,8 +2,10 @@
     <main v-if="data" class="quote">
         <header>
             <div style="background-color: #081c44" class="blue-logo-box">
-                <img src="https://firebasestorage.googleapis.com/v0/b/portfolio-1953f.firebasestorage.app/o/cw-logo.webp?alt=media&token=8572be88-d5f1-4c58-9c0e-2ef76b5a185a"
-                    alt="" />
+                <img
+                    src="https://firebasestorage.googleapis.com/v0/b/portfolio-1953f.firebasestorage.app/o/cw-logo.webp?alt=media&token=8572be88-d5f1-4c58-9c0e-2ef76b5a185a"
+                    alt=""
+                />
             </div>
             <div>
                 <h1>Project Quote</h1>
@@ -72,13 +74,14 @@
                 <p>I provide free bug fixes for 30 days after project completion to ensure everything runs smoothly.</p>
                 <p>
                     Before anything is released to the public all code is end-to-end tested using industry best
-                    practices, this ensures your website works
-                    seamlessly and without error on all devices.
+                    practices, this ensures your website works seamlessly and without error on all devices.
                 </p>
                 <p>All my websites are 100% mobile responsive.</p>
                 <p>All my clients get a google analytics hooked up to their website for free.</p>
-                <p>Every website I build comes with an independent Google Lighthouse performance report as a testament
-                    to my commitment to quality.</p>
+                <p>
+                    Every website I build comes with an independent Google Lighthouse performance report as a testament
+                    to my commitment to quality.
+                </p>
             </section>
         </article>
 
@@ -113,14 +116,6 @@ interface Data {
 }
 
 const data = ref<Data | null>(null)
-
-function readCache() {
-    const cache = localStorage.getItem("data")
-
-    if (!cache) return null
-
-    data.value = JSON.parse(cache)
-}
 
 if (route.query.data) {
     try {

@@ -7,7 +7,9 @@
             {{ $BillingModal.state.paymentAmount }}
 
             <div class="amount">
-                <h2 v-if="$BillingModal.state.paymentAmount">£{{ $BillingModal.state.paymentAmount.toFixed(2) }}</h2>
+                <h2 v-if="$BillingModal.state.paymentAmount">
+                    £{{ ($BillingModal.state.paymentAmount / 100).toFixed(2) }}
+                </h2>
                 <input type="text" v-else />
             </div>
         </header>
@@ -44,7 +46,11 @@
                 <div class="form-item">
                     <label for="email">Reciept Email:</label>
                     <input class="input-element" type="email" placeholder="email" v-model="address.email.input" />
-                    <div :class="{ active: address.email.error }" v-for="e of address.email.error" class="error-message">
+                    <div
+                        :class="{ active: address.email.error }"
+                        v-for="e of address.email.error"
+                        class="error-message"
+                    >
                         {{ e }}
                     </div>
                 </div>
@@ -54,7 +60,11 @@
                 <div class="form-item">
                     <label for="">Full Name</label>
                     <input class="input-element" type="text" v-model="address.fullName.input" />
-                    <div :class="{ active: address.fullName.error }" v-for="e of address.fullName.error" class="error-message">
+                    <div
+                        :class="{ active: address.fullName.error }"
+                        v-for="e of address.fullName.error"
+                        class="error-message"
+                    >
                         {{ e }}
                     </div>
                 </div>
@@ -70,15 +80,28 @@
                 <div class="form-item">
                     <label for="">Postcode</label>
                     <input class="input-element" type="text" v-model="address.postcode.input" />
-                    <div :class="{ active: address.postcode.error }" v-for="e of address.postcode.error" class="error-message">
+                    <div
+                        :class="{ active: address.postcode.error }"
+                        v-for="e of address.postcode.error"
+                        class="error-message"
+                    >
                         {{ e }}
                     </div>
                 </div>
 
                 <div class="form-item">
                     <label for="">Country</label>
-                    <input :class="{ error: address.country.error }" class="input-element" type="text" v-model="address.country.input" />
-                    <div :class="{ active: address.country.error }" v-for="e of address.country.error" class="error-message">
+                    <input
+                        :class="{ error: address.country.error }"
+                        class="input-element"
+                        type="text"
+                        v-model="address.country.input"
+                    />
+                    <div
+                        :class="{ active: address.country.error }"
+                        v-for="e of address.country.error"
+                        class="error-message"
+                    >
                         {{ e }}
                     </div>
                 </div>
@@ -88,8 +111,16 @@
         </form>
 
         <div class="button-box">
-            <btn class="loading-button" @click="addCard()" v-if="$BillingModal.type === 'save-card'" :disabled="loading" :loading="loading">Save Card</btn>
-            <btn class="loading-button" @click="pay()" v-else :disabled="loading" :loading="loading">Make Payment </btn>
+            <btn
+                class="loading-button"
+                @click="addCard()"
+                v-if="$BillingModal.type === 'save-card'"
+                :disabled="loading"
+                :loading="loading"
+            >
+                Save Card
+            </btn>
+            <btn class="loading-button" @click="pay()" v-else :disabled="loading" :loading="loading">Make Payment</btn>
             <div class="error-message">{{ state.errorMessage }}</div>
         </div>
     </section>
@@ -97,7 +128,12 @@
 
 <script setup lang="ts">
 import { isValidEmail } from "~~/services/InputValidationService"
-import type { StripeCardCvcElement, StripeCardExpiryElement, StripeAddressElement, StripeCardNumberElement } from "@stripe/stripe-js"
+import type {
+    StripeCardCvcElement,
+    StripeCardExpiryElement,
+    StripeAddressElement,
+    StripeCardNumberElement,
+} from "@stripe/stripe-js"
 import { loadStripe, type Stripe, type StripeCardElement } from "@stripe/stripe-js"
 import PaymentController from "~~/controllers/PaymentController"
 import { InputValidationService, required } from "~~/services/InputValidationService"
@@ -291,12 +327,12 @@ dialog[open] {
     flex-direction: column;
     position: relative;
     z-index: 10;
-    background: white;
+    background: var(--background);
     padding-block: 35px 25px;
     padding-inline: 25px;
     gap: 20px;
     border-radius: 5px;
-    border: 1px solid $text-light2;
+    border: 1px solid var(--text2);
 }
 
 .new-card {
@@ -304,8 +340,8 @@ dialog[open] {
     height: 90px;
     margin-top: 15px;
     border-radius: 5px;
-    background: white;
-    border: 3px solid $text-light1;
+    background: var(--background);
+    border: 3px solid var(--text1);
 }
 
 header {
@@ -346,12 +382,12 @@ form {
 
 .loading-button {
     height: 30px;
-    color: white;
+    color: var(--text1);
     border: 0;
     margin: 0;
     margin-inline: auto;
     width: 100%;
-    background: $primary;
+    background: var(--primary);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -365,13 +401,13 @@ form {
     border-radius: 5px;
 
     &:focus-within {
-        border: 1px solid $primary;
+        border: 1px solid var(--primary);
         outline: none;
     }
 }
 
 .StripeElement--focus {
-    border: 1px solid $primary;
+    border: 1px solid var(--primary);
 }
 
 .button-box {

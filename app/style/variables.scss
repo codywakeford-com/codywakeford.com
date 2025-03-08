@@ -1,23 +1,37 @@
-$primary: #081c44;
-$primary-light: #0f347c;
 
-$background-light: #ffffff;
 
-$secondary: #ececec;
+:root {
+  --primary:  #081c44;
+  --primary2: #0f347c;
+  --secondary: #ececec;
+  --background: #ffffff;
+  --text1: #f0f0f0;
+  --text2: #cecece;
+  --text3: #909090;
+  --text4: #000000;
+  --text5: #1b1b1b;
+  --text6: #414141;
+  --shadow-color: lightgrey;
+}
 
-$text-light1: #f0f0f0;
-$text-light2: #cecece;
-$text-light3: #909090;
+.dark-mode {
+  --primary: #0b2760;
+  --primary2: #0a1b4a;
+  --background: #222;
+  --secondary: #2a2a2a;
+  --text6: #f0f0f0;
+  --text5: #cecece;
+  --text4: #909090;
+  --text3: #000000;
+  --text2: #1b1b1b;
+  --text1: #414141;
+  --shadow-color: #222;
+}
 
-$text-dark1: #000000;
-$text-dark2: #1b1b1b;
-$text-dark3: #414141;
 
 $danger-transparent: rgba(243, 196, 196, 0.445);
 $danger1: rgb(223, 67, 67);
-
 $success: rgb(10, 116, 10);
-
 $border-radius: 5px;
 
 $page-width: 1200px;
@@ -41,6 +55,3 @@ $footer-height: 75px;
     }
 }
 
-// remove
-$admin-background: white;
-$shadow-dark: 4px 4px 10px black;

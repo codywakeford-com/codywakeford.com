@@ -17,7 +17,7 @@
 <style lang="scss" scoped>
 section {
     position: relative;
-    background: $primary;
+    background: var(--primary);
     z-index: 2;
     height: $footer-height;
 }
@@ -35,11 +35,11 @@ section {
 
 .center {
     text-align: center;
-    color: $text-light1;
+    color: var(--text1);
 }
 
 .socials {
-    color: white;
+    color: var(--text1);
 }
 
 img {

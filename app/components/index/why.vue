@@ -98,7 +98,7 @@ section {
 
 .content {
     padding-block: var(--page-gutter) calc(var(--page-gutter) * 2);
-    color: $text-dark1;
+    color: var(--text4);
     display: flex;
     flex-direction: column;
     gap: 50px;
@@ -119,16 +119,16 @@ section {
         max-width: 300px;
 
         svg {
-            color: $primary;
+            color: var(--primary);
             margin-bottom: 10px;
         }
 
         h3 {
-            color: $primary;
+            color: var(--primary);
         }
 
         p {
-            color: $text-dark2;
+            color: var(--text5);
         }
     }
 }

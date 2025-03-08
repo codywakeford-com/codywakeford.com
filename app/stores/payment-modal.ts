@@ -20,7 +20,7 @@ export const useBillingModalStore = defineStore(
 
         function openPaymentModal(amountToPay: number) {
             state.value.ui = "payment"
-            state.value.paymentAmount = Math.floor(amountToPay * 100)
+            state.value.paymentAmount = Math.floor(amountToPay)
             showModalById("payment-modal")
         }
 

@@ -47,7 +47,7 @@ const testimonials: Review[] = [
 
 <style lang="scss" scoped>
 section {
-    background: $primary;
+    background: var(--primary);
     padding-block: var(--page-gutter) calc(var(--page-gutter) * 2);
 }
 
@@ -71,7 +71,7 @@ section {
 
     .card {
         max-width: 300px;
-        background: white;
+        background: var(--background);
         padding: 25px;
         height: min-content;
         border-radius: $border-radius;

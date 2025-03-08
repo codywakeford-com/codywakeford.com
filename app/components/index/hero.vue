@@ -45,7 +45,7 @@ section {
     h2 {
         font-weight: normal;
         font-size: 1.2rem;
-        color: $text-dark2;
+        color: var(--text5);
         max-width: 500px;
         line-height: 1.6;
     }

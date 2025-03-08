@@ -53,7 +53,10 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
         }
 
         await ActivityLogService.addPhaseActivityItem(project.id, "development")
-        await ActivityLogService.addSystemMessageActivityItem(project.id, "Design is approved! Now, we begin development.")
+        await ActivityLogService.addSystemMessageActivityItem(
+            project.id,
+            "I'm glad your happy with the design! Now, I'll start developing the project. Check back here for updates!",
+        )
         return true
     },
 
@@ -75,7 +78,10 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
             "The website is built and tested! Book a meeting to review the final version before launch.",
         )
         await ActivityLogService.addPhaseActivityItem(project.id, "launch")
-        await ActivityLogService.addSystemMessageActivityItem(project.id, "Everything is ready! Please book a call for the final review.")
+        await ActivityLogService.addSystemMessageActivityItem(
+            project.id,
+            "Everything is ready! Please book a call for the final review.",
+        )
 
         // TODO: await client reveiw and final approval
         return true
@@ -85,8 +91,16 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
         if (!project.quote) throw new Error("quote not found")
 
         if (project.quote.amountPaid / project.quote.totalAmount < 1) {
-            await ActionService.createUserAction(project.id, "payment", "Please make the final payment before we launch your website.")
-            await ActivityLogService.addSystemMessageActivityItem(project.id, "Final payment required before launching your website!", [paymentAction.id])
+            await ActionService.createUserAction(
+                project.id,
+                "payment",
+                "Please make the final payment before we launch your website.",
+            )
+            await ActivityLogService.addSystemMessageActivityItem(
+                project.id,
+                "Final payment required before launching your website!",
+                [paymentAction.id],
+            )
             return false
         }
 
@@ -100,7 +114,10 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
     },
 
     live: async (project) => {
-        await ActivityLogService.addSystemMessageActivityItem(project.id, "Your website is now live! Check it out on your domain.")
+        await ActivityLogService.addSystemMessageActivityItem(
+            project.id,
+            "Your website is now live! Check it out on your domain.",
+        )
         return true
     },
 }

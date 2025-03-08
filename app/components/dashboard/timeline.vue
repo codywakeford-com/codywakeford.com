@@ -47,35 +47,40 @@ const phases: Phase[] = [
     {
         name: "Design",
         phaseName: "design",
-        shortDescription: "We create design concepts and prototypes based on the defined project goals and requirements.",
+        shortDescription:
+            "We create design concepts and prototypes based on the defined project goals and requirements.",
         description:
             "During the Design phase, we translate the project requirements into visual concepts. This includes creating wireframes, mockups, and prototypes, which will help the client visualize the final product. We work iteratively with the client to refine the design before moving to development.",
     },
     {
         name: "Development",
         phaseName: "development",
-        shortDescription: "This phase involves the actual creation of the product, including coding and technical setup.",
+        shortDescription:
+            "This phase involves the actual creation of the product, including coding and technical setup.",
         description:
             "The Development phase is where the design is turned into a fully functional product. Our team works on coding, setting up the necessary infrastructure, and integrating any required third-party services. This is the longest phase and involves frequent collaboration with the client to ensure the product meets their expectations.",
     },
     {
         name: "Testing",
         phaseName: "testing",
-        shortDescription: "We rigorously test the product to ensure it meets quality standards and is ready for launch.",
+        shortDescription:
+            "We rigorously test the product to ensure it meets quality standards and is ready for launch.",
         description:
             "The Testing phase involves thorough quality assurance (QA) to identify and fix any bugs or issues in the product. We conduct functional testing, usability testing, and performance testing to ensure that the product is stable and works as intended before launch.",
     },
     {
         name: "Launch",
         phaseName: "launch",
-        shortDescription: "Here we finalize the product, deploy it to the live environment, and guide the client through the first steps of using the product.",
+        shortDescription:
+            "Here we finalize the product, deploy it to the live environment, and guide the client through the first steps of using the product.",
         description:
             "In the Launch phase, the product is deployed to the live environment, and we guide the client through its use. This includes onboarding, training, and providing documentation on how to manage the product. We ensure that the client is fully equipped to use and maintain the product moving forward.",
     },
     {
         name: "Live",
         phaseName: "live",
-        shortDescription: "The product is live, and we provide ongoing support and maintenance to ensure smooth operation.",
+        shortDescription:
+            "The product is live, and we provide ongoing support and maintenance to ensure smooth operation.",
         description:
             "The Live phase is where the product is in full operation. We provide ongoing support, monitor its performance, and address any issues that arise. Additionally, we assist the client with updates and new features, ensuring that the product continues to meet their needs as their business evolves.",
     },
@@ -110,7 +115,7 @@ section {
     flex-direction: column;
     gap: 20px;
     align-items: center;
-    background: $text-light1;
+    background: var(--background);
     padding: 15px 15px;
     margin-inline: 15px;
     border-radius: 10px;
@@ -132,7 +137,7 @@ section {
         &::after {
             content: "";
             position: absolute;
-            background: white;
+            background: var(--background);
             height: 184px;
             width: 12px;
             left: -15px;
@@ -160,7 +165,7 @@ section {
         &::after {
             content: "";
             position: absolute;
-            background: white;
+            background: var(--background);
             height: 184px;
             width: 12px;
             right: -15px;
@@ -185,51 +190,51 @@ section {
     }
 
     &.complete {
-        border: 3px solid $primary;
+        border: 3px solid var(--primary);
 
         .number {
-            background: $primary;
-            color: $text-light1;
+            background: var(--primary);
+            color: var(--text1);
         }
 
         .name {
-            color: $primary;
+            color: var(--primary);
         }
 
         &::before {
-            background: $primary;
+            background: var(--primary);
         }
     }
 
     &.active {
-        border: 3px solid $primary;
+        border: 3px solid var(--primary);
 
         .number {
-            border: 3px solid $primary;
-            color: $primary;
+            border: 3px solid var(--primary);
+            color: var(--primary);
         }
 
         &::before {
-            background: $text-light3;
+            background: var(--text6);
         }
 
         .name {
-            color: $primary;
+            color: var(--primary);
         }
     }
 
     &.incomplete {
         .number {
-            color: $text-light3;
-            border: 3px solid $text-light3;
+            color: var(--text6);
+            border: 3px solid var(--text6);
         }
 
         &::before {
-            background: $text-light3;
+            background: var(--text6);
         }
 
         .name {
-            color: $text-light3;
+            color: var(--text6);
         }
     }
 

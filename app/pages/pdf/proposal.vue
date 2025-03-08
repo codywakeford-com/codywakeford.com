@@ -17,8 +17,9 @@
             <section>
                 <h3>Overview</h3>
                 <p>
-                    This document outlines my understanding of your project requirements to ensure we are aligned on the scope, objectives, and deliverables. It
-                    serves as a reference point to keep expectations clear and ensure a smooth development process.
+                    This document outlines my understanding of your project requirements to ensure we are aligned on the
+                    scope, objectives, and deliverables. It serves as a reference point to keep expectations clear and
+                    ensure a smooth development process.
                 </p>
             </section>
 
@@ -34,8 +35,8 @@
                 </ol>
 
                 <p>
-                    As part of my standard development process, your website will be fully mobile-responsive, rigorously tested, and optimized to ensure all
-                    features function as intended.
+                    As part of my standard development process, your website will be fully mobile-responsive, rigorously
+                    tested, and optimized to ensure all features function as intended.
                 </p>
             </section>
 
@@ -43,13 +44,17 @@
                 <h3>Timeline & Milestones</h3>
                 <p>
                     As outlined in the quote, the estimated time for completion is
-                    {{ proposal.nDaysWork }} days. I will ensure the website is fully delivered and handed over by {{ proposal.due }}.
+                    {{ proposal.nDaysWork }} days. I will ensure the website is fully delivered and handed over by
+                    {{ proposal.due }}.
                 </p>
             </section>
 
             <section>
                 <h3>Payment Structure</h3>
-                <p>To ensure a smooth workflow and mutual commitment throughout the project, payments will be structured in three stages:</p>
+                <p>
+                    To ensure a smooth workflow and mutual commitment throughout the project, payments will be
+                    structured in three stages:
+                </p>
 
                 <ul>
                     <!-- <li> -->
@@ -99,9 +104,10 @@ definePageMeta({
 const route = useRoute()
 const proposal = ref<Proposal | null>(null)
 
-if (route.query.proposal) {
+if (route.query.data) {
     try {
-        proposal.value = JSON.parse(route.query.proposal as string)
+        proposal.value = JSON.parse(route.query.data as string)
+        console.log(proposal.value)
     } catch (e) {
         console.error("Invalid JSON in query parameter:", e)
         proposal.value = null

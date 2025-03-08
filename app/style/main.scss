@@ -16,6 +16,11 @@ body,
     transition: all 0.15s;
     font-family: $font;
     box-sizing: border-box;
+    color: var(--text6);
+}
+
+.iconify {
+    color: var(--text6)
 }
 
 a {
@@ -45,6 +50,11 @@ p {
     margin: 0;
 }
 
+.dark-mode {
+    .pattern-background {
+        filter: invert(0.8)
+    }
+}
 .pattern-background {
     position: absolute;
     height: 100%;
@@ -54,18 +64,6 @@ p {
     &.light {
         opacity: 0.3;
     }
-
-    &.dark {
-        filter: invert(0.05)
-    }
 }
 
-.calendly-overlay {
-    // display: none;
-}
-.calendly-button {
-    background: none;
-    color: $text-light1;
-    font-size: 0.9rem;
-    padding: 0;
-}
+

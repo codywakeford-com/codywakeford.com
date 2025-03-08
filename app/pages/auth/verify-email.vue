@@ -51,13 +51,13 @@ form {
 
     a {
         text-decoration: underline;
-        color: $text-dark1;
+        color: var(--text4);
     }
 
     p {
         font-size: 0.95rem;
         margin-bottom: 25px;
-        color: $text-dark1;
+        color: var(--text4);
     }
 }
 

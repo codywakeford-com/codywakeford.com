@@ -26,16 +26,16 @@ header {
     margin-inline: auto;
     text-align: center;
     max-width: 600px;
-    color: $text-light1;
+    color: var(--text1);
 
     &.dark {
-        color: $primary;
+        color: var(--primary);
 
         h2,
         h3 {
             &::after,
             &::before {
-                background: $primary;
+                background: var(--primary);
             }
         }
     }
@@ -59,7 +59,7 @@ h3 {
         position: absolute;
         height: 2px;
         width: 20px;
-        background: $text-light1;
+        background: var(--text1);
         top: 50%;
         transform: translateY(-50%);
     }

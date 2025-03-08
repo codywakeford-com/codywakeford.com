@@ -193,7 +193,7 @@ function applyClasses() {
 
 section {
     position: relative;
-    background: $primary;
+    background: var(--primary);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -201,7 +201,7 @@ section {
 
     padding-block: 75px 50px;
     padding-inline: 100px;
-    color: white;
+    color: var(--text1);
 
     header {
         display: flex;
@@ -220,12 +220,12 @@ section {
         }
 
         h4 {
-            color: $primary;
+            color: var(--primary);
             position: relative;
 
             &::before {
                 content: "";
-                background: $primary;
+                background: var(--primary);
                 height: 1px;
                 width: 50px;
 
@@ -237,7 +237,7 @@ section {
 
             &::after {
                 content: "";
-                background: $primary;
+                background: var(--primary);
                 height: 1px;
                 width: 50px;
 
@@ -265,7 +265,7 @@ section {
             align-items: center;
 
             border: none;
-            color: black;
+            color: var(--text6);
             border-radius: 5px;
             height: 40px;
             width: 40px;
@@ -293,9 +293,9 @@ section {
             margin-inline: 10px;
             width: 300px;
             max-width: 300px;
-            background-color: white;
+            background-color: var(--text1);
             border-radius: 5px;
-            color: black;
+            color: var(--text6);
             padding: 25px 0;
             height: min-content;
             font-size: 1.1rem;

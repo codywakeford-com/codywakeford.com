@@ -50,7 +50,7 @@ main {
 
         align-items: center;
         border-radius: 10px;
-        border: 1px solid $text-light2;
+        border: 1px solid var(--text2);
         background: rgba(255, 255, 255, 0.6);
         cursor: pointer;
         font-size: 0.9rem;
@@ -60,21 +60,21 @@ main {
 
         .add-icon {
             box-sizing: content-box;
-            border: 1px solid $text-light2;
+            border: 1px solid var(--text2);
             border-radius: 50%;
             padding: 5px;
         }
 
         &:hover {
-            background: white;
-            border: 1px solid $primary;
+            background: var(--background);
+            border: 1px solid var(--primary);
         }
     }
 }
 
 .save-card-modal {
     max-width: 850px;
-    background: white;
+    background: var(--background);
     padding: 25px;
     border-radius: $border-radius;
 }
