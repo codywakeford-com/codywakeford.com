@@ -31,7 +31,7 @@ interface Phase {
 }
 
 interface Props {
-    project: Project | undefined
+    project: Project
 }
 
 const props = defineProps<Props>()
@@ -82,7 +82,7 @@ const phases: Phase[] = [
 ]
 
 const phaseIndex = computed(() => {
-    return phases.findIndex((phase) => phase.phaseName === props.project?.phase) || 0
+    return phases.findIndex((phase) => phase.phaseName === props.project.phase) || 0
 })
 </script>
 

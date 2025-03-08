@@ -4,8 +4,10 @@
             <h1 v-if="$BillingModal.type === 'save-card'">Add a card</h1>
             <h1 v-else>Make a payment</h1>
 
+            {{ $BillingModal.state.paymentAmount }}
+
             <div class="amount">
-                <h2 v-if="amount">£{{ (amount / 100).toFixed(2) }}</h2>
+                <h2 v-if="$BillingModal.state.paymentAmount">£{{ $BillingModal.state.paymentAmount.toFixed(2) }}</h2>
                 <input type="text" v-else />
             </div>
         </header>
@@ -26,7 +28,7 @@
             <div class="left">
                 <div class="form-item">
                     <label for="cardNumber">Card Number</label>
-                    <div class="input-element" id="card-number-element1" ref="cardNumber" />
+                    <div class="input-element" :id="`card-number-element${elId}`" ref="cardNumber" />
                 </div>
 
                 <div class="form-item">
@@ -42,8 +44,8 @@
                 <div class="form-item">
                     <label for="email">Reciept Email:</label>
                     <input class="input-element" type="email" placeholder="email" v-model="address.email.input" />
-                    <div :class="{ active: address.email.error }" class="error-message">
-                        {{ address.email.error }}
+                    <div :class="{ active: address.email.error }" v-for="e of address.email.error" class="error-message">
+                        {{ e }}
                     </div>
                 </div>
             </div>
@@ -52,32 +54,32 @@
                 <div class="form-item">
                     <label for="">Full Name</label>
                     <input class="input-element" type="text" v-model="address.fullName.input" />
-                    <div :class="{ active: address.fullName.error }" class="error-message">
-                        {{ address.fullName.error }}
+                    <div :class="{ active: address.fullName.error }" v-for="e of address.fullName.error" class="error-message">
+                        {{ e }}
                     </div>
                 </div>
 
                 <div class="form-item">
                     <label for="">City</label>
                     <input class="input-element" type="text" v-model="address.city.input" />
-                    <div :class="{ active: address.city.error }" class="error-message">
-                        {{ address.city.error }}
+                    <div :class="{ active: address.city.error }" v-for="e of address.city.error" class="error-message">
+                        {{ e }}
                     </div>
                 </div>
 
                 <div class="form-item">
                     <label for="">Postcode</label>
                     <input class="input-element" type="text" v-model="address.postcode.input" />
-                    <div :class="{ active: address.postcode.error }" class="error-message">
-                        {{ address.postcode.error }}
+                    <div :class="{ active: address.postcode.error }" v-for="e of address.postcode.error" class="error-message">
+                        {{ e }}
                     </div>
                 </div>
 
                 <div class="form-item">
                     <label for="">Country</label>
                     <input :class="{ error: address.country.error }" class="input-element" type="text" v-model="address.country.input" />
-                    <div :class="{ active: address.country.error }" class="error-message">
-                        {{ address.country.error }}
+                    <div :class="{ active: address.country.error }" v-for="e of address.country.error" class="error-message">
+                        {{ e }}
                     </div>
                 </div>
             </div>
@@ -94,41 +96,29 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const amount = ref<number>()
-const userInputAmount = ref<number>(0)
-const $BillingModal = useBillingModalStore()
-
-const useNewCard = ref(false) // keeps track if the user wants to use a saved card or not
-
+import { isValidEmail } from "~~/services/InputValidationService"
 import type { StripeCardCvcElement, StripeCardExpiryElement, StripeAddressElement, StripeCardNumberElement } from "@stripe/stripe-js"
 import { loadStripe, type Stripe, type StripeCardElement } from "@stripe/stripe-js"
 import PaymentController from "~~/controllers/PaymentController"
 import { InputValidationService, required } from "~~/services/InputValidationService"
 
+const route = useRoute()
+const amount = ref<number | undefined>(undefined)
+const userInputAmount = ref<number>(0)
+const $BillingModal = useBillingModalStore()
+const useNewCard = ref(false) // keeps track if the user wants to use a saved card or not
 const cardNumber = ref<StripeCardNumberElement | null>(null)
 const cardExpiry = ref<StripeCardExpiryElement | null>(null)
 const cardCvc = ref<StripeCardCvcElement | null>(null)
 const stripe = ref<Stripe | null>(null)
 const card = ref()
-
-const paymentProfiles = computed(() => {
-    return $User.stripePaymentProfile?.paymentMethods || []
-})
-
 const selectedCardIndex = ref<number>(0)
-
-interface Props {
-    onComplete?: (setupRecord: PaymentMethod) => void
-    onFailure?: () => void
-}
-
-const props = defineProps<Props>()
-
+const elId = uuid() // differentiates instances of this component
 const { onLoaded } = useScriptStripe()
+
 onMounted(() => {
     onLoaded(({ Stripe }) => {
-        amount.value = Number(route.query.amount) || 10000
+        amount.value = Number(route.query.amount) || $BillingModal.state.paymentAmount || undefined
         stripe.value = Stripe(useRuntimeConfig().public.STRIPE_PUBLISHABLE_KEY)
 
         if (!stripe.value || !cardNumber.value || !cardCvc.value || !cardExpiry.value) {
@@ -142,7 +132,7 @@ onMounted(() => {
 
         card.value = cardNumber.value // data sent in payment request
 
-        cardNumber.value.mount("#card-number-element2")
+        cardNumber.value.mount("#card-number-element" + elId)
         cardExpiry.value.mount("#card-expiry-element")
         cardCvc.value.mount("#card-cvc-element")
     })
@@ -152,20 +142,15 @@ const address = ref<FormInput>({
     fullName: {
         input: "",
         error: [],
-        validators: [required, isValidEmail],
+        validators: [required],
     },
     email: {
         input: "",
         error: [],
-        validators: [required],
+        validators: [required, isValidEmail],
     },
 
     country: {
-        input: "",
-        error: [],
-        validators: [required],
-    },
-    street: {
         input: "",
         error: [],
         validators: [required],
@@ -193,6 +178,7 @@ async function pay() {
         throw new Error("Stripe or stripe elements not initialized properly.")
     }
 
+    console.log(InputValidationService.validate(address))
     if (!InputValidationService.validate(address)) return
 
     loading.value = true
@@ -200,11 +186,24 @@ async function pay() {
     try {
         const amountToPay = amount.value ? amount.value : userInputAmount.value
 
-        const result = await PaymentController.payWithCardElement({
+        await PaymentController.payWithCardElement({
+            projectId: useRoute().params.id as string,
+            userId: $User.state.user.id,
             stripe: stripe.value,
             card: card.value,
-            name: address.value.fullName,
             amount: amountToPay,
+            billing: {
+                name: address.value.fullName.input,
+                email: $User.state.user.email,
+                address: {
+                    line1: "Street not provided",
+                    line2: null,
+                    city: address.value.city.input,
+                    state: address.value.city.input,
+                    postcode: address.value.postcode.input,
+                    country: address.value.country.input,
+                },
+            },
         })
     } catch (e) {
         console.log(e)

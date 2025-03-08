@@ -12,7 +12,12 @@
                 </header>
 
                 <div class="cards" v-if="$Files.state.files.length">
-                    <dashboard-file-card-large v-for="(file, index) of $Files.state.files" @click="selectedDoc = file.url" :key="index" :file="file" />
+                    <dashboard-file-card-large
+                        v-for="(file, index) of $Files.state.files"
+                        @click="selectedDoc = file.url"
+                        :key="index"
+                        :file="file"
+                    />
                 </div>
             </section>
 
@@ -34,7 +39,12 @@
 
                     <section>
                         <div class="cards">
-                            <dashboard-file-card v-for="(file, index) of $Files.state.files" :file="file" :key="index" />
+                            <dashboard-file-card
+                                @click="$FilesDashboard.state.previewFileIndex = index"
+                                v-for="(file, index) of $Files.state.files"
+                                :file="file"
+                                :key="index"
+                            />
                         </div>
                     </section>
                 </div>

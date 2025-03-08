@@ -1,34 +1,19 @@
 <template>
-
     <section class="file-preview card" v-if="previewFile">
         <header class="preview-header">
             <h3>File Preview</h3>
             <Icon name="material-symbols:multimodal-hand-eye" size="25" v-modal="'doc-preview'" />
         </header>
         <embed v-if="previewFile.url" :src="previewFile.url" type="application/pdf" />
-        <h3 class="file-name">
-            {{ previewFile.name }}.{{ previewFile.extension }}
-        </h3>
-
-        <div class="description">
-            <p>{{ previewFile.description }}</p>
-            <p v-if="!previewFile.description">No description provided</p>
-        </div>
+        <h3 class="file-name">{{ previewFile.name }}.{{ previewFile.extension }}</h3>
 
         <div class="properties">
             <h4>Properties</h4>
-            <div>Type: {{ previewFile.type }}</div>
             <div>
                 Last Modified:
-                {{
-                    dayjs(previewFile.timestamp).format(
-                        "dddd Do MMM HH:mma",
-                    )
-                }}
+                {{ dayjs(previewFile.timestamp).format("dddd Do MMM HH:mma") }}
             </div>
-            <div v-if="previewFile.size">
-                Size: {{ (previewFile.size / 1024).toFixed(0) }}kb
-            </div>
+            <div v-if="previewFile.size">Size: {{ (previewFile.size / 1024).toFixed(0) }}kb</div>
         </div>
     </section>
 </template>

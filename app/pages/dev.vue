@@ -5,6 +5,10 @@
         <button @click="readObject('/testing/wK8wIvBJNlHHQSyufLik')">readObject</button>
         <button @click="showModalById('payment-modal')">open payment modal</button>
         <button @click="$Calendly.open">Book a call</button>
+        <pre>
+
+        {{ $Projects.state.projects }}
+        </pre>
     </main>
 </template>
 

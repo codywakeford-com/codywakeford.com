@@ -1,5 +1,6 @@
 <template>
     <div class="action" v-if="action">
+        {{ action.action }}
         <h3 v-if="action.action === 'book-meeting'">Book a meeting</h3>
         <h3 v-if="action.action === 'accept-quote'">Accept the quote</h3>
         <h3 v-if="action.action === 'payment'">Make a payment</h3>
@@ -7,22 +8,39 @@
 
         <p>{{ action.description }}</p>
         <div class="action-controls">
-            <button-primary-m v-if="action.action === 'book-meeting'" @click="startBookMeeting()"> Book a call </button-primary-m>
-            <button-primary-m v-if="action.action === 'accept-quote'" @click="ProjectController.acceptProjectProposal(projectId)"
-                >Accept Quote</button-primary-m
+            <button-primary-m v-if="action.action === 'book-meeting'" @click="startBookMeeting()">
+                Book a call
+            </button-primary-m>
+            <button-primary-m
+                v-if="action.action === 'accept-quote'"
+                @click="ProjectController.acceptProjectProposal(projectId)"
             >
-            <button-primary-m @click="($BillingModal.openPaymentModal(), ($Actions.state.selectedActionId = action.id))" v-if="action.action === 'payment'">
+                Accept Quote
+            </button-primary-m>
+            <button-primary-m
+                @click="
+                    ($BillingModal.openPaymentModal($Projects.getAmountToPay(projectId)),
+                    ($Actions.state.selectedActionId = action.id))
+                "
+                v-if="action.action === 'payment'"
+            >
                 Make a payment
             </button-primary-m>
-            <button-primary-m v-modal="'design-modal'" v-if="action.action === 'accept-design'">View Design</button-primary-m>
-            <button-primary-m v-if="action.action === 'accept-design'" @click="($Projects.clientAcceptsDesign(projectId), $Actions.markAsComplete(action.id))"
-                >Accept Design</button-primary-m
+            <button-primary-m v-modal="'design-modal'" v-if="action.action === 'accept-design'">
+                View Design
+            </button-primary-m>
+            <button-primary-m
+                v-if="action.action === 'accept-design'"
+                @click="ProjectController.acceptDesign(projectId)"
             >
+                Accept Design
+            </button-primary-m>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import ActionController from "~~/controllers/ActionsController"
 import ProjectController from "~~/controllers/ProjectsController"
 
 const projectId = useRoute().params.id as string

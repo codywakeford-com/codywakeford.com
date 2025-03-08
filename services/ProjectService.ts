@@ -11,7 +11,6 @@ export default class ProjectService {
                 accepted: false,
             },
         }
-        console.log("herere")
         try {
             const projectId = await DbService.createObject<Project>("/projects", project)
 

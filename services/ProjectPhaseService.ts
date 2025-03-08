@@ -2,19 +2,26 @@ import ActionService from "./ActionService"
 import ActivityLogService from "./ActivityLogService"
 import DbService from "./DbService"
 
-type PhaseHandler = (project: Project) => Promise<void>
+// Returns true if able to move to next phase
+type PhaseHandler = (project: Project) => Promise<boolean>
 
 const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
     discovery: async (project) => {
         if (!project.quote) throw new Error("quote not found")
 
         if (project.quote.amountPaid / project.quote.totalAmount < 0.33) {
+            await ActivityLogService.addSystemMessageActivityItem(
+                project.id,
+                "Great, I'm happy you want to move forward with my services. To continue with the project please make the initial downpayment of a minimum of 33%.",
+                ["payment"],
+            )
+
             await ActionService.createUserAction(
                 project.id,
                 "payment",
                 "In order to move forward with the design I ask you make a minimum of 33% of the payment.",
             )
-            return
+            return false
         }
 
         await ActionService.createUserAction(
@@ -22,6 +29,10 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
             "book-meeting",
             "Welcome to our project. To start, book your design meeting where we gather all the details to shape the website's structure.",
         )
+
+        await ActivityLogService.addPhaseActivityItem(project.id, "design")
+
+        return true
     },
 
     design: async (project) => {
@@ -38,10 +49,12 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
                 project.id,
                 "Before moving to development, please make the second payment (66% of project quote).",
             )
-            return
+            return false
         }
 
+        await ActivityLogService.addPhaseActivityItem(project.id, "development")
         await ActivityLogService.addSystemMessageActivityItem(project.id, "Design is approved! Now, we begin development.")
+        return true
     },
 
     development: async (project) => {
@@ -49,6 +62,10 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
             project.id,
             "Development is mostly complete. Now, I will perform rigorous testing and security checks.",
         )
+
+        await ActivityLogService.addPhaseActivityItem(project.id, "testing")
+
+        return true
     },
 
     testing: async (project) => {
@@ -57,7 +74,11 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
             "book-meeting",
             "The website is built and tested! Book a meeting to review the final version before launch.",
         )
+        await ActivityLogService.addPhaseActivityItem(project.id, "launch")
         await ActivityLogService.addSystemMessageActivityItem(project.id, "Everything is ready! Please book a call for the final review.")
+
+        // TODO: await client reveiw and final approval
+        return true
     },
 
     launch: async (project) => {
@@ -66,17 +87,21 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
         if (project.quote.amountPaid / project.quote.totalAmount < 1) {
             await ActionService.createUserAction(project.id, "payment", "Please make the final payment before we launch your website.")
             await ActivityLogService.addSystemMessageActivityItem(project.id, "Final payment required before launching your website!", [paymentAction.id])
-            return
+            return false
         }
 
         await ActivityLogService.addSystemMessageActivityItem(
             project.id,
             "Now all thats left to do is move the website onto your live link. This may take up to 24 hours but is usually much faster. You'll be notified when its ready!",
         )
+
+        await ActivityLogService.addPhaseActivityItem(project.id, "live")
+        return true
     },
 
     live: async (project) => {
         await ActivityLogService.addSystemMessageActivityItem(project.id, "Your website is now live! Check it out on your domain.")
+        return true
     },
 }
 
@@ -97,8 +122,13 @@ export default class ProjectPhaseService {
         const handler = phaseHandlers[project.phase]
         if (!handler) throw new Error("phase not found")
 
-        await handler(project)
-        await this.updatePhase(project.id, this.getNextPhase(project.phase))
+        const canMoveToNextPhase = await handler(project)
+
+        console.log(canMoveToNextPhase)
+
+        if (canMoveToNextPhase) {
+            await this.updatePhase(project.id, this.getNextPhase(project.phase))
+        }
     }
 }
 

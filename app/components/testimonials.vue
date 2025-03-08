@@ -7,12 +7,11 @@
 
         <div class="carousel-container">
             <div ref="carousel" class="carousel">
-                <div class="carousel-card" :style="{ transform: `translateX(${item.offset}px)`, opacity: item.opacity }"
-                    v-for="(item, index) in testimonials">
+                <div class="carousel-card" :style="{ transform: `translateX(${item.offset}px)`, opacity: item.opacity }" v-for="(item, index) in testimonials">
                     <div class="text">{{ item.text }}</div>
-                    <flex class="stars">
+                    <div class="stars">
                         <Icon color="gold" icon="material-symbols:star" width="18" v-for="_ in 5" />
-                    </flex>
+                    </div>
 
                     <nuxt-link :to="`https://${item.url}`" target="_blank">
                         <h6>{{ item.author }}</h6>
@@ -313,6 +312,8 @@ section {
             }
 
             .stars {
+                display: flex;
+                align-items: center;
                 padding-inline: 25px;
                 margin-top: 20px;
             }

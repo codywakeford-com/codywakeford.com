@@ -3,11 +3,11 @@
         <dashboard-project-list interface="client" v-if="$Projects.state.projects.length" />
 
         <div class="no-projects-box" v-else>
-            <Icon name="ix:project-new" size="50" style="color: grey" />
+            <Icon name="ix:project-new" size="75" style="color: grey" />
             <h2>No Projects</h2>
             <p>Feel free to book a call to set one up.</p>
 
-            <button-primary-m @click="ProjectsController.createProject([$User.email])"
+            <button-primary-m @click="ProjectController.createProject([$User.email])"
                 ><Icon name="material-symbols:add-2" style="color: white" size="15" />
                 New Project
             </button-primary-m>
@@ -16,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+import ProjectController from "~~/controllers/ProjectsController"
 definePageMeta({
     layout: "dashboard",
     middleware: "dashboard",

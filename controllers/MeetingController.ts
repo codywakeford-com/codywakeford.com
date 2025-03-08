@@ -1,6 +1,7 @@
 import ActionService from "~~/services/ActionService"
 import ActivityLogService from "~~/services/ActivityLogService"
 import MeetingService from "~~/services/MeetingService"
+import ActionController from "./ActionsController"
 
 export default class MeetingController {
     static async onMeetingScheduled(event: any) {
@@ -12,7 +13,7 @@ export default class MeetingController {
         const meetingUrl = event.payload.event.uri
         const clientUrl = event.payload.invitee.uri
 
-        await ActionService.markActionAsComplete($Projects.state.selectedProjectId, $Actions.state.selectedActionId)
+        await ActionController.onBookCall($Projects.state.selectedProjectId)
         const meeting = await MeetingService.setMeeting($Projects.state.selectedProjectId, meetingUrl, clientUrl)
 
         if (!meeting) throw new Error("An error occured getting the meeting details")

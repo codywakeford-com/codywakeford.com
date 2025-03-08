@@ -5,7 +5,6 @@ import DbService from "./DbService"
 
 export default class PaymentService {
     static async getPaymentSecret(paymentOptions: Stripe.PaymentIntentCreateParams): Promise<string> {
-        console.log(paymentOptions)
         const { clientSecret } = await $fetch<{ clientSecret: string }>("/api/stripe/create-payment-intent", {
             method: "POST",
             body: paymentOptions,
@@ -19,6 +18,18 @@ export default class PaymentService {
         }
 
         return clientSecret
+    }
+
+    static generatePaymentRecord(paymentIntent: PaymentIntent, billing: PaymentRecord["billing"], projectId: string, userId: string) {
+        const paymentRecord: PaymentRecord = {
+            paymentIntent,
+            billing,
+            timestamp: Date.now(),
+            projectId,
+            userId: userId,
+        }
+
+        return paymentRecord
     }
 
     static async getSetupIntentSecret(customerId: Stripe.Customer["id"]) {
@@ -51,9 +62,7 @@ export default class PaymentService {
     }
 
     static async confirmCardPayment(stripe: Stripe, clientSecret: string, options: ConfirmCardPaymentData) {
-        const result = await stripe.confirmCardPayment(clientSecret, options)
-
-        return result
+        return await stripe.confirmCardPayment(clientSecret, options)
     }
 
     static async getCardMetadata(paymentMethodId: string) {
@@ -91,20 +100,6 @@ export default class PaymentService {
             expiry: expiry,
             nameOnCard: billingAddress.name,
         }
-    }
-
-    static async savePaymentRecord(paymentIntent: PaymentIntent, paymentMethod: PaymentMethod) {
-        const paymentRecord: PaymentRecord = {
-            totalPaid: paymentIntent.amount,
-            transactionId: paymentIntent.id,
-            billingAddress: paymentMethod.billingAddress,
-            timestamp: String(Date.now()),
-            currency: "gbp",
-            taxRate: 0,
-            description: "",
-        }
-
-        DbService.createObject(`/`)
     }
 
     static async setupPaymentMethod() {

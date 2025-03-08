@@ -7,6 +7,7 @@
             </div>
 
             <div class="right">
+                <dashboard-staff-project-controls />
                 <!-- <nuxt-link target="_blank" :to="`https://${project.domain}`" class="project-url" v-if="project?.domain">https://{{ project?.domain }}</nuxt-link> -->
             </div>
         </header>
@@ -15,7 +16,7 @@
             <div class="left-content">
                 <div class="timeline card">
                     <h3>Timeline</h3>
-                    <!-- <dashboard-timeline :project="project" /> -->
+                    <dashboard-timeline :project="project" />
                 </div>
 
                 <div class="meeting card">

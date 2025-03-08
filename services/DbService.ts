@@ -132,7 +132,10 @@ export default class DbService {
 
                 if (index === -1) {
                     state.push(docData)
+                    return
                 }
+
+                state[index] = docData
 
                 return
             } else {

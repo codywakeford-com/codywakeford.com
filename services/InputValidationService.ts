@@ -12,18 +12,17 @@ interface FormInput {
 }
 
 export function required(field: Field): string | null {
-    if (!field.input) return `This field is required.`
+    if (field.input.trim() === "") return `This field is required.`
     return null
 }
 
 export function isValidEmail(field: Field): string | null {
-    if (typeof field.input === typeof Number) return null
+    if (typeof field.input === "number") return null // Proper number check
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
     const isValid = emailRegex.test(field.input)
 
-    if (!isValid) return "Please input a valid email"
-    else return null
+    return isValid ? null : "Please input a valid email"
 }
 
 export function containsUppercase(field: Field): string | null {
@@ -48,6 +47,7 @@ export class InputValidationService {
                 if (result !== null) {
                     isValid = false
                     field.error.push(result)
+                    console.log(field)
                 }
             }
         })

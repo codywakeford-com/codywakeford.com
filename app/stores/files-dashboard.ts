@@ -5,7 +5,7 @@ interface State {
         search: string
         type: ProjectFile["type"] | "any"
     }
-    previewFileIndex: 0
+    previewFileIndex: number
 }
 
 export const useFilesDashboardStore = defineStore(

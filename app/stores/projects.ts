@@ -24,7 +24,15 @@ export const useProjectStore = defineStore(
 
         const getByEmail = (email: string) => computed(() => state.value.projects.filter((project) => project.emails.includes(email)))
 
-        const designUrl = (projectId: Project["id"]) => computed(() => state.value.projects.find((p) => p.id === projectId)?.design?.url)
+        const getAmountToPay = computed(() => (projectId: string) => {
+            const project = getByProjectId.value(projectId)
+
+            if (!project.quote) throw new Error("Quote not found")
+
+            return project.quote.totalAmount * 0.33
+        })
+
+        const designUrl = computed(() => (projectId: Project["id"]) => state.value.projects.find((p) => p.id === projectId)?.design?.url)
 
         const getPhaseById = (projectId: string) => computed(() => state.value.projects.find((p) => p.id === projectId)?.phase)
 
@@ -65,7 +73,20 @@ export const useProjectStore = defineStore(
 
         const getIds = computed(() => state.value.projects.map((p) => p.id))
 
-        return { state, projects, getByEmail, designUrl, getPhaseById, amountPaid, totalCost, quote, getByProjectId, getNextProjectPhase, getIds }
+        return {
+            state,
+            getAmountToPay,
+            projects,
+            getByEmail,
+            designUrl,
+            getPhaseById,
+            amountPaid,
+            totalCost,
+            quote,
+            getByProjectId,
+            getNextProjectPhase,
+            getIds,
+        }
     },
     { persist: true },
 )

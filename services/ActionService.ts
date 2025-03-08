@@ -15,6 +15,22 @@ export default class ActionService {
         await DbService.createObject<Action>(`/projects/${projectId}/user-required-actions`, action)
     }
 
+    static async onAction(projectId: string, actionType: Action["action"]) {
+        const actions = $Actions.getPendingByProjectId(projectId)
+
+        if (actions.length === 0) {
+            return
+        }
+
+        const action = actions.find((a) => a.action === actionType)
+
+        if (!action) {
+            return
+        }
+
+        await ActionService.markActionAsComplete(projectId, action.id)
+    }
+
     static async markActionAsComplete(projectId: string, actionId: string) {
         const update: Partial<Action> = { status: "completed" }
         await DbService.updateObject<Action>(`/projects/${projectId}/user-required-actions/${actionId}`, update)

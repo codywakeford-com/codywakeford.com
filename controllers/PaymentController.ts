@@ -1,33 +1,62 @@
-import type { PaymentMethod, Stripe, StripeCardElement } from "@stripe/stripe-js"
+import type { PaymentMethod, PaymentMethodCreateParams, Stripe, StripeCardElement } from "@stripe/stripe-js"
+import DbService from "~~/services/DbService"
 import PaymentService from "~~/services/PaymentService"
+import ActionController from "./ActionsController"
+import ProjectController from "./ProjectsController"
+import ProjectPhaseService from "~~/services/ProjectPhaseService"
 
 interface PayWithCardElementInput {
+    projectId: string
     stripe: Stripe
     card: StripeCardElement
-    name: string
+    billing: PaymentRecord["billing"]
     amount: number
+    userId: string
 }
+
 export default class PaymentController {
-    static async payWithCardElement({ stripe, card, name, amount }: PayWithCardElementInput) {
+    static async payWithCardElement({ projectId, stripe, card, billing, amount, userId }: PayWithCardElementInput) {
         const clientSecret = await PaymentService.getPaymentSecret({
             amount,
             currency: "gbp",
             payment_method_types: ["card"],
         })
 
-        const result = await PaymentService.confirmCardPayment(stripe, clientSecret, {
+        const { paymentIntent } = await PaymentService.confirmCardPayment(stripe, clientSecret, {
             payment_method: {
                 card: card,
                 billing_details: {
-                    name: name,
+                    name: billing.name,
                 },
             },
         })
 
-        return result
+        if (!paymentIntent) throw new Error("Broken paymtn")
+
+        // TODO create and send email reciept
+
+        const paymentRecord = PaymentService.generatePaymentRecord(paymentIntent, billing, projectId, userId)
+
+        await $fetch(`/api/projects/update-amount-paid`, {
+            method: "PUT",
+            body: { id: projectId, amountPaid: paymentIntent.amount },
+        })
+
+        await DbService.createObject<PaymentRecord>(`/projects/${projectId}/payment-records`, paymentRecord)
+        await DbService.createObject<PaymentRecord>(`/users/${userId}/payment-records`, paymentRecord)
+        await ActionController.onPayment(projectId)
+        await ProjectPhaseService.incrementPhase($Projects.getByProjectId(projectId))
     }
 
-    static async payWithPaymentMethod({ customerId, paymentMethod, amount }: { customerId: Stripe.Customer["id"]; paymentMethod: PaymentMethod; amount: number }) {
+    static async payWithPaymentMethod({
+        customerId,
+        paymentMethod,
+        amount,
+    }: {
+        customerId: Stripe.Customer["id"]
+        paymentMethod: PaymentMethod
+        amount: number
+    }) {
         const paymentOptions: Stripe.PaymentIntentCreateParams = {
             currency: "gbp",
             amount,
@@ -54,7 +83,12 @@ export default class PaymentController {
         }
     }
 
-    static async setupPaymentMethod(stripe: StripeClient, cardElement: StripeCardNumberElement | StripeCardElement, billingAddress: StripeBillingAddress, customerId: Stripe.Customer["id"]) {
+    static async setupPaymentMethod(
+        stripe: StripeClient,
+        cardElement: StripeCardNumberElement | StripeCardElement,
+        billingAddress: StripeBillingAddress,
+        customerId: Stripe.Customer["id"],
+    ) {
         try {
             const { clientSecret } = await getSetupIntentSecret(customerId)
 
