@@ -4,7 +4,7 @@
         <div class="meeting-details" v-if="meeting">
             <rflex class="atendees">
                 <Icon width="20" icon="material-symbols:person-outline" />
-                <span>{{ meeting.clients[0].name }}</span>
+                <span>{{ meeting.clients[0]?.name }}</span>
             </rflex>
             <rflex class="time">
                 <Icon width="20" icon="uil:calender" />
@@ -26,8 +26,9 @@
             <nuxt-link target="_blank" :to="meeting.meetingUrl">
                 <button-primary-m>Join Meeting</button-primary-m>
             </nuxt-link>
-            <button-primary-m @click="$Calendly.openReschedule(meeting.rescheduleUrl)">Reschedule
-                Meeting</button-primary-m>
+            <button-primary-m @click="$Calendly.openReschedule(meeting.rescheduleUrl)">
+                Reschedule Meeting
+            </button-primary-m>
         </div>
     </div>
 </template>

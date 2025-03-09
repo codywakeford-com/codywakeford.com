@@ -1,4 +1,14 @@
-import { collection, doc, Firestore, onSnapshot } from "firebase/firestore"
+import {
+    collection,
+    CollectionReference,
+    doc,
+    Firestore,
+    onSnapshot,
+    Query,
+    query,
+    QueryConstraint,
+    type DocumentData,
+} from "firebase/firestore"
 
 export default class DbService {
     static async createObject<T>(path: string, data: T): Promise<string> {
@@ -73,11 +83,14 @@ export default class DbService {
         }
     }
 
-    static initCollectionListener(path: string, state: any) {
+    static initCollectionListener(path: string, state: any, queryConstraint?: QueryConstraint) {
         const db = useNuxtApp().$db as Firestore
-        const colRef = collection(db, path)
+        let colRef: CollectionReference<DocumentData> | Query<DocumentData> = collection(db, path)
+
+        if (queryConstraint) colRef = query(colRef, queryConstraint)
 
         onSnapshot(colRef, (snapshot) => {
+            const keepIds: string[] = []
             snapshot.docChanges().forEach((change) => {
                 const docData = { id: change.doc.id, ...change.doc.data() } as any
 
@@ -87,6 +100,7 @@ export default class DbService {
                     })
 
                     if (index === -1) {
+                        keepIds.push(docData.id)
                         state.push(docData)
                     }
 
@@ -115,6 +129,9 @@ export default class DbService {
                     return
                 }
             })
+
+            // remove items no longer in firebase
+            // state.splice(0, state.length, ...state.filter((i) => keepIds.includes(i.id)))
         })
     }
 

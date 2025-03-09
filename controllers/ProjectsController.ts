@@ -56,13 +56,12 @@ export default class ProjectController {
         await ActionService.createUserAction(
             projectId,
             "accept-design",
-            "I have uploaded the design document for you to view. The design needs to be finilized before moving to development. Once your happy with the design click the button below to continue. Once the website it being built you will not be able to change the design.",
+            "I have uploaded the design document for you to view.  Once your happy with the design click the button below to continue. Once the website it being built you will not be able to change the design.",
         )
 
         await ActivityLogService.addSystemMessageActivityItem(
             projectId,
-            "When your 100% happy with the design, you accept it in the action menu. This will move the project into the development phase. Beware, once the website is in development no changes may be made.",
-            ["randomId"],
+            "I have uploaded the figma design document. Once your 100% happy with the design, you can accept it in the action menu, this will move the project into the development phase. Beware, once the website is in development no changes may be made.",
         )
     }
 
@@ -76,7 +75,6 @@ export default class ProjectController {
             )
             await ProjectPhaseService.incrementPhase($Projects.getByProjectId(projectId))
             await ActionController.onAccept(projectId)
-            //await ActionService.markActionAsComplete(projctId, $Actions.state.selectedActionId)
         } catch (error) {
             console.error(error)
         }
@@ -85,6 +83,10 @@ export default class ProjectController {
     static async acceptDesign(projectId: string) {
         await DbService.updateObject(`/projects/${projectId}`, { design: { accepted: true } })
         await ActionController.onAcceptDesign(projectId)
+        await ProjectPhaseService.incrementPhase($Projects.getByProjectId(projectId))
+    }
+
+    static async incrementPhase(projectId: string) {
         await ProjectPhaseService.incrementPhase($Projects.getByProjectId(projectId))
     }
 }

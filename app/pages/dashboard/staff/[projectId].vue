@@ -2,6 +2,26 @@
     <main class="admin-page">
         <button @click="ProjectController.setDesignDocument(projectId, designLink)">Upload Dummy Figma File</button>
         <button @click="ProjectController.deleteProject(projectId)">Delete Project</button>
+        <button
+            v-if="$Projects.getByProjectId(projectId).phase === 'development'"
+            @click="ProjectController.incrementPhase(projectId)"
+        >
+            Move to Testing
+        </button>
+
+        <button
+            v-if="$Projects.getByProjectId(projectId).phase === 'testing'"
+            @click="ProjectController.incrementPhase(projectId)"
+        >
+            Move to Launch
+        </button>
+
+        <button
+            v-if="$Projects.getByProjectId(projectId).phase === 'launch'"
+            @click="ProjectController.incrementPhase(projectId)"
+        >
+            Move to Live
+        </button>
         <nuxt-link :to="`/dashboard/staff/forms/quote?projectId=${projectId}`">Quote</nuxt-link>
     </main>
 </template>

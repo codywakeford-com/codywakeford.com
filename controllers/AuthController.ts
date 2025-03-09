@@ -1,4 +1,5 @@
 import AuthService from "~~/services/AuthService"
+import InitController from "./InitController"
 
 export default class AuthController {
     static async register(email: string, password: string) {
@@ -14,6 +15,8 @@ export default class AuthController {
             localStorage.setItem("jwt", response.jwt)
             $User.state.jwt = response.jwt
             $User.state.user = response.user
+
+            InitController.initProjectListeners($User.state.user.email)
         }
     }
 

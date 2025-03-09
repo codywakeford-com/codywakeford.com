@@ -1,35 +1,40 @@
 <template>
     <div class="meeting">
-        <rflex>
+        <div class="row">
             <div class="sender">{{ activity.sender }}</div>
             <span>has booked a meeting.</span>
-        </rflex>
+        </div>
         <div class="timestamp">{{ dayjs(activity.timestamp).format("dddd Do MMM HH:mma") }}</div>
 
         <div class="meeting-details" v-if="meeting">
-            <rflex class="atendees">
+            <div class="atendees">
                 <Icon size="20" name="material-symbols:person-outline" />
                 <span>{{ activity.sender }}</span>
-            </rflex>
-            <rflex class="time">
+            </div>
+            <div class="time">
                 <Icon size="20" name="uil:calender" />
                 <span>{{ dayjs(meeting.timestamp).format("dddd Do MMMM YYYY, HH:mma ") }}</span>
-            </rflex>
+            </div>
 
-            <rflex>
+            <div>
                 <Icon size="20" name="material-symbols:globe" />
                 <span>UK, Ireland, Lisbon Time</span>
-            </rflex>
+            </div>
 
-            <rflex class="status">
+            <div class="status">
                 <Icon size="20" name="gridicons:stats" />
                 <span>{{ meeting.status }}</span>
-            </rflex>
+            </div>
         </div>
 
         <div class="controls">
-            <nuxt-link target="_blank" :to="meeting?.meetingUrl">Join Meeting</nuxt-link>
-            <nuxt-link target="_blank" :to="meeting?.rescheduleUrl">Reschedule Meeting</nuxt-link>
+            <nuxt-link target="_blank" :to="meeting?.meetingUrl">
+                <button-primary-m>Join Meeting</button-primary-m>
+            </nuxt-link>
+
+            <nuxt-link target="_blank" :to="meeting?.rescheduleUrl">
+                <button-primary-m>Reschedule Url</button-primary-m>
+            </nuxt-link>
         </div>
     </div>
 </template>
@@ -51,11 +56,14 @@ const meeting = computed(() => {
 </script>
 
 <style scoped lang="scss">
+@use "~/style/activity-log.scss" as *;
 .meeting {
     display: flex;
     flex-direction: column;
 
-    .rflex {
+    .row {
+        display: flex;
+        align-items: center;
         gap: 5px;
     }
 
@@ -64,16 +72,17 @@ const meeting = computed(() => {
         flex-direction: column;
         background: var(--background);
         margin-top: 10px;
-        padding: 10px;
+        padding-block: 10px;
         font-size: 1rem;
         gap: 5px;
-        font-size: 0.9rem;
         max-width: min-content;
         border-radius: $border-radius;
         min-width: 300px;
 
-        .rflex {
-            font-size: 0.8rem;
+        div {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
             gap: 15px;
         }
 

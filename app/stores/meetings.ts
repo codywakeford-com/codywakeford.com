@@ -10,10 +10,14 @@ export const useMeetingStore = defineStore(
             meetings: [],
         })
 
-        const getByMeetingId = computed(() => {
-            return (meetingId: string) => {
-                return state.value.meetings.find((m) => m.id === meetingId)
-            }
+        const futureMeetings = computed(() => (projectId: string) => {
+            return state.value.meetings.filter((m) => {
+                return m.startTime > Date.now()
+            })
+        })
+
+        const getByMeetingId = computed(() => (meetingId: string) => {
+            return state.value.meetings.find((m) => m.id === meetingId)
         })
 
         const getByProjectId = computed(() => {
@@ -22,7 +26,7 @@ export const useMeetingStore = defineStore(
             }
         })
 
-        return { state, getByProjectId, getByMeetingId }
+        return { state, getByProjectId, getByMeetingId, futureMeetings }
     },
     { persist: true },
 )

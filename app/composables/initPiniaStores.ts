@@ -17,7 +17,6 @@ export async function initPiniaStores() {
 
     $User = useUserStore()
     $Projects = useProjectStore()
-    $Projects.state.projects = []
 
     if ($User.state.user) {
         InitController.initProjectListeners($User.state.user.email)
@@ -33,4 +32,16 @@ export async function initPiniaStores() {
     $BillingModal = useBillingModalStore()
 }
 
-export { $User, $Projects, $Chatroom, $FilesDashboard, $Files, $ActivityLogs, $App, $Meetings, $Actions, $BillingModal, $Calendly }
+export {
+    $User,
+    $Projects,
+    $Chatroom,
+    $FilesDashboard,
+    $Files,
+    $ActivityLogs,
+    $App,
+    $Meetings,
+    $Actions,
+    $BillingModal,
+    $Calendly,
+}

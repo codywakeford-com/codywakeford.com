@@ -28,6 +28,8 @@ const props = defineProps<{
 </script>
 
 <style scoped lang="scss">
+@use "~/style/activity-log.scss" as *;
+
 .phase {
     display: flex;
     flex-direction: column;
@@ -52,10 +54,5 @@ const props = defineProps<{
             white-space: nowrap;
         }
     }
-}
-
-.timestamp {
-    font-size: 0.8rem;
-    font-weight: 500;
 }
 </style>

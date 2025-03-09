@@ -38,6 +38,7 @@ const quote = computed(() => {
 </script>
 
 <style scoped lang="scss">
+@use "~/style/activity-log.scss" as *;
 .quote {
     display: flex;
     flex-direction: column;

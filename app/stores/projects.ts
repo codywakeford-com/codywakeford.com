@@ -22,7 +22,8 @@ export const useProjectStore = defineStore(
 
         const projects = computed(() => state.value.projects)
 
-        const getByEmail = (email: string) => computed(() => state.value.projects.filter((project) => project.emails.includes(email)))
+        const getByEmail = (email: string) =>
+            computed(() => state.value.projects.filter((project) => project.emails.includes(email)))
 
         const getAmountToPay = computed(() => (projectId: string) => {
             const project = getByProjectId.value(projectId)
@@ -32,9 +33,12 @@ export const useProjectStore = defineStore(
             return project.quote.totalAmount * 0.33
         })
 
-        const designUrl = computed(() => (projectId: Project["id"]) => state.value.projects.find((p) => p.id === projectId)?.design?.url)
+        const designUrl = computed(
+            () => (projectId: Project["id"]) => state.value.projects.find((p) => p.id === projectId)?.design?.url,
+        )
 
-        const getPhaseById = (projectId: string) => computed(() => state.value.projects.find((p) => p.id === projectId)?.phase)
+        const getPhaseById = (projectId: string) =>
+            computed(() => state.value.projects.find((p) => p.id === projectId)?.phase)
 
         const amountPaid = (projectId: Project["id"]) =>
             computed(() => {

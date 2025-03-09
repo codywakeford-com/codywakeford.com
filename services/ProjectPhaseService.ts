@@ -32,6 +32,10 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
 
         await ActivityLogService.addPhaseActivityItem(project.id, "design")
 
+        await ActivityLogService.addSystemMessageActivityItem(
+            project.id,
+            "Thank you for choosing me. Let's book our design call and get this project underway. Book a call using the action menu in the top right of the dashboard.",
+        )
         return true
     },
 
@@ -61,12 +65,11 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
     },
 
     development: async (project) => {
+        await ActivityLogService.addPhaseActivityItem(project.id, "testing")
         await ActivityLogService.addSystemMessageActivityItem(
             project.id,
-            "Development is mostly complete. Now, I will perform rigorous testing and security checks.",
+            "Development is mostly complete all that is left is the testing. This step is crucial to ensure your website runs smoothly without any problems. I will write code that tests all the failure points and security weakpoints.",
         )
-
-        await ActivityLogService.addPhaseActivityItem(project.id, "testing")
 
         return true
     },
@@ -80,10 +83,9 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
         await ActivityLogService.addPhaseActivityItem(project.id, "launch")
         await ActivityLogService.addSystemMessageActivityItem(
             project.id,
-            "Everything is ready! Please book a call for the final review.",
+            "Everything is ready and tested! Please book a call for the final review.",
         )
 
-        // TODO: await client reveiw and final approval
         return true
     },
 
@@ -94,23 +96,25 @@ const phaseHandlers: Record<ProjectPhase, PhaseHandler> = {
             await ActionService.createUserAction(
                 project.id,
                 "payment",
-                "Please make the final payment before we launch your website.",
+                "Please make the final payment before I launch your website.",
             )
             await ActivityLogService.addSystemMessageActivityItem(
                 project.id,
-                "Final payment required before launching your website!",
-                [paymentAction.id],
+                "Now the website is complete and your completely happy with it, all that is left is to move the website onto your live domain. Please make the final payment and I'll get started.",
             )
             return false
         }
 
         await ActivityLogService.addSystemMessageActivityItem(
             project.id,
-            "Now all thats left to do is move the website onto your live link. This may take up to 24 hours but is usually much faster. You'll be notified when its ready!",
+            "Now all thats left to do is move the website onto your live domain. This may take up to 24 hours but is usually much faster. You'll be notified when its ready!",
         )
 
         await ActivityLogService.addPhaseActivityItem(project.id, "live")
         return true
+        // TODO: await client reveiw and final approval
+        //
+        // TODO: add conclusion package: website overview, links etc
     },
 
     live: async (project) => {

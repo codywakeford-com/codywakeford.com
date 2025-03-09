@@ -1,6 +1,16 @@
 <template>
     <div class="message-container">
         <div
+            class="files"
+            :class="{
+                sent: message.sender === $User.email,
+                recieved: message.sender !== $User.email,
+            }"
+            v-if="message.files.length"
+        >
+            <dashboard-file-card-small v-for="(file, index) of message.files" :key="index" :file="file" />
+        </div>
+        <div
             class="message"
             :class="{
                 contains: message.message.length,
@@ -18,16 +28,6 @@
                 <Icon name="hugeicons:tick-double-01" v-if="delivered" />
                 <Icon name="hugeicons:tick-01" v-else />
             </rflex>
-        </div>
-        <div
-            class="files"
-            :class="{
-                sent: message.sender === $User.email,
-                recieved: message.sender !== $User.email,
-            }"
-            v-if="message.files.length"
-        >
-            <dashboard-file-card-small v-for="(file, index) of message.files" :key="index" :file="file" />
         </div>
     </div>
 </template>
@@ -55,7 +55,7 @@ const delivered = true
 .message-container {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0px;
 }
 
 .message {

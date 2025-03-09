@@ -23,7 +23,9 @@
         </cflex>
 
         <cflex class="bottom-links">
-            <nuxt-link @click="AuthController.logout()" class="nav-item" data-tooltip="Logout">l o</nuxt-link>
+            <nuxt-link v-if="true" class="nav-item" to="/dashboard/profile" data-tooltip="profile">
+                <Icon name="material-symbols:account-circle" size="30" />
+            </nuxt-link>
 
             <nuxt-link v-if="true" class="nav-item" to="/dashboard/staff" data-tooltip="staff">
                 <Icon name="eos-icons:admin" size="30" />
@@ -46,8 +48,6 @@
 </template>
 
 <script setup lang="ts">
-import AuthController from "~~/controllers/AuthController"
-
 const toggleTheme = () => {
     const colorMode = useColorMode()
     colorMode.preference = colorMode.preference === "dark" ? "light" : "dark"
