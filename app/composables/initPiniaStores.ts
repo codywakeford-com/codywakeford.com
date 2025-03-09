@@ -18,6 +18,8 @@ export async function initPiniaStores() {
     $User = useUserStore()
     $Projects = useProjectStore()
 
+    $Projects.state.projects = []
+
     if ($User.state.user) {
         InitController.initProjectListeners($User.state.user.email)
     }

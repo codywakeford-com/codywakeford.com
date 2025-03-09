@@ -1,13 +1,13 @@
-import { getDownloadURL, uploadBytes, ref as storageRef } from "firebase/storage"
+import { getDownloadURL, uploadBytes, ref as storageRef, type UploadMetadata } from "firebase/storage"
 import DbService from "./DbService"
 
 export default class FilesService {
-    static async uploadToFirebase(path: string, file: File) {
+    static async uploadToFirebase(path: string, file: File, metadata?: UploadMetadata) {
         const $storage = useStorage()
         const fileStorageRef = storageRef($storage, path)
 
         try {
-            await uploadBytes(fileStorageRef, file)
+            await uploadBytes(fileStorageRef, file, metadata)
             const url = await getDownloadURL(fileStorageRef)
 
             return url
@@ -18,9 +18,12 @@ export default class FilesService {
 
     static async addFileToProject(projectId: string, file: File, sender: User["email"]) {
         try {
-            const url = await this.uploadToFirebase(`/projects/${projectId}/files`, file)
+            const previewUrl = await this.uploadToFirebase(`/projects/${projectId}/files`, file)
+            const downloadUrl = await this.uploadToFirebase(`/projects/${projectId}/files-download`, file, {
+                contentType: "octet/steam",
+            })
 
-            if (!url) throw new Error()
+            if (!previewUrl || !downloadUrl) throw new Error()
 
             const projectFile: ProjectFile = {
                 id: uuid(),
@@ -29,7 +32,8 @@ export default class FilesService {
                 sender: sender,
                 timestamp: Date.now(),
                 projectId,
-                url: url,
+                previewUrl,
+                downloadUrl,
                 extension: file.name.split(".")[1] || "",
             }
 

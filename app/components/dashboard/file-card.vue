@@ -16,19 +16,19 @@
         </div>
 
         <div class="menu" ref="menu" v-show="menuActive">
-            <a :href="file.url" :download="file.name">
+            <nuxt-link :to="file.downloadUrl" :download="file.name">
                 <button>
                     <Icon name="material-symbols:download" size="20" />
                     <span>Download</span>
                 </button>
-            </a>
+            </nuxt-link>
 
             <button>
                 <Icon name="streamline:interface-edit-view-eye-eyeball-open-view" size="20" />
                 <span>View</span>
             </button>
 
-            <nuxt-link :to="file.url" target="_blank">
+            <nuxt-link :to="file.previewUrl" target="_blank">
                 <button>
                     <Icon name="streamline:interface-edit-view-eye-eyeball-open-view" size="20" />
                     <span>View Fullscreen</span>

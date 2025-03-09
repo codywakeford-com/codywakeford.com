@@ -1,0 +1,82 @@
+main {
+    display: flex;
+    
+    background: var(--background);
+    margin-block: 50px;
+    border: 1px solid var(--text2);
+    height: calc(100vh - 100px);
+}
+
+.profile-page {
+    padding: 50px;
+
+    header {
+        h1 {
+            margin-bottom: 10px;
+        }
+    }
+}
+
+
+
+.profile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-right: 1px solid var(--text2);
+    padding: 50px;
+
+    .profile-pic {
+        height: 50px;
+        width: 50px;
+        background: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text1);
+    }
+
+    header {
+        display: flex;
+        gap: 15px;
+    }
+
+
+}
+
+.links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    a {
+        font-size: 1.1rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding-block: 10px;
+
+        &:hover {
+            color: var(--primary); 
+        }
+
+        .iconify, span {
+            color: inherit;
+        }
+
+        .float-right {
+            margin-left: auto;
+        }
+    }
+
+    &.bottom {
+        margin-top: auto;
+    }
+}
+
+.router-link-active {
+    color: var(--primary);
+ }
+

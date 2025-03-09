@@ -9,7 +9,8 @@ declare global {
     interface ProjectFile {
         id: string
         name: string
-        url: string
+        previewUrl: string
+        downloadUrl: string
         size: number
         sender: User["email"]
         signed?: boolean

@@ -1,15 +1,22 @@
 <template>
-    <pre>{{ $User.user }}</pre>
-    <button-primary-m @click="AuthController.logout()" class="nav-item" data-tooltip="Logout">log out</button-primary-m>
+    <section class="profile-page">
+        <header>
+            <h1>Personal Information</h1>
+            <p>
+                Keep your personal information up-to-date to ensure seamless communication and service delivery. You can
+                update your details whenever necessary.
+            </p>
+        </header>
+    </section>
 </template>
 
 <script setup lang="ts">
-import AuthController from "~~/controllers/AuthController"
-
 definePageMeta({
-    layout: "dashboard",
+    layout: "dashboard-profile",
     middleware: "dashboard",
 })
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@use "~/style/profile.scss";
+</style>
