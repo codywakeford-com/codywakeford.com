@@ -4,9 +4,10 @@ import { uuid } from "~/utils/uuid"
 
 export default eventHandler(async (event): Promise<Api.Auth.Register.Response> => {
     const db = event.context.db
-    const { email, password, role } = (await readBody(event)) as Api.Auth.Register.Request
+    const { firstName, lastName, email, password, role } = (await readBody(event)) as Api.Auth.Register.Request
 
-    if (!email || !password) {
+    console.log(await readBody(event))
+    if (!firstName || !lastName || !email || !password) {
         throw createError({
             statusCode: 400,
             message: "Server expects `email` & `password` in request body.",
@@ -27,10 +28,12 @@ export default eventHandler(async (event): Promise<Api.Auth.Register.Response> =
         })
     }
 
-    const user: $User = {
+    const user: User = {
         id: uuid(),
-        email: email,
+        firstName,
+        lastName,
         password: hashedPassword,
+        email: email,
         role: role ? role : "user",
         stripePaymentProfile: {
             customerId: "",

@@ -47,8 +47,8 @@
                     <label for="email">Reciept Email:</label>
                     <input class="input-element" type="email" placeholder="email" v-model="address.email.input" />
                     <div
-                        :class="{ active: address.email.error }"
-                        v-for="e of address.email.error"
+                        :class="{ active: address.email.errors }"
+                        v-for="e of address.email.errors"
                         class="error-message"
                     >
                         {{ e }}
@@ -61,8 +61,8 @@
                     <label for="">Full Name</label>
                     <input class="input-element" type="text" v-model="address.fullName.input" />
                     <div
-                        :class="{ active: address.fullName.error }"
-                        v-for="e of address.fullName.error"
+                        :class="{ active: address.fullName.errors }"
+                        v-for="e of address.fullName.errors"
                         class="error-message"
                     >
                         {{ e }}
@@ -72,7 +72,11 @@
                 <div class="form-item">
                     <label for="">City</label>
                     <input class="input-element" type="text" v-model="address.city.input" />
-                    <div :class="{ active: address.city.error }" v-for="e of address.city.error" class="error-message">
+                    <div
+                        :class="{ active: address.city.errors }"
+                        v-for="e of address.city.errors"
+                        class="error-message"
+                    >
                         {{ e }}
                     </div>
                 </div>
@@ -81,8 +85,8 @@
                     <label for="">Postcode</label>
                     <input class="input-element" type="text" v-model="address.postcode.input" />
                     <div
-                        :class="{ active: address.postcode.error }"
-                        v-for="e of address.postcode.error"
+                        :class="{ active: address.postcode.errors }"
+                        v-for="e of address.postcode.errors"
                         class="error-message"
                     >
                         {{ e }}
@@ -92,14 +96,14 @@
                 <div class="form-item">
                     <label for="">Country</label>
                     <input
-                        :class="{ error: address.country.error }"
+                        :class="{ errors: address.country.errors }"
                         class="input-element"
                         type="text"
                         v-model="address.country.input"
                     />
                     <div
-                        :class="{ active: address.country.error }"
-                        v-for="e of address.country.error"
+                        :class="{ active: address.country.errors }"
+                        v-for="e of address.country.errors"
                         class="error-message"
                     >
                         {{ e }}
@@ -127,7 +131,7 @@
 </template>
 
 <script setup lang="ts">
-import { isValidEmail } from "~~/services/InputValidationService"
+import { isValidEmail } from "~~/controllers/InputValidationController"
 import type {
     StripeCardCvcElement,
     StripeCardExpiryElement,
@@ -136,7 +140,7 @@ import type {
 } from "@stripe/stripe-js"
 import { loadStripe, type Stripe, type StripeCardElement } from "@stripe/stripe-js"
 import PaymentController from "~~/controllers/PaymentController"
-import { InputValidationService, required } from "~~/services/InputValidationService"
+import { InputValidationController, required } from "~~/controllers/InputValidationController"
 
 const route = useRoute()
 const amount = ref<number | undefined>(undefined)
@@ -177,28 +181,28 @@ onMounted(() => {
 const address = ref<FormInput>({
     fullName: {
         input: "",
-        error: [],
+        errors: [],
         validators: [required],
     },
     email: {
         input: "",
-        error: [],
+        errors: [],
         validators: [required, isValidEmail],
     },
 
     country: {
         input: "",
-        error: [],
+        errors: [],
         validators: [required],
     },
     city: {
         input: "",
-        error: [],
+        errors: [],
         validators: [required],
     },
     postcode: {
         input: "",
-        error: [],
+        errors: [],
         validators: [required],
     },
 })

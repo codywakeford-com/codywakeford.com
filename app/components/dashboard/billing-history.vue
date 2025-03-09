@@ -62,10 +62,7 @@ const reciepts = computed(() => {
                     <p>View all payments made to codywakeford.com</p>
                 </div>
 
-                <div class="right">
-                    <label for="">Balance</label>
-                    <div class="balance">-£762.27</div>
-                </div>
+                <div class="right"></div>
             </header>
 
             <table>
@@ -86,6 +83,7 @@ const reciepts = computed(() => {
                         <td>completed</td>
                         <td>£{{ (reciept.totalPaid / 100).toFixed(2) }}</td>
                     </tr>
+                    <div class="empty" v-if="!reciepts?.length">No payment history to be shown right now.</div>
                 </tbody>
             </table>
         </div>
@@ -93,14 +91,6 @@ const reciepts = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-section {
-    background: var(--background);
-    position: relative;
-    padding: 25px;
-    margin-top: 25px;
-    border-radius: $border-radius;
-}
-
 header {
     display: flex;
     justify-content: space-between;
@@ -136,7 +126,9 @@ header {
         color: var(--text6);
     }
 }
-
+.empty {
+    margin-top: 25px;
+}
 table {
     width: 100%;
     border-collapse: collapse;

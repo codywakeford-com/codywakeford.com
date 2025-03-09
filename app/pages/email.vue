@@ -1,5 +1,5 @@
 <template>
-    <emails-invitation />
+    <emails-invite />
 </template>
 
 <script setup lang="ts">

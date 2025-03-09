@@ -1,22 +1,21 @@
-export { }
+export {}
 
 declare global {
-    interface UserObj {
+    interface User {
         id: string
-        email: string
-        role: UserRole
-    }
-
-    type UserRole = "staff" | "user"
-    type User = Omit<$User, "password">
-
-    interface $User {
-        id: string
+        firstName: string
+        lastName: string
         password: string
         email: string
         role: UserRole
-        stripePaymentProfile: StripePaymentProfile
+
+        stripePaymentProfile: {
+            customerId: ""
+            paymentMethods: any[]
+        }
     }
+
+    type UserRole = "staff" | "user"
 
     interface $PaymentRecord extends PaymentRecord {
         projectId: Project["id"]

@@ -145,6 +145,7 @@ section {
             border-bottom-left-radius: 7px;
             top: calc(50% + 3px);
             z-index: 100;
+            transform: none;
         }
     }
 

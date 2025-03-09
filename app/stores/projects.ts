@@ -40,6 +40,14 @@ export const useProjectStore = defineStore(
         const getPhaseById = (projectId: string) =>
             computed(() => state.value.projects.find((p) => p.id === projectId)?.phase)
 
+        const getCompletionPercentage = computed(() => (phase: ProjectPhase) => {
+            const index = projectPhases.findIndex((i) => phase === i)
+
+            if (index === -1) return 100
+
+            return ((100 / projectPhases.length) * index).toFixed(0)
+        })
+
         const amountPaid = (projectId: Project["id"]) =>
             computed(() => {
                 const project = state.value.projects.find((p) => p.id === projectId)
@@ -90,6 +98,7 @@ export const useProjectStore = defineStore(
             getByProjectId,
             getNextProjectPhase,
             getIds,
+            getCompletionPercentage,
         }
     },
     { persist: true },

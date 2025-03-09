@@ -1,16 +1,3 @@
-type ValidatorFunction = (field: Field) => null | string // returns error message or null
-
-interface Field {
-    input: string | number
-    error: string[]
-    validators: ValidatorFunction[]
-    default?: string | number
-}
-
-interface FormInput {
-    [key: string]: Field
-}
-
 export function required(field: Field): string | null {
     if (field.input.trim() === "") return `This field is required.`
     return null
@@ -31,11 +18,12 @@ export function containsUppercase(field: Field): string | null {
 }
 
 export function containsSpecialChar(field: Field): string | null {
-    if (typeof field.input !== "string" || !/[!@#$%^&*(),.?":{}|<>]/.test(field.input)) return "Must contain a special character."
+    if (typeof field.input !== "string" || !/[!@#$%^&*(),.?":{}|<>]/.test(field.input))
+        return "Must contain a special character."
     return null
 }
 
-export class InputValidationService {
+export class InputValidationController {
     static validate(inputObject: Ref<FormInput>): boolean {
         this.resetErrors(inputObject)
         let isValid = true
@@ -46,7 +34,7 @@ export class InputValidationService {
 
                 if (result !== null) {
                     isValid = false
-                    field.error.push(result)
+                    field.errors.push(result)
                     console.log(field)
                 }
             }
@@ -57,7 +45,13 @@ export class InputValidationService {
 
     static resetErrors(inputObject: Ref<FormInput>): void {
         Object.entries(inputObject.value).forEach(([fieldName, field]) => {
-            field.error = []
+            field.errors = []
+        })
+    }
+
+    static destructure(inputObject: Ref<FormInput>) {
+        Object.entries(inputObject.value).forEach(([fieldName, field]) => {
+            fieldName = field.input
         })
     }
 
@@ -65,8 +59,6 @@ export class InputValidationService {
         Object.entries(inputObject.value).forEach(([fieldName, field]) => {
             if (field.default) {
                 field.input = field.default
-            } else if (Number.isNaN(field.input)) {
-                field.input = 0
             } else {
                 field.input = ""
             }

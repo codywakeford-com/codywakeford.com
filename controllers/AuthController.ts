@@ -2,8 +2,8 @@ import AuthService from "~~/services/AuthService"
 import InitController from "./InitController"
 
 export default class AuthController {
-    static async register(email: string, password: string) {
-        await AuthService.register(email, password)
+    static async register(firstName: string, lastName: string, email: string, password: string) {
+        await AuthService.register(firstName, lastName, email, password)
     }
 
     static async login(email: string, password: string) {

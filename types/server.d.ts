@@ -36,6 +36,8 @@ declare global {
 
             namespace Register {
                 interface Request {
+                    firstName: string
+                    lastName: string
                     email: string
                     password: string
                     role?: User["role"]

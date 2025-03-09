@@ -3,7 +3,7 @@
         <header>
             <div class="profile-pic">CW</div>
             <div class="right">
-                <h3>{{ $User.user.email }}</h3>
+                <h3>{{ $User.user.firstName }} {{ $User.user.lastName }}</h3>
                 <h4>{{ $User.user.email }}</h4>
             </div>
         </header>

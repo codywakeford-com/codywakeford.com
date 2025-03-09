@@ -4,29 +4,23 @@ type LoginSuccess = { jwt: string; user: User }
 type LoginFailure = { error: string }
 
 export default class AuthService {
-    static async register(email: string, password: string) {
+    static async register(firstName: string, lastName: string, email: string, password: string) {
         try {
             await $fetch<Api.Auth.Register.Response>("/api/auth/register", {
                 method: "POST",
-                body: { email, password } as Api.Auth.Register.Request,
+                body: { firstName, lastName, email, password } as Api.Auth.Register.Request,
             })
         } catch (error) {
             return error
         }
     }
 
-    static async login(
-        email: string,
-        password: string,
-    ): Promise<LoginSuccess | LoginFailure> {
+    static async login(email: string, password: string): Promise<LoginSuccess | LoginFailure> {
         try {
-            const jwt = await $fetch<Api.Auth.Login.Response>(
-                "/api/auth/login",
-                {
-                    method: "POST",
-                    body: { email, password } as Api.Auth.Login.Request,
-                },
-            )
+            const jwt = await $fetch<Api.Auth.Login.Response>("/api/auth/login", {
+                method: "POST",
+                body: { email, password } as Api.Auth.Login.Request,
+            })
 
             const payload = jwtDecode(jwt) as User
 
@@ -49,14 +43,10 @@ export default class AuthService {
 
     static async validateJwt(jwt: string): Promise<boolean> {
         try {
-            const { valid, payload } =
-                await $fetch<Api.Auth.ValidateJwt.Response>(
-                    "/api/auth/validate-jwt",
-                    {
-                        method: "POST",
-                        body: { token: jwt } as Api.Auth.ValidateJwt.Request,
-                    },
-                )
+            const { valid, payload } = await $fetch<Api.Auth.ValidateJwt.Response>("/api/auth/validate-jwt", {
+                method: "POST",
+                body: { token: jwt } as Api.Auth.ValidateJwt.Request,
+            })
 
             if (valid) return true
             else {

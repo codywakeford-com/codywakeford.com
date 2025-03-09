@@ -1,3 +1,5 @@
+import vue from "@vitejs/plugin-vue"
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     compatibilityDate: "2024-11-01",
@@ -60,7 +62,11 @@ export default defineNuxtConfig({
         "pinia-plugin-persistedstate/nuxt",
         "@nuxtjs/color-mode",
     ],
-
+    nitro: {
+        rollupConfig: {
+            plugins: [vue()],
+        },
+    },
     colorMode: {
         preference: "system", // default value of $colorMode.preference
         fallback: "light", // fallback value if not system preference found
@@ -73,4 +79,3 @@ export default defineNuxtConfig({
         storageKey: "nuxt-color-mode",
     },
 })
-

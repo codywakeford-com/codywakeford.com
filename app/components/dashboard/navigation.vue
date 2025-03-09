@@ -13,10 +13,6 @@
                 <Icon name="ic:baseline-insert-drive-file" size="30" />
             </nuxt-link>
 
-            <nuxt-link class="nav-item" to="/dashboard/client/billing" data-tooltip="Billing">
-                <Icon name="fluent:wallet-credit-card-16-filled" size="30" />
-            </nuxt-link>
-
             <nuxt-link to="/dashboard/domains" class="nav-item" data-tooltip="Market">
                 <Icon name="healthicons:market-stall" size="30" />
             </nuxt-link>
@@ -80,7 +76,7 @@ nav {
     background: none;
 
     .iconify {
-        color: var(--text1);
+        color: var(--text1a);
     }
 
     &::after {

@@ -1,6 +1,5 @@
 <template>
     <div class="action" v-if="action">
-        {{ action.action }}
         <h3 v-if="action.action === 'book-meeting'">Book a meeting</h3>
         <h3 v-if="action.action === 'accept-quote'">Accept the quote</h3>
         <h3 v-if="action.action === 'payment'">Make a payment</h3>

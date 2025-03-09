@@ -24,7 +24,7 @@ main {
     flex-direction: column;
     gap: 10px;
     border-right: 1px solid var(--text2);
-    padding: 50px;
+    padding: 50px 45px;;
 
     .profile-pic {
         height: 50px;
@@ -41,8 +41,6 @@ main {
         display: flex;
         gap: 15px;
     }
-
-
 }
 
 .links {

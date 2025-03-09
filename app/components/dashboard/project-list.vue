@@ -1,19 +1,3 @@
-<template>
-    <section>
-        <header>
-            <h1>Projects</h1>
-        </header>
-
-        <rflex class="cards">
-            <nuxt-link @click="$Projects.state.selectedProjectId = project.id" :to="getProjectUrl(project.id)" class="project-card" v-for="project in $Projects.state.projects">{{ project.id }}</nuxt-link>
-
-            <nuxt-link to="/dashboard/staff/forms/add-project" class="project-add-card">
-                <Icon name="material-symbols:add" size="25" style="color: #222" />
-            </nuxt-link>
-        </rflex>
-    </section>
-</template>
-
 <script setup lang="ts">
 interface Props {
     interface: "staff" | "client"
@@ -30,6 +14,55 @@ function getProjectUrl(projectId: string) {
 }
 </script>
 
+<template>
+    <section>
+        <div class="cards">
+            <nuxt-link
+                @click="$Projects.state.selectedProjectId = project.id"
+                :to="getProjectUrl(project.id)"
+                class="card"
+                v-for="project in $Projects.state.projects"
+            >
+                <header>
+                    <div class="box" :style="`background: ${project.color || 'orange'}`">PN</div>
+                    <div class="right">
+                        <h2>{{ project.name || "Project Name" }}</h2>
+                        <p>{{ project.phase }}</p>
+                    </div>
+                </header>
+
+                <div class="description">
+                    <p>
+                        {{
+                            project.description ||
+                            "This is a description is a description is a description is a description is"
+                        }}
+                    </p>
+                </div>
+
+                <div class="status">
+                    <div class="top">
+                        <div class="actions">{{ $Actions.getPendingByProjectId(project.id).length }} action</div>
+                        <div class="percentage">{{ $Projects.getCompletionPercentage(project.phase) }}%</div>
+                    </div>
+                    <div
+                        class="status-bar"
+                        :style="{ '--filled-width': `${$Projects.getCompletionPercentage(project.phase)}%` }"
+                    ></div>
+                </div>
+
+                <div class="bottom">
+                    <div class="people-icons">
+                        <div class="icon"></div>
+                    </div>
+
+                    <div class="est-delivery">10 March</div>
+                </div>
+            </nuxt-link>
+        </div>
+    </section>
+</template>
+
 <style lang="scss" scoped>
 header {
     margin-bottom: 25px;
@@ -41,64 +74,65 @@ header {
 }
 
 .cards {
+    display: flex;
     align-items: start;
     gap: 50px;
     flex-wrap: wrap;
 }
 
-.project-add-card {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    width: 300px;
-    min-height: 300px;
-    display: flex;
-    justify-content: center;
-
-    align-items: center;
-}
-
-.project-card {
+.card {
     display: flex;
     flex-direction: column;
-    align-items: start;
-    position: relative;
+    gap: 25px;
     background: var(--background);
-    min-width: 250px;
-    flex-grow: 1;
-    border-radius: 10px;
-    box-shadow: 4px 4px 10px black;
-    min-height: 300px;
-    padding: 20px;
-    max-width: 300px;
+    padding: 25px;
+    border-radius: 5px;
+    border: 1px solid var(--text2);
+    min-width: 300px;
+    max-width: 400px;
 
-    h3 {
-        font-size: 1.5rem;
-        font-weight: bold;
+    header {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 0;
+
+        .box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text1a);
+            font-weight: bold;
+            font-size: 1.2rem;
+            height: 60px;
+            border-radius: 7px;
+            width: 60px;
+        }
     }
 
-    .project-phase {
-        position: absolute;
-        bottom: 20px;
-        right: 0;
-        color: #333;
-        font-size: 0.9rem;
-        padding: 2px 10px 2px 15px;
-        border-top-left-radius: 15px;
-        border-bottom-left-radius: 15px;
-        background: lightgreen;
-    }
+    .status {
+        .top {
+            display: flex;
+            justify-content: space-between;
+        }
 
-    .project-description {
-        color: #555;
-        flex-grow: 1;
-        font-size: 1rem;
-    }
+        .status-bar {
+            position: relative;
+            background: var(--text2);
+            height: 10px;
+            width: 100%;
+            border-radius: 25px;
 
-    .project-domain {
-        font-weight: 100;
-        color: #222;
-        font-size: 0.9rem;
-        margin-bottom: 10px;
+            &::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                background: var(--primary);
+                height: 10px;
+                width: var(--filled-width);
+                border-radius: 25px;
+                transition: width 0.25s;
+            }
+        }
     }
 }
 </style>

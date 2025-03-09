@@ -1,13 +1,12 @@
 
 dialog {
-    min-height: calc(100vh - 75px);
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     position: fixed;
-    height: 100vh;
-    width: 100vw;
+    min-height: 100vh;
+    min-width: 100vw;
     z-index: 10000;
     border: none;
     flex-direction: column;

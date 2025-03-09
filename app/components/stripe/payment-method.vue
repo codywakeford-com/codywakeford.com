@@ -8,15 +8,15 @@
                 <!-- <Icon icon="logos:visa" v-if="card.brand === 'visa'" width="50" /> -->
             </rflex>
 
-            <btn class="menu-button">
-                <Icon icon="majesticons:dots-horizontal" height="30" />
+            <button class="menu-button">
+                <Icon name="majesticons:dots-horizontal" size="30" />
                 <drop bottom class="menu">
-                    <button class="menu-item" @click="$User.deletePaymentProfile(card.paymentMethodId)">
-                        <Icon icon="solar:trash-bin-trash-bold" width="20" />
+                    <button class="menu-item" @click="PaymentController.removePaymentMethod(card.paymentMethodId)">
+                        <Icon name="solar:trash-bin-trash-bold" size="20" />
                         <span>Delete Card</span>
                     </button>
                 </drop>
-            </btn>
+            </button>
         </div>
 
         <div class="card-number">**** **** **** {{ card.last4 }}</div>
@@ -36,7 +36,8 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
+import type PaymentController from "~~/controllers/PaymentController"
+
 interface Props {
     card: PaymentProfile
 }
@@ -55,7 +56,7 @@ const props = defineProps<Props>()
 
     width: 300px;
     height: 175px;
-    color: var(--text1);
+    color: var(--text1a);
 
     .top-row {
         display: flex;
@@ -78,18 +79,28 @@ const props = defineProps<Props>()
 
         label {
             font-size: 0.8rem;
-            color: var(--text2);
+            color: var(--text1a);
         }
 
         .name {
             font-size: 1rem;
+            color: var(--text1a);
         }
     }
 
     .menu-button {
-        padding: 0px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 35px;
+        width: 35px;
         border: none;
+        background: var(--primary);
         border-radius: $border-radius;
+
+        .iconify {
+            color: var(--text1a);
+        }
 
         .menu {
             display: flex;
@@ -108,13 +119,13 @@ const props = defineProps<Props>()
                 align-items: center;
                 gap: 10px;
                 white-space: nowrap;
-                background: var(--text1);
+                background: var(--text1a);
                 border-radius: 3px;
                 padding: 4px 10px;
                 font-weight: 500;
 
                 &:hover {
-                    background: var(--text2);
+                    background: var(--primary-light);
                 }
 
                 svg {
@@ -130,16 +141,20 @@ const props = defineProps<Props>()
 
     .card-number {
         font-size: 1.3rem;
+        color: var(--text1a);
     }
 
     .expiry-box {
         display: flex;
         flex-direction: column;
 
+        .expiry {
+            color: var(--text1a);
+        }
+
         label {
             font-size: 0.75rem;
-
-            color: var(--text2);
+            color: var(--text1a);
         }
     }
 
