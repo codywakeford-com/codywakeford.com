@@ -3,20 +3,48 @@ import InitController from "./InitController"
 
 export default class AuthController {
     static async register(firstName: string, lastName: string, email: string, password: string) {
-        await AuthService.register(firstName, lastName, email, password)
+        try {
+            await AuthService.register(firstName, lastName, email, password)
+
+            return { error: null }
+        } catch (e: any) {
+            const code = e.statusCode as number
+
+            switch (code) {
+                case 409:
+                    return { error: "Email is already in use" }
+                default:
+                    return { error: "An unknown error occured" }
+            }
+        }
     }
 
     static async login(email: string, password: string) {
-        const response = await AuthService.login(email, password)
+        try {
+            const { jwt, user } = await AuthService.login(email, password)
 
-        if ("error" in response) {
-            return { error: response.error }
-        } else {
-            localStorage.setItem("jwt", response.jwt)
-            $User.state.jwt = response.jwt
-            $User.state.user = response.user
+            localStorage.setItem("jwt", jwt)
+            $User.state.jwt = jwt
+            if (user) $User.state.user = user
 
             InitController.initProjectListeners($User.state.user.email)
+
+            navigateTo("/dashboard/client")
+            return { error: null }
+        } catch (e) {
+            if (e && typeof e === "object" && "statusCode" in e) {
+                const error = e as { statusCode: number; statusMessage?: string }
+
+                switch (error.statusCode) {
+                    case 401:
+                        return { error: "Invalid email or password" }
+                    default:
+                        console.error("Unexpected error:", error)
+                        return { error: "An unknown error occurred" }
+                }
+            }
+
+            return { error: "An unknown error occurred" }
         }
     }
 

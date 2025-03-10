@@ -10,7 +10,7 @@ declare global {
         role: UserRole
 
         stripePaymentProfile: {
-            customerId: ""
+            customerId: string
             paymentMethods: any[]
         }
     }

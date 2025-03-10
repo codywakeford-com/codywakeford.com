@@ -61,12 +61,15 @@ export default defineNuxtConfig({
         "@nuxt/scripts",
         "pinia-plugin-persistedstate/nuxt",
         "@nuxtjs/color-mode",
+        "@formkit/nuxt",
     ],
+
     nitro: {
         rollupConfig: {
             plugins: [vue()],
         },
     },
+
     colorMode: {
         preference: "system", // default value of $colorMode.preference
         fallback: "light", // fallback value if not system preference found

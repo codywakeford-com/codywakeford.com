@@ -1,43 +1,32 @@
 import { jwtDecode } from "jwt-decode"
 
-type LoginSuccess = { jwt: string; user: User }
-type LoginFailure = { error: string }
-
 export default class AuthService {
     static async register(firstName: string, lastName: string, email: string, password: string) {
-        try {
-            await $fetch<Api.Auth.Register.Response>("/api/auth/register", {
-                method: "POST",
-                body: { firstName, lastName, email, password } as Api.Auth.Register.Request,
-            })
-        } catch (error) {
-            return error
-        }
+        await $fetch<Api.Auth.Register.Response>("/api/auth/register", {
+            method: "POST",
+            body: { firstName, lastName, email, password } as Api.Auth.Register.Request,
+        })
     }
 
-    static async login(email: string, password: string): Promise<LoginSuccess | LoginFailure> {
-        try {
-            const jwt = await $fetch<Api.Auth.Login.Response>("/api/auth/login", {
-                method: "POST",
-                body: { email, password } as Api.Auth.Login.Request,
+    static async login(email: string, password: string) {
+        const jwt = await $fetch<Api.Auth.Login.Response>("/api/auth/login", {
+            method: "POST",
+            body: { email, password } as Api.Auth.Login.Request,
+        })
+
+        const payload = jwtDecode(jwt) as User
+
+        if (!payload) {
+            throw createError({
+                statusCode: 500,
+                message: "An unknown error occured",
             })
+        }
 
-            const payload = jwtDecode(jwt) as User
-
-            if (!payload) {
-                return { error: "An error has occurred." }
-            }
-
-            return {
-                jwt: jwt,
-                user: payload,
-            }
-        } catch (error: any) {
-            if (error.status === 401) {
-                return { error: "Invalid email or password." }
-            } else {
-                return { error: "An unknown error has occurred." }
-            }
+        return {
+            error: null,
+            jwt: jwt,
+            user: payload,
         }
     }
 

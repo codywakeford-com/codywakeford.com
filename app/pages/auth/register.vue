@@ -1,55 +1,66 @@
 <template>
     <main class="auth-page">
-        <form
-            class="auth-form"
-            @submit.prevent="submit(form.firstName.input, form.lastName.input, form.email.input, form.password.input)"
-        >
-            <lheader>
-                <h1>Sign Up</h1>
-                <p>Fill out the form to create a new account.</p>
-            </lheader>
+        <form-kit novalidate type="form" @submit="submit()" :errors="errors">
+            <header>
+                <h1>Register</h1>
+                <p>Fill out the form to create a new account</p>
+            </header>
 
             <div class="input-row">
-                <div class="input-group">
-                    <label for="">First Name</label>
-                    <input type="text" v-model="form.firstName.input" />
-                    <div class="error" v-for="e in form.firstName.errors">{{ e }}</div>
-                </div>
-
-                <div class="input-group">
-                    <label for="">Last Name</label>
-                    <input type="text" v-model="form.lastName.input" />
-                    <div class="error" v-for="e in form.lastName.errors">{{ e }}</div>
-                </div>
-            </div>
-            <div class="input-group">
-                <label for="email">Email Address</label>
-                <input class="nova-input" type="text" name="email" v-model="form.email.input" />
-                <div class="error" v-for="e in form.email.errors">{{ e }}</div>
+                <FormKit
+                    type="email"
+                    label="First Name"
+                    name="firstName"
+                    v-model="input.firstName"
+                    validation="required"
+                />
+                <FormKit
+                    type="email"
+                    label="Last Name"
+                    name="lastName"
+                    v-model="input.lastName"
+                    validation="required"
+                />
             </div>
 
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input class="nova-input" type="password" name="password" v-model="form.password.input" />
-                <div class="error" v-for="e in form.password.errors">{{ e }}</div>
-            </div>
+            <FormKit type="email" label="Email" name="email" v-model="input.email" validation="required|email" />
 
-            <button type="submit">
-                <loader color="black" v-if="loading" />
-                <div v-else>Sign Up</div>
-            </button>
+            <FormKit type="group">
+                <FormKit
+                    type="password"
+                    name="password"
+                    value="super-secret"
+                    label="Password"
+                    validation="required"
+                    v-model="input.password"
+                />
+                <FormKit
+                    type="password"
+                    name="password_confirm"
+                    label="Confirm password"
+                    validation="required|confirm"
+                    validation-label="Password confirmation"
+                    v-model="input.confirmPassword"
+                />
+            </FormKit>
 
-            <p class="no-account-p">
-                Already have an account?
-                <nuxt-link to="/auth/login">Sign In</nuxt-link>
-            </p>
-        </form>
+            <template #submit>
+                <button type="submit" :disabled="loading">
+                    <loader v-if="loading" color="white" />
+                    <span v-else>Submit</span>
+                </button>
+
+                <p class="no-account-p">
+                    Already have an account?
+                    <nuxt-link to="/auth/login">Sign In</nuxt-link>
+                </p>
+            </template>
+        </form-kit>
     </main>
 </template>
 
 <script setup lang="ts">
 import AuthController from "~~/controllers/AuthController"
-import { required, isValidEmail, InputValidationController } from "~~/controllers/InputValidationController"
 
 definePageMeta({
     layout: "auth",
@@ -57,65 +68,26 @@ definePageMeta({
 
 const loading = ref(false)
 
-const form = ref<FormInput>({
-    firstName: {
-        input: "",
-        errors: [],
-        validators: [required],
-    },
-
-    lastName: {
-        input: "",
-        errors: [],
-        validators: [required],
-    },
-
-    email: {
-        input: "",
-        errors: [],
-        validators: [required, isValidEmail],
-    },
-
-    password: {
-        input: "",
-        errors: [],
-        validators: [required],
-    },
+const input = ref({
+    firstName: "cody",
+    lastName: "wakeford",
+    email: "codypwakeford@gmail.com",
+    password: "123123",
+    confirmPassword: "123123",
 })
 
-async function submit(firstName: string, lastName: string, email: string, password: string) {
-    if (!InputValidationController.validate(form)) return
+const errors = ref<string[]>([])
 
+async function submit() {
     loading.value = true
-    try {
-        await AuthController.register(firstName, lastName, email, password)
-    } catch (e) {
-        errorMessage.value = String(e)
-    } finally {
-        loading.value = false
-    }
+
+    const { firstName, lastName, email, password } = input.value
+    const { error } = await AuthController.register(firstName, lastName, email, password)
+
+    if (error) errors.value.push(error)
+
+    loading.value = false
 }
 </script>
 
-<style lang="scss" scoped>
-input {
-    margin-bottom: 0px;
-}
-.input-group {
-    margin-bottom: 15px;
-}
-
-label {
-    margin-bottom: 0px;
-}
-.input-row {
-    gap: 15px !important;
-    input {
-        max-width: 155px;
-    }
-}
-
-button {
-    margin-top: 25px;
-}
-</style>
+<style lang="scss" scoped></style>

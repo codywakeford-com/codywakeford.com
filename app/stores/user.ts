@@ -56,6 +56,21 @@ export const useUserStore = defineStore(
             return state.value.user?.stripePaymentProfile.paymentMethods || []
         })
 
+        function setNullUserObj() {
+            state.value.user = {
+                id: "hello",
+                firstName: "Guest",
+                lastName: "User",
+                email: "guest@email.com",
+                password: "sogbndg",
+                role: "user",
+                stripePaymentProfile: {
+                    customerId: "123",
+                    paymentMethods: [],
+                },
+            }
+        }
+
         //
         // async function createStripeCustomer() {
         //     try {
@@ -146,6 +161,7 @@ export const useUserStore = defineStore(
             paymentMethods,
             email,
             user,
+            setNullUserObj,
         }
     },
     { persist: true },
