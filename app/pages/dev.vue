@@ -16,6 +16,14 @@
 definePageMeta({
     layout: "dashboard",
 })
+
+const input = ref({
+    fullName: "",
+    email: "",
+    country: "",
+    city: "",
+    postcode: "",
+})
 </script>
 
 <style lang="scss" scoped>

@@ -16,36 +16,42 @@ interface PayWithCardElementInput {
 
 export default class PaymentController {
     static async payWithCardElement({ projectId, stripe, card, billing, amount, userId }: PayWithCardElementInput) {
-        const clientSecret = await PaymentService.getPaymentSecret({
-            amount,
-            currency: "gbp",
-            payment_method_types: ["card"],
-        })
+        try {
+            const clientSecret = await PaymentService.getPaymentSecret({
+                amount,
+                currency: "gbp",
+                payment_method_types: ["card"],
+            })
 
-        const { paymentIntent } = await PaymentService.confirmCardPayment(stripe, clientSecret, {
-            payment_method: {
-                card: card,
-                billing_details: {
-                    name: billing.name,
+            const { paymentIntent } = await PaymentService.confirmCardPayment(stripe, clientSecret, {
+                payment_method: {
+                    card: card,
+                    billing_details: {
+                        name: billing.name,
+                    },
                 },
-            },
-        })
+            })
 
-        if (!paymentIntent) throw new Error("Broken paymtn")
+            if (!paymentIntent) throw new Error("An error occured getting the payment intent.")
 
-        // TODO create and send email reciept
+            // TODO create and send email reciept
 
-        const paymentRecord = PaymentService.generatePaymentRecord(paymentIntent, billing, projectId, userId)
+            const paymentRecord = PaymentService.generatePaymentRecord(paymentIntent, billing, projectId, userId)
 
-        await $fetch(`/api/projects/update-amount-paid`, {
-            method: "PUT",
-            body: { id: projectId, amountPaid: paymentIntent.amount },
-        })
+            await $fetch(`/api/projects/update-amount-paid`, {
+                method: "PUT",
+                body: { id: projectId, amountPaid: paymentIntent.amount },
+            })
 
-        await DbService.createObject<PaymentRecord>(`/projects/${projectId}/payment-records`, paymentRecord)
-        await DbService.createObject<PaymentRecord>(`/users/${userId}/payment-records`, paymentRecord)
-        await ActionController.onPayment(projectId)
-        await ProjectPhaseService.incrementPhase($Projects.getByProjectId(projectId))
+            await DbService.createObject<PaymentRecord>(`/projects/${projectId}/payment-records`, paymentRecord)
+            await DbService.createObject<PaymentRecord>(`/users/${userId}/payment-records`, paymentRecord)
+            await ActionController.onPayment(projectId)
+            await ProjectPhaseService.incrementPhase($Projects.getByProjectId(projectId))
+
+            return { error: null }
+        } catch (e) {
+            return { error: "An unknown error has occured, please try again later." }
+        }
     }
 
     static async payWithPaymentMethod({
@@ -87,30 +93,22 @@ export default class PaymentController {
         stripe: StripeClient,
         cardElement: StripeCardNumberElement | StripeCardElement,
         billingAddress: StripeBillingAddress,
-        customerId: Stripe.Customer["id"],
     ) {
         try {
-            const { clientSecret } = await getSetupIntentSecret(customerId)
+            let customerId: string | null = $User.state.user.stripePaymentProfile.customerId
 
-            const { setupIntent, error } = await stripe.confirmCardSetup(clientSecret, {
-                payment_method: {
-                    card: cardElement,
-                    billing_details: {
-                        name: billingAddress.name,
-                        email: billingAddress.email,
-                    },
-                },
-            })
+            if (!customerId) {
+                customerId = (await PaymentService.createStripeCustomer($User.state.user.email)).customerId
+            }
+
+            await PaymentService.setupPaymentMethod(stripe, cardElement, billingAddress, customerId)
 
             if (error) throw new Error(`${error}`)
 
-            if (!setupIntent) {
-                throw createError({ statusCode: 500 })
-            }
-
-            return paymentMethod
+            return { error: null }
         } catch (error) {
             console.error(error)
+            return { error: "An unknown error has occured, please try again later" }
         }
     }
 }

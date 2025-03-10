@@ -3,11 +3,11 @@
         <div class="blue-bar">
             <content>
                 <nuxt-link to="mailto:codypwakeford@gmail.com">
-                    <Icon icon="material-symbols:mail-outline-rounded" width="20" />
+                    <Icon name="material-symbols:mail-outline-rounded" size="20" />
                     <span>codypwakeford@gmail.com</span>
                 </nuxt-link>
                 <nuxt-link to="tel:07570068765">
-                    <Icon icon="material-symbols:call" width="20" />
+                    <Icon name="material-symbols:call" size="20" />
                     <span>07570068765</span>
                 </nuxt-link>
             </content>
@@ -18,7 +18,6 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
 const bgWhite = ref(false)
 onMounted(() => {
     window.addEventListener("scroll", () => {
@@ -39,6 +38,10 @@ onMounted(() => {
 
 .background-light {
     background: var(--background) !important;
+}
+
+.iconify {
+    color: var(--text1);
 }
 
 $blue-bar-height: 40px;

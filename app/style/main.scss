@@ -28,6 +28,11 @@ a {
     text-decoration: none;
 }
 
+.flex {
+    display: flex;
+    gap: 25px;
+}
+
 button,
 .btn {
     cursor: pointer;
@@ -54,6 +59,7 @@ p {
         filter: invert(0.8)
     }
 }
+
 .pattern-background {
     position: absolute;
     height: 100%;
@@ -64,5 +70,3 @@ p {
         opacity: 0.3;
     }
 }
-
-

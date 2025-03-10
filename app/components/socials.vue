@@ -32,4 +32,8 @@
     display: flex;
     gap: 10px;
 }
+
+.iconify {
+    color: var(--text1);
+}
 </style>

@@ -15,17 +15,4 @@ main {
     justify-content: center;
     align-items: center;
 }
-
-section {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    z-index: 10;
-    background: var(--background);
-    padding-block: 35px 25px;
-    padding-inline: 25px;
-    gap: 20px;
-    border-radius: 5px;
-    border: 1px solid var(--text2);
-}
 </style>

@@ -1,7 +1,25 @@
-import type { PaymentMethod, ConfirmCardPaymentData, PaymentIntent, SetupIntent, Stripe } from "@stripe/stripe-js"
-import { loadStripe } from "@stripe/stripe-js"
+import type {
+    PaymentMethod,
+    ConfirmCardPaymentData,
+    PaymentIntent,
+    SetupIntent,
+    Stripe,
+    StripeCardElement,
+    StripeCardNumberElement,
+} from "@stripe/stripe-js"
 
-import DbService from "./DbService"
+interface PaymentServiceSavePaymentMethod {
+    customerId: string
+    setupIntent: SetupIntent
+    billingAddress: StripeBillingAddress
+}
+
+interface PaymentServiceSetupPaymentMethodParams {
+    stripe: StripeClient
+    cardElement: StripeCardElement | StripeCardNumberElement
+    billingAddress: StripeBillingAddress
+    customerId: string
+}
 
 export default class PaymentService {
     static async getPaymentSecret(paymentOptions: Stripe.PaymentIntentCreateParams): Promise<string> {
@@ -20,7 +38,12 @@ export default class PaymentService {
         return clientSecret
     }
 
-    static generatePaymentRecord(paymentIntent: PaymentIntent, billing: PaymentRecord["billing"], projectId: string, userId: string) {
+    static generatePaymentRecord(
+        paymentIntent: PaymentIntent,
+        billing: PaymentRecord["billing"],
+        projectId: string,
+        userId: string,
+    ) {
         const paymentRecord: PaymentRecord = {
             paymentIntent,
             billing,
@@ -46,19 +69,6 @@ export default class PaymentService {
         }
 
         return { clientSecret, customerId }
-    }
-
-    static async createCustomer(email: string) {
-        try {
-            const customer = await $fetch<Stripe.Customer>("/api/stripe/create-customer", {
-                method: "POST",
-                body: { email },
-            })
-
-            return { customer: customer }
-        } catch (error) {
-            console.error(error)
-        }
     }
 
     static async confirmCardPayment(stripe: Stripe, clientSecret: string, options: ConfirmCardPaymentData) {
@@ -88,8 +98,12 @@ export default class PaymentService {
         }
     }
 
-    static async savePaymentMethod(customerId: Stripe.Customer["id"], setupIntent: SetupIntent, billingAddress: StripeBillingAddress) {
-        const { last4, brand, expiry } = (await this.getCardMetadata(String(setupIntent.payment_method))) as PaymentMethodMetadata
+    static async savePaymentMethod(input: PaymentServiceSavePaymentMethod) {
+        const { customerId, setupIntent, billingAddress } = input
+
+        const { last4, brand, expiry } = (await PaymentService.getCardMetadata(
+            String(setupIntent.payment_method),
+        )) as PaymentMethodMetadata
 
         const paymentMethod: PaymentMethod = {
             paymentMethodId: String(setupIntent.payment_method),
@@ -102,9 +116,37 @@ export default class PaymentService {
         }
     }
 
-    static async setupPaymentMethod() {
-        const stripe = await loadStripe(useRuntimeConfig().public.STRIPE_PUBLISHABLE_KEY)
+    static async setupPaymentMethod(input: PaymentServiceSetupPaymentMethodParams) {
+        const { stripe, cardElement, billingAddress } = input
 
-        if (!stripe) throw new Error("stripe failed to initialize")
+        const { clientSecret } = await PaymentService.getSetupIntentSecret(customerId)
+
+        const { setupIntent, error } = await stripe.confirmCardSetup(clientSecret, {
+            payment_method: {
+                card: cardElement,
+                billing_details: {
+                    name: billingAddress.name,
+                    email: billingAddress.email,
+                },
+            },
+        })
+
+        return { setupIntent, error }
+    }
+
+    static async createStripeCustomer(email: string) {
+        const customer = await $fetch<Stripe.Customer>("/api/stripe/create-customer", {
+            method: "POST",
+            body: { email },
+        })
+
+        if (!customer) throw new Error("Customer failed to create")
+
+        const stripePaymentProfile: User["stripePaymentProfile"] = {
+            customerId: customer.id,
+            paymentMethods: [],
+        }
+
+        return stripePaymentProfile
     }
 }

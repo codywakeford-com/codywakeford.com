@@ -16,6 +16,10 @@
             <nuxt-link to="/dashboard/domains" class="nav-item" data-tooltip="Market">
                 <Icon name="healthicons:market-stall" size="30" />
             </nuxt-link>
+
+            <nuxt-link to="/dashboard/ads" class="nav-item" data-tooltip="Market">
+                <Icon name="mdi:advertisements" size="30" />
+            </nuxt-link>
         </cflex>
 
         <cflex class="bottom-links">

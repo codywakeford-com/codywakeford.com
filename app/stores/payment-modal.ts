@@ -15,6 +15,7 @@ export const useBillingModalStore = defineStore(
 
         function openAddCardModal() {
             state.value.ui = "save-card"
+            state.value.paymentAmount = undefined
             showModalById("payment-modal")
         }
 

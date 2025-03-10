@@ -1,12 +1,10 @@
 <template>
-    <section class="modal-body" @click.stop.prevent>
+    <section @click.stop.prevent>
         <header>
             <h1 v-if="$BillingModal.type === 'save-card'">Add a card</h1>
             <h1 v-else>Make a payment</h1>
 
-            {{ $BillingModal.state.paymentAmount }}
-
-            <div class="amount">
+            <div class="amount" v-if="$BillingModal.state.ui === 'payment'">
                 <h2 v-if="$BillingModal.state.paymentAmount">
                     £{{ ($BillingModal.state.paymentAmount / 100).toFixed(2) }}
                 </h2>
@@ -14,139 +12,84 @@
             </div>
         </header>
 
-        <form v-if="$BillingModal.type === 'payment' && !useNewCard" @submit.prevent="pay" class="payment-form">
-            <div class="saved-cards">
-                <stripe-payment-method-sm
-                    v-for="(card, index) of $User.stripePaymentProfile?.paymentMethods"
-                    @click="selectedCardIndex = index"
-                    :key="index"
-                    :card="card"
-                    :selected="selectedCardIndex === index"
-                />
-                <button @click="useNewCard = true" class="new-card">Use a new card</button>
-            </div>
-        </form>
-        <form v-show="$BillingModal.type === 'payment' && useNewCard">
-            <div class="left">
-                <div class="form-item">
-                    <label for="cardNumber">Card Number</label>
-                    <div class="input-element" :id="`card-number-element${elId}`" ref="cardNumber" />
-                </div>
-
-                <div class="form-item">
-                    <label for="cardExpiry">Expiration Date</label>
-                    <div class="input-element" id="card-expiry-element" ref="cardExpiry" />
-                </div>
-
-                <div class="form-item">
-                    <label for="cardCvc">CVC</label>
-                    <div class="input-element" id="card-cvc-element" ref="cardCvc" />
-                </div>
-
-                <div class="form-item">
-                    <label for="email">Reciept Email:</label>
-                    <input class="input-element" type="email" placeholder="email" v-model="address.email.input" />
-                    <div
-                        :class="{ active: address.email.errors }"
-                        v-for="e of address.email.errors"
-                        class="error-message"
-                    >
-                        {{ e }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="right">
-                <div class="form-item">
-                    <label for="">Full Name</label>
-                    <input class="input-element" type="text" v-model="address.fullName.input" />
-                    <div
-                        :class="{ active: address.fullName.errors }"
-                        v-for="e of address.fullName.errors"
-                        class="error-message"
-                    >
-                        {{ e }}
-                    </div>
-                </div>
-
-                <div class="form-item">
-                    <label for="">City</label>
-                    <input class="input-element" type="text" v-model="address.city.input" />
-                    <div
-                        :class="{ active: address.city.errors }"
-                        v-for="e of address.city.errors"
-                        class="error-message"
-                    >
-                        {{ e }}
-                    </div>
-                </div>
-
-                <div class="form-item">
-                    <label for="">Postcode</label>
-                    <input class="input-element" type="text" v-model="address.postcode.input" />
-                    <div
-                        :class="{ active: address.postcode.errors }"
-                        v-for="e of address.postcode.errors"
-                        class="error-message"
-                    >
-                        {{ e }}
-                    </div>
-                </div>
-
-                <div class="form-item">
-                    <label for="">Country</label>
-                    <input
-                        :class="{ errors: address.country.errors }"
-                        class="input-element"
+        <FormKit type="form" :errors="errors.formErrors" novalidate v-show="useNewCard" ref="form" @submit="submit()">
+            <div class="flex">
+                <div class="left">
+                    <form-kit
                         type="text"
-                        v-model="address.country.input"
-                    />
-                    <div
-                        :class="{ active: address.country.errors }"
-                        v-for="e of address.country.errors"
-                        class="error-message"
+                        label="Card Number"
+                        :errors="errors.cardErrors"
+                        :class="{ 'data-invalid': true }"
                     >
-                        {{ e }}
-                    </div>
+                        <template #input>
+                            <div
+                                class="formkit-input"
+                                :id="`card-number-element${elId}`"
+                                ref="cardNumber"
+                                validation="required"
+                            />
+                        </template>
+                    </form-kit>
+
+                    <form-kit
+                        type="text"
+                        label="Card Expiry"
+                        :errors="errors.expiryErrors"
+                        :class="{ 'data-invalid': errors.expiryErrors?.length }"
+                    >
+                        <template #input>
+                            <div class="formkit-input" id="card-expiry-element" ref="cardExpiry" />
+                        </template>
+                    </form-kit>
+
+                    <form-kit
+                        type="text"
+                        label="CVC"
+                        :errors="errors.cvcErrors"
+                        :class="{ 'data-invalid': errors.expiryErrors?.length }"
+                    >
+                        <template #input>
+                            <div class="formkit-input" id="card-cvc-element" ref="cardCvc" validation="required" />
+                        </template>
+                    </form-kit>
+
+                    <FormKit type="text" label="Email" validation="required|email" />
+                </div>
+
+                <div class="right">
+                    <FormKit type="text" label="Full Name" validation="required" v-model="input.fullName" />
+                    <FormKit type="text" label="City" validation="required" v-model="input.city" />
+                    <FormKit type="text" label="Postcode" validation="required" v-model="input.postcode" />
+                    <FormKit type="text" label="Country" validation="required" v-model="input.country" />
                 </div>
             </div>
 
-            <button v-if="$BillingModal.type !== 'save-card'" @click="useNewCard = false">Use saved card</button>
-        </form>
-
-        <div class="button-box">
-            <btn
-                class="loading-button"
-                @click="addCard()"
-                v-if="$BillingModal.type === 'save-card'"
-                :disabled="loading"
-                :loading="loading"
-            >
-                Save Card
-            </btn>
-            <btn class="loading-button" @click="pay()" v-else :disabled="loading" :loading="loading">Make Payment</btn>
-            <div class="error-message">{{ state.errorMessage }}</div>
-        </div>
+            <template #submit>
+                <button type="submit" :disabled="loading" @click="(validateStripeInputs(), form?.node.submit())">
+                    <loader v-if="loading" color="white" />
+                    <span v-else>{{ $BillingModal.state.ui === "payment" ? "Pay" : "Add Card" }}</span>
+                </button>
+            </template>
+        </FormKit>
     </section>
 </template>
 
 <script setup lang="ts">
-import { isValidEmail } from "~~/controllers/InputValidationController"
 import type {
     StripeCardCvcElement,
     StripeCardExpiryElement,
     StripeAddressElement,
     StripeCardNumberElement,
 } from "@stripe/stripe-js"
+
 import { loadStripe, type Stripe, type StripeCardElement } from "@stripe/stripe-js"
 import PaymentController from "~~/controllers/PaymentController"
-import { InputValidationController, required } from "~~/controllers/InputValidationController"
-
+const form = ref<HTMLFormElement | null>()
 const route = useRoute()
 const amount = ref<number | undefined>(undefined)
 const userInputAmount = ref<number>(0)
 const $BillingModal = useBillingModalStore()
-const useNewCard = ref(false) // keeps track if the user wants to use a saved card or not
+const useNewCard = ref(true) // keeps track if the user wants to use a saved card or not
 const cardNumber = ref<StripeCardNumberElement | null>(null)
 const cardExpiry = ref<StripeCardExpiryElement | null>(null)
 const cardCvc = ref<StripeCardCvcElement | null>(null)
@@ -155,6 +98,14 @@ const card = ref()
 const selectedCardIndex = ref<number>(0)
 const elId = uuid() // differentiates instances of this component
 const { onLoaded } = useScriptStripe()
+const loading = ref(false)
+
+const errors = ref<{ [key: string]: string[] }>({
+    cardErrors: [],
+    cvcErrors: [],
+    expiryErrors: [],
+    formErrors: [],
+})
 
 onMounted(() => {
     onLoaded(({ Stripe }) => {
@@ -175,137 +126,134 @@ onMounted(() => {
         cardNumber.value.mount("#card-number-element" + elId)
         cardExpiry.value.mount("#card-expiry-element")
         cardCvc.value.mount("#card-cvc-element")
+
+        cardNumber.value.on("change", (event) => {
+            if (event.error) {
+                errors.value.cardErrors?.push(event.error.message)
+            }
+        })
+
+        cardCvc.value.on("change", (event) => {
+            if (event.error) {
+                errors.value.cvcErrors?.push(event.error.message)
+            }
+        })
+
+        cardExpiry.value.on("change", (event) => {
+            console.log(event)
+            if (event.error) {
+                errors.value.expiryErrors?.push(event.error.message)
+            }
+        })
+
+        if (!stripe.value || !cardNumber.value || !cardCvc.value || !cardExpiry.value) {
+            throw new Error("Stripe or stripe elements not initialized properly.")
+        }
     })
 })
 
-const address = ref<FormInput>({
-    fullName: {
-        input: "",
-        errors: [],
-        validators: [required],
-    },
-    email: {
-        input: "",
-        errors: [],
-        validators: [required, isValidEmail],
-    },
+function submit() {
+    if ($BillingModal.state.ui === "payment") {
+        pay()
+    } else {
+        addCard()
+    }
+}
 
-    country: {
-        input: "",
-        errors: [],
-        validators: [required],
-    },
-    city: {
-        input: "",
-        errors: [],
-        validators: [required],
-    },
-    postcode: {
-        input: "",
-        errors: [],
-        validators: [required],
-    },
-})
+function validateStripeInputs() {
+    let c1 = document.getElementById(`card-number-element` + elId)
+    let c2 = document.getElementById(`card-cvc-element`)
+    let c3 = document.getElementById(`card-expiry-element`)
 
-const state = ref({
-    successMessage: "",
-    errorMessage: "",
-    loading: false,
+    if (c1?.classList.contains("StripeElement--empty")) {
+        errors.value.cardErrors?.push("Card number is required")
+    }
+    if (c2?.classList.contains("StripeElement--empty")) {
+        errors.value.cvcErrors?.push("Card CVC is required")
+    }
+    if (c3?.classList.contains("StripeElement--empty")) {
+        errors.value.expiryErrors?.push("Card Expiry is required")
+    }
+}
+
+const input = ref({
+    fullName: "",
+    email: "",
+    country: "",
+    city: "",
+    postcode: "",
 })
 
 async function pay() {
-    if (!stripe.value || !cardNumber.value || !cardCvc.value || !cardExpiry.value) {
-        throw new Error("Stripe or stripe elements not initialized properly.")
+    if (!stripe.value) {
+        errors.value.formErrors?.push("An unknown error has occured, please try again later.")
+        console.error("Stripe not initialized")
+        return
     }
-
-    console.log(InputValidationService.validate(address))
-    if (!InputValidationService.validate(address)) return
 
     loading.value = true
 
-    try {
-        const amountToPay = amount.value ? amount.value : userInputAmount.value
+    const amountToPay = amount.value ? amount.value : userInputAmount.value
 
-        await PaymentController.payWithCardElement({
-            projectId: useRoute().params.id as string,
-            userId: $User.state.user.id,
-            stripe: stripe.value,
-            card: card.value,
-            amount: amountToPay,
-            billing: {
-                name: address.value.fullName.input,
-                email: $User.state.user.email,
-                address: {
-                    line1: "Street not provided",
-                    line2: null,
-                    city: address.value.city.input,
-                    state: address.value.city.input,
-                    postcode: address.value.postcode.input,
-                    country: address.value.country.input,
-                },
+    const { error } = await PaymentController.payWithCardElement({
+        projectId: useRoute().params.id as string,
+        userId: $User.state.user.id,
+        stripe: stripe.value,
+        card: card.value,
+        amount: amountToPay,
+        billing: {
+            name: input.value.fullName,
+            email: $User.state.user.email,
+            address: {
+                line1: "Street not provided",
+                line2: null,
+                city: input.value.city,
+                state: input.value.city,
+                postcode: input.value.postcode,
+                country: input.value.country,
             },
-        })
-    } catch (e) {
-        console.log(e)
-        state.value.errorMessage = "An error has occured"
-    } finally {
-        loading.value = false
+        },
+    })
+
+    if (error) {
+        errors.value.formErrors?.push(error)
     }
+
+    loading.value = false
 }
 
 async function addCard() {
-    if (!stripe.value || !cardNumber.value || !card.value) {
-        throw new Error("Stripe not initialized or card element not created!")
+    if (!stripe.value) {
+        errors.value.formErrors?.push("An unknown error has occured, please try again later.")
+        console.error("Stripe not initialized")
+        return
     }
 
     loading.value = true
-    try {
-        if (!address.value) {
-            throw new Error("No billing address")
-        }
 
-        if (!$User.getStripeCustomerId) {
-            await $User.createStripeCustomer()
-        }
+    const { error } = await PaymentController.setupPaymentMethod()
 
-        const customerId = $User.getStripeCustomerId
-
-        if (!customerId) throw new Error("Stripe customer ID not found")
-
-        const stripeAddress: StripeBillingAddress = {
-            name: address.value.fullName,
-            postal_code: address.value.postcode,
-            line1: address.value.street,
-            line2: "",
-            state: "",
-            city: address.value.city,
-            email: address.value.email,
-            country: address.value.country,
-        }
-
-        const paymentMethod = await $Stripe.setupPaymentMethod(stripe.value, card.value, stripeAddress, customerId)
-
-        if (!paymentMethod) throw new Error("Payment method not found")
-
-        if (paymentMethod) {
-            await $User.addPaymentMethod(paymentMethod)
-
-            if (props.onComplete) props.onComplete(paymentMethod)
-        }
-    } catch (error) {
-        console.error("Error in addCard:", error)
-
-        if (props.onFailure) {
-            props.onFailure()
-        }
-    } finally {
-        loading.value = false
+    if (error) {
+        errors.value.formError?.push(error)
     }
+
+    loading.value = false
 }
-const loading = ref(false)
 </script>
 
 <style scoped lang="scss">
+section {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 10;
+    background: var(--background);
+    padding-block: 25px 25px;
+    padding-inline: 25px;
+    gap: 20px;
+    border-radius: 5px;
+    border: 1px solid var(--text2);
+}
 dialog {
     min-height: calc(100vh - 75px);
     top: 0;
@@ -359,43 +307,20 @@ header {
     }
 }
 
-form {
-    display: flex;
-    gap: 25px;
-
-    label {
-        font-weight: 300;
-        font-size: 0.9rem;
-    }
-
+.formkit-form {
     .left,
     .right {
         display: flex;
         flex-direction: column;
-        gap: 15px;
         min-width: 300px;
         text-align: start;
     }
 
-    .form-item {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
+    button {
+        width: fit-content;
+        margin-inline: auto;
+        min-width: 150px;
     }
-}
-
-.loading-button {
-    height: 30px;
-    color: var(--text1);
-    border: 0;
-    margin: 0;
-    margin-inline: auto;
-    width: 100%;
-    background: var(--primary);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: $border-radius;
 }
 
 .input-element {
