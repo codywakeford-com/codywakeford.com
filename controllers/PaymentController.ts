@@ -89,21 +89,26 @@ export default class PaymentController {
         }
     }
 
-    static async setupPaymentMethod(
-        stripe: StripeClient,
-        cardElement: StripeCardNumberElement | StripeCardElement,
-        billingAddress: StripeBillingAddress,
-    ) {
+    static async setupPaymentMethod({ stripe, cardElement, billing }: PaymentController_SetupPaymentMethod) {
         try {
-            let customerId: string | null = $User.state.user.stripePaymentProfile.customerId
+            let customerId: string | undefined = $User.getStripeCustomerId
 
             if (!customerId) {
                 customerId = (await PaymentService.createStripeCustomer($User.state.user.email)).customerId
             }
 
-            await PaymentService.setupPaymentMethod(stripe, cardElement, billingAddress, customerId)
+            const { setupIntent, error } = await PaymentService.setupPaymentMethod({
+                customerId: customerId || "",
+                stripe,
+                cardElement,
+                billing,
+            })
 
-            if (error) throw new Error(`${error}`)
+            await PaymentService.savePaymentMethod({
+                userId: $User.state.user.id,
+                setupIntent,
+                billingAddress: billing,
+            })
 
             return { error: null }
         } catch (error) {

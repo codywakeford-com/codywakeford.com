@@ -7,8 +7,8 @@
             </div>
 
             <div class="right">
-                {{ $colorMode.value }}
-                <dashboard-staff-project-controls />
+                <dashboard-client-project-controls />
+                <dashboard-staff-project-controls v-if="$User.state.user.role === 'staff'" />
                 <!-- <nuxt-link target="_blank" :to="`https://${project.domain}`" class="project-url" v-if="project?.domain">https://{{ project?.domain }}</nuxt-link> -->
             </div>
         </header>
@@ -288,8 +288,15 @@ header {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
+    padding-bottom: 25px;
 
     grid-area: header;
+
+    .right {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
 }
 
 .card {

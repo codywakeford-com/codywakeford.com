@@ -36,10 +36,8 @@
 </template>
 
 <script setup lang="ts">
-import type PaymentController from "~~/controllers/PaymentController"
-
 interface Props {
-    card: PaymentProfile
+    card: UserPaymentMethod
 }
 
 const props = defineProps<Props>()
@@ -53,7 +51,7 @@ const props = defineProps<Props>()
     padding-block: 15px;
     padding-inline: 20px;
     border-radius: 10px;
-
+    min-width: 300px;
     width: 300px;
     height: 175px;
     color: var(--text1a);

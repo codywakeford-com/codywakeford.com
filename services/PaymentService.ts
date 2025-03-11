@@ -7,19 +7,8 @@ import type {
     StripeCardElement,
     StripeCardNumberElement,
 } from "@stripe/stripe-js"
-
-interface PaymentServiceSavePaymentMethod {
-    customerId: string
-    setupIntent: SetupIntent
-    billingAddress: StripeBillingAddress
-}
-
-interface PaymentServiceSetupPaymentMethodParams {
-    stripe: StripeClient
-    cardElement: StripeCardElement | StripeCardNumberElement
-    billingAddress: StripeBillingAddress
-    customerId: string
-}
+import DbService from "./DbService"
+import Billing from "~/pages/dashboard/profile/billing.vue"
 
 export default class PaymentService {
     static async getPaymentSecret(paymentOptions: Stripe.PaymentIntentCreateParams): Promise<string> {
@@ -98,26 +87,28 @@ export default class PaymentService {
         }
     }
 
-    static async savePaymentMethod(input: PaymentServiceSavePaymentMethod) {
-        const { customerId, setupIntent, billingAddress } = input
+    static async savePaymentMethod(input: PaymentService_SavePaymentMethod) {
+        const { setupIntent, billingAddress, userId } = input
 
         const { last4, brand, expiry } = (await PaymentService.getCardMetadata(
             String(setupIntent.payment_method),
         )) as PaymentMethodMetadata
 
-        const paymentMethod: PaymentMethod = {
-            paymentMethodId: String(setupIntent.payment_method),
-            billingAddress: billingAddress,
+        const paymentMethod: UserPaymentMethod = {
+            paymentMethodId: setupIntent.payment_method,
+            billing: billingAddress,
             timestamp: Date.now(),
             last4: last4,
             brand: brand,
             expiry: expiry,
             nameOnCard: billingAddress.name,
         }
+
+        await DbService.createObject(`/users/${userId}/payment-methods`, paymentMethod)
     }
 
-    static async setupPaymentMethod(input: PaymentServiceSetupPaymentMethodParams) {
-        const { stripe, cardElement, billingAddress } = input
+    static async setupPaymentMethod(params: PaymentService_SetupPaymentMethod) {
+        const { stripe, cardElement, billing, customerId } = params
 
         const { clientSecret } = await PaymentService.getSetupIntentSecret(customerId)
 
@@ -125,8 +116,8 @@ export default class PaymentService {
             payment_method: {
                 card: cardElement,
                 billing_details: {
-                    name: billingAddress.name,
-                    email: billingAddress.email,
+                    name: billing.name,
+                    email: billing.email,
                 },
             },
         })

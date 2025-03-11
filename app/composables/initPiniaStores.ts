@@ -22,6 +22,7 @@ export async function initPiniaStores() {
 
     if ($User.state.user) {
         InitController.initProjectListeners($User.state.user.email)
+        InitController.initUserListeners($User.state.user.id)
     }
 
     $Actions = useActionStore()

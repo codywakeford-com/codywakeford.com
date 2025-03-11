@@ -1,5 +1,9 @@
 <template>
     <main>
+        <header class="page-header">
+            <h1>Your Projects</h1>
+            <p>Find all of your projects in one place.</p>
+        </header>
         <dashboard-project-list interface="client" v-if="$Projects.state.projects.length" />
 
         <div class="no-projects-box" v-else>
@@ -7,8 +11,8 @@
             <h2>No Projects</h2>
             <p>Feel free to book a call to set one up.</p>
 
-            <button-primary-m @click="ProjectController.createProject([$User.email])"
-                ><Icon name="material-symbols:add-2" style="color: white" size="15" />
+            <button-primary-m @click="ProjectController.createProject([$User.email])">
+                <Icon name="material-symbols:add-2" style="color: white" size="15" />
                 New Project
             </button-primary-m>
         </div>

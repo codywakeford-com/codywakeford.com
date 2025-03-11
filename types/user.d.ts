@@ -8,11 +8,7 @@ declare global {
         password: string
         email: string
         role: UserRole
-
-        stripePaymentProfile: {
-            customerId: string
-            paymentMethods: any[]
-        }
+        customerId: string
     }
 
     type UserRole = "staff" | "user"

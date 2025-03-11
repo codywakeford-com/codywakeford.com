@@ -70,3 +70,22 @@ p {
         opacity: 0.3;
     }
 }
+
+.payment-method-sm {
+    width: 300px;
+    border: 2px solid var(--text2);
+    border-radius: 10px;
+}
+
+.page-header {
+    padding-block: 25px;
+
+    h1 {
+        margin-bottom: 5px;
+
+    }
+
+    p {
+        font-size: 1.1rem;
+    }
+}

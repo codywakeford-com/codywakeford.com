@@ -5,7 +5,11 @@
     </main>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+onMounted(() => {
+    $BillingModal.state.ui = "payment"
+})
+</script>
 
 <style lang="scss" scoped>
 main {

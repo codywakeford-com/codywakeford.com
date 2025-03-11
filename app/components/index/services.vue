@@ -8,21 +8,22 @@
 
             <div class="cards">
                 <div class="card">
-                    <Icon icon="hugeicons:computer-programming-01" width="50" />
+                    <Icon name="hugeicons:computer-programming-01" size="50" />
                     <h4>Website Update</h4>
                     <p>Anything from Website Updates, Bug Fixes, Content changes, or additions of any kind.</p>
                 </div>
 
                 <div class="card">
-                    <Icon icon="hugeicons:computer-programming-02" width="50" />
+                    <Icon name="hugeicons:computer-programming-02" size="50" />
                     <h4>Website Redesign and Rebuild</h4>
-                    <p>Redesigning and building dynamic, user-friendly websites that enhance your online presence and
-                        drive
-                        engagement.</p>
+                    <p>
+                        Redesigning and building dynamic, user-friendly websites that enhance your online presence and
+                        drive engagement.
+                    </p>
                 </div>
 
                 <div class="card">
-                    <Icon icon="hugeicons:computer-settings" width="50" />
+                    <Icon name="hugeicons:computer-settings" size="50" />
                     <h4>Speed Optimization</h4>
                     <p>I can optimise your website for speed, making sure your visitors aren't waiting around.</p>
                 </div>
@@ -31,9 +32,7 @@
     </section>
 </template>
 
-<script setup lang="ts">
-import { Icon } from "@iconify/vue"
-</script>
+<script setup lang="ts"></script>
 
 <style lang="scss" scoped>
 section {
@@ -71,7 +70,8 @@ section {
             color: var(--text2);
         }
 
-        svg {
+        .iconify {
+            color: var(--text2a);
             margin-inline: auto;
         }
     }

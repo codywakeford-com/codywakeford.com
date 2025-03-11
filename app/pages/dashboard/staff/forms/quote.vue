@@ -1,113 +1,116 @@
 <template>
     <mpage>
-        <form @submit.prevent="submit()" class="main-form">
-            <header>
-                <h1>Build Client Quote</h1>
-                <p>Here we can generate a client quote and project proposal pdf to be sent over.</p>
-            </header>
+        <main class="staff-main-form">
+            <form-kit type="form" @submit.prevent="submit()">
+                <header class="form-header">
+                    <h1>Build Client Quote</h1>
+                    <p>Here we can generate a client quote and project proposal pdf to be sent over.</p>
+                </header>
 
-            <h2>Project Proposal</h2>
+                <h2>Project Proposal</h2>
 
-            <div class="input-group">
-                <label>Scope Of Work</label>
-                <textarea name="" rows="15" v-model="input.scope" />
-            </div>
+                <form-kit
+                    type="textarea"
+                    rows="11"
+                    label="Scope of Work"
+                    help="Please explain your understanding of the clients requiremnts. This helps clear up any misunderstandings before the quote is accepted."
+                    validation="required"
+                />
 
-            <div class="input-row">
-                <div class="input-group">
-                    <label for="">Number Days Work</label>
-                    <input type="text" v-model="input.nDaysWork" />
-                </div>
-
-                <div class="input-group">
-                    <label for="">Due Date</label>
-                    <input type="text" v-model="input.due" />
-                </div>
-
-                <div class="input-group">
-                    <label for="">Deliverable</label>
-                    <input type="text" v-model="deliverableInput" />
-                    <button type="button" @click="addItem(deliverableInput)">Add Item</button>
-                </div>
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Deliverable</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(item, index) of input.deliverables">
-                        <td>{{ item }}</td>
-                        <td>
-                            <button type="button" @click="removeDeliverable(index)">Delete</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h2>Quote</h2>
-            <div class="quote-form">
                 <div class="input-row">
-                    <div class="input-group">
-                        <label for="">Item Name</label>
-                        <input type="text" v-model="newQuoteItem.name" />
-                    </div>
-
-                    <div class="input-group">
-                        <label for="">Quantity</label>
-                        <input type="text" v-model="newQuoteItem.quantity" />
-                    </div>
-
-                    <div class="input-group">
-                        <label for="">Unit Price</label>
-                        <input type="text" v-model="newQuoteItem.unitPrice" />
-                    </div>
+                    <form-kit type="text" label="Number of Days Work" validation="required" v-model="input.nDaysWork" />
+                    <form-kit type="date" label="Due Date" validation="required" v-model="input.due" />
                 </div>
 
-                <button-primary-m type="button" @click="addQuoteItem()">Add item</button-primary-m>
+                <header class="sub-heading">
+                    <h3>Deliverables</h3>
+                    <p class="form-p">A list of tangible items for the project.</p>
+                </header>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Item</th>
-                            <th>Quantity</th>
-                            <th>Unit Price</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, index) of quoteItems">
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td>£{{ item.unitPrice }}</td>
-                            <td>
-                                <button type="button" @click="removeQuoteItem(index)">Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <FormKit
+                    type="list"
+                    :value="['']"
+                    dynamic
+                    #default="{ items, node, value }"
+                    validation="list_length:2|required"
+                    :config="{ validation: 'required' }"
+                >
+                    <div class="input-row">
+                        <FormKit
+                            v-for="(item, index) in items"
+                            :key="item"
+                            :index="index"
+                            label="Deliverables"
+                            @suffix-icon-click="() => node.input(value.filter((_, i) => i !== index))"
+                        />
+
+                        <button class="remove-button"><Icon name="material-symbols:delete" /></button>
+                    </div>
+
+                    <button type="button" class="add-another-button" @click="() => node.input(value.concat(''))">
+                        <span>Add another item</span>
+                        <Icon name="material-symbols:add-rounded" />
+                    </button>
+                </FormKit>
+
+                <header class="sub-heading">
+                    <h3>Quote</h3>
+                    <p class="form-p">A list of quote items for the project.</p>
+                </header>
+
+                <FormKit
+                    type="list"
+                    :value="[{}]"
+                    dynamic
+                    #default="{ items, node, value }"
+                    :config="{ validation: 'required' }"
+                >
+                    <FormKit type="group" v-for="(item, index) in items" :key="item" :index="index">
+                        <div class="input-row">
+                            <form-kit type="text" name="name" label="Item Name" />
+                            <form-kit name="quantity" type="text" label="Quantity" />
+                            <form-kit name="unitPrice" type="text" label="Unit Price" />
+                            <button
+                                type="button"
+                                @click="() => node.input(value.filter((_, i) => i !== index))"
+                                class="remove-button"
+                            >
+                                <Icon name="material-symbols:delete" />
+                            </button>
+                        </div>
+                    </FormKit>
+
+                    <button type="button" class="add-another-button" @click="() => node.input(value.concat({}))">
+                        <span>Add another item</span>
+                        <Icon name="material-symbols:add-rounded" />
+                    </button>
+                </FormKit>
 
                 <div class="total">Total £{{ total }}</div>
-            </div>
 
-            <embed v-if="quoteUrl" :src="quoteUrl" type="application/pdf" />
-            <embed v-if="proposalUrl" :src="proposalUrl" type="application/pdf" />
-            <embed v-if="invoiceUrl" :src="invoiceUrl" type="application/pdf" />
+                <!-- <embed v-if="quoteUrl" :src="quoteUrl" type="application/pdf" /> -->
+                <!-- <embed v-if="proposalUrl" :src="proposalUrl" type="application/pdf" /> -->
+                <!-- <embed v-if="invoiceUrl" :src="invoiceUrl" type="application/pdf" /> -->
+                <!---->
+                <!-- <button -->
+                <!--     type="button" -->
+                <!--     v-if="projectId && quoteUrl" -->
+                <!--     @click="ProjectController.addQuoteToProject(projectId, quoteUrl, proposalUrl, total)" -->
+                <!-- > -->
+                <!--     Upload Quote To Project -->
+                <!-- </button> -->
+                <!-- <button-primary-m :disabled="loading" type="submit"> -->
+                <!--     {{ loading ? "Loading" : "Generate Documents" }} -->
+                <!-- </button-primary-m> -->
 
-            <button
-                type="button"
-                v-if="projectId && quoteUrl"
-                @click="ProjectController.addQuoteToProject(projectId, quoteUrl, proposalUrl, total)"
-            >
-                Upload Quote To Project
-            </button>
-            <button-primary-m :disabled="loading" type="submit">
-                {{ loading ? "Loading" : "Generate Documents" }}
-            </button-primary-m>
-        </form>
+                <template #submit>
+                    <button type="submit" class="submit-button" :disabled="loading">
+                        <loader v-if="loading" color="white" />
+                        <span v-else>Submit</span>
+                    </button>
+                </template>
+            </form-kit>
+        </main>
     </mpage>
 </template>
 
@@ -123,42 +126,10 @@ const proposalUrl = ref("")
 import PdfController from "~~/controllers/PdfController"
 import ProjectController from "~~/controllers/ProjectsController"
 
-const quoteItems = ref<QuoteItem[]>([
-    {
-        name: "Item 1",
-        unitPrice: 1166,
-        quantity: 1,
-        subtotal: 1166,
-        paymentType: "single",
-    },
-    {
-        name: "Item 1",
-        unitPrice: 1166,
-        quantity: 1,
-        subtotal: 1166,
-        paymentType: "single",
-    },
-    {
-        name: "Item 1",
-        unitPrice: 1166,
-        quantity: 1,
-        subtotal: 1166,
-        paymentType: "single",
-    },
-])
-
 const quoteUrl = ref<null | string>(null)
 const invoiceUrl = ref<null | string>(null)
-const newQuoteItem = ref<QuoteItem>({
-    name: "",
-    quantity: 0,
-    unitPrice: 0,
-    paymentType: "single",
-    get subtotal() {
-        return this.quantity * this.unitPrice
-    },
-})
 
+const quoteItems = ref([])
 function addQuoteItem() {
     for (let value of Object.values(newQuoteItem.value)) {
         if (!value) return
@@ -192,16 +163,6 @@ const input = ref<Proposal>({
     deliverables: ["Home Page", "About Page"],
 })
 
-function addItem(item: string) {
-    if (!deliverableInput.value) return
-    input.value.deliverables.push(item)
-    deliverableInput.value = ""
-}
-
-function removeDeliverable(index: number) {
-    input.value.deliverables.splice(index, 1)
-}
-
 const loading = ref(false)
 
 async function submit() {
@@ -231,10 +192,6 @@ async function submit() {
     }
 
     loading.value = false
-}
-
-function removeQuoteItem(i: number) {
-    quoteItems.value.splice(i, 1)
 }
 </script>
 

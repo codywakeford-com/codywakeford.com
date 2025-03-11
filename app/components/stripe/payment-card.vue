@@ -13,7 +13,17 @@
         </header>
 
         <FormKit type="form" :errors="errors.formErrors" novalidate v-show="useNewCard" ref="form" @submit="submit()">
-            <div class="flex">
+            <div class="existing-cards" v-if="useNewCard && $BillingModal.state.ui === 'payment'">
+                <stripe-payment-method-sm
+                    @click="selectedCardIndex = index"
+                    v-for="(card, index) of $User.state.paymentMethods"
+                    :card="card"
+                    :selected="selectedCardIndex === index"
+                />
+
+                <button class="new-card" @click="useNewCard = true">Use existing card</button>
+            </div>
+            <div class="flex" v-else>
                 <div class="left">
                     <form-kit
                         type="text"
@@ -201,18 +211,7 @@ async function pay() {
         stripe: stripe.value,
         card: card.value,
         amount: amountToPay,
-        billing: {
-            name: input.value.fullName,
-            email: $User.state.user.email,
-            address: {
-                line1: "Street not provided",
-                line2: null,
-                city: input.value.city,
-                state: input.value.city,
-                postcode: input.value.postcode,
-                country: input.value.country,
-            },
-        },
+        billing: billing.value,
     })
 
     if (error) {
@@ -231,7 +230,11 @@ async function addCard() {
 
     loading.value = true
 
-    const { error } = await PaymentController.setupPaymentMethod()
+    const { error } = await PaymentController.setupPaymentMethod({
+        stripe: stripe.value,
+        cardElement: card.value,
+        billing: billing.value,
+    })
 
     if (error) {
         errors.value.formError?.push(error)
@@ -239,6 +242,21 @@ async function addCard() {
 
     loading.value = false
 }
+
+const billing = computed(() => {
+    return {
+        name: input.value.fullName,
+        email: $User.state.user.email,
+        address: {
+            line1: "Street not provided",
+            line2: null,
+            city: input.value.city,
+            state: input.value.city,
+            postcode: input.value.postcode,
+            country: input.value.country,
+        },
+    }
+})
 </script>
 
 <style scoped lang="scss">
@@ -287,13 +305,18 @@ dialog[open] {
     border: 1px solid var(--text2);
 }
 
-.new-card {
-    width: 100%;
-    height: 90px;
-    margin-top: 15px;
-    border-radius: 5px;
-    background: var(--background);
-    border: 3px solid var(--text1);
+.existing-cards {
+    padding-block: 25px;
+
+    .new-card {
+        width: 100%;
+        height: 90px;
+        margin-top: 15px;
+        color: var(--text6);
+        border-radius: 5px;
+        background: var(--background);
+        border: 1px solid var(--text2);
+    }
 }
 
 header {

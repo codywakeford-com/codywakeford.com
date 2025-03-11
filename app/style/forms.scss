@@ -1,5 +1,13 @@
 @use "./variables.scss" as *;
 
+.staff-main-form {
+    overflow-y: scroll;
+    padding: 50px;
+    background: var(--text1);
+    max-height: 100vh;
+
+}
+
 .main-form {
     background: var(--background);
     height: 100%;
@@ -8,6 +16,33 @@
     overflow-y: auto;
 }
 
+.remove-button {
+    max-height: 40px;
+    min-width: 50px;
+    max-width: fit-content;
+
+    .iconify {
+        color: var(--text1a);
+        width: 25px;
+        height: 25px;
+    }
+}
+
+
+.add-another-button {
+
+    max-height: 20px;
+    min-width: 75px;
+    max-width: fit-content;
+    font-size: 1rem !important;
+
+    .iconify {
+        margin-left: 10px;
+        color: var(--text1a);
+        width: 25px;
+        height: 25px;
+    }
+}
 
 .input-group {
     display: flex;
@@ -17,8 +52,14 @@
     margin-bottom: 25px;
 }
 
+.formkit-help {
+    font-size: 0.8rem;
+    color: var(--text5);
+}
+
 .input-row {
     display: flex;
+    align-items: center;
     width: 100%;
     gap: 20px;
 }
@@ -78,14 +119,6 @@
         margin-block: 50px 100px;
     }
 
-    header {
-        margin-bottom: 30px;
-
-        p {
-            margin-top: 5px;
-            font-size: 0.9rem;
-        }
-    }
 
     .formkit-label {
         font-size: 0.8rem;
@@ -161,6 +194,12 @@
 
 }
 
+.submit-button {
+    margin-top: 50px;
+    max-width: 100px;
+}
+
+
 .formkit-input[type="checkbox"] {
     min-height: 0;
     width: auto;
@@ -192,4 +231,17 @@ td {
 
 th {
     background-color: var(--text1);
+}
+
+.form-header {
+    margin-block: 0 50px;
+}
+
+.sub-heading {
+    margin-block: 25px 10px;
+
+    p {
+        margin-top: 5px;
+        font-size: 0.9rem;
+    }
 }

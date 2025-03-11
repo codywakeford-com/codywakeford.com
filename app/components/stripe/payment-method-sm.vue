@@ -1,39 +1,33 @@
 <template>
-    <section>
-        <div class="saved-card" :class="{ selected: props.selected }">
-            <div class="left">
-                <div class="top">
-                    <Icon icon="brandico:amex" v-if="card.brand === 'amex'" width="25" color="lightblue" />
-                    <Icon icon="logos:mastercard" v-if="card.brand === 'mastercard'" />
-                    <Icon icon="logos:visa" v-if="card.brand === 'visa'" width="50" />
-                    <div class="card-number">**** **** **** {{ card.last4 }}</div>
-                </div>
-
-                <div class="bottom">
-                    <div class="name-box">
-                        <!-- <label for="">Name</label> -->
-                        <div class="name">{{ card.nameOnCard }}</div>
-                    </div>
-
-                    <div class="expiry-box">
-                        <!-- <label for="">Exp. date</label> -->
-                        <div class="expiry">{{ card.expiry }}</div>
-                    </div>
-                </div>
+    <div class="saved-card" :class="{ selected: props.selected }">
+        <div class="left">
+            <div class="top">
+                <Icon name="brandico:amex" v-if="card.brand === 'amex'" width="25" color="lightblue" />
+                <Icon name="logos:mastercard" v-if="card.brand === 'mastercard'" />
+                <Icon name="logos:visa" v-if="card.brand === 'visa'" width="50" />
+                <div class="card-number">**** **** **** {{ card.last4 }}</div>
             </div>
 
-            <div class="right">
-                <div class="radio"></div>
+            <div class="bottom">
+                <div class="name-box">
+                    <div class="name">{{ card.nameOnCard }}</div>
+                </div>
+
+                <div class="expiry-box">
+                    <div class="expiry">{{ card.expiry }}</div>
+                </div>
             </div>
         </div>
-    </section>
+
+        <div class="right">
+            <div class="radio"></div>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
-
 interface Props {
-    card: PaymentProfile
+    card: UserPaymentMethod
     selected: boolean
 }
 
@@ -47,6 +41,9 @@ const props = defineProps<Props>()
     display: flex;
     justify-content: space-between;
     gap: 30px;
+    max-width: 350px;
+    margin-inline: auto;
+    margin-bottom: 15px;
     min-width: 300px;
 
     border: 1px solid var(--text6);

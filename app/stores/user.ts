@@ -4,7 +4,7 @@ interface State {
     user: User
     jwt: string | null
     isLoading: boolean
-    // reciepts: PaymentRecord[]
+    paymentMethods: PaymentMethod[]
 }
 
 export const useUserStore = defineStore(
@@ -12,15 +12,18 @@ export const useUserStore = defineStore(
     () => {
         const state = ref<State>({
             user: {
+                firstName: "John",
+                lastName: "Doe",
                 id: "guest-user-id",
+                password: "hello",
                 email: "guest user",
                 role: "user",
-                stripePaymentProfile: {},
+                customerId: "",
             },
 
             jwt: null,
             isLoading: true,
-            // reciepts: [],
+            paymentMethods: [],
         })
 
         const email = computed<string>(() => {
@@ -37,19 +40,11 @@ export const useUserStore = defineStore(
         })
 
         const getStripeCustomerId = computed<string | undefined>(() => {
-            return state.value.user?.stripePaymentProfile?.customerId || undefined
-        })
-
-        const stripeCustomerId = computed<string | undefined>(() => {
-            return state.value.user?.stripePaymentProfile?.customerId
-        })
-
-        const stripePaymentProfile = computed(() => {
-            return state.value.user?.stripePaymentProfile
+            return state.value.user.customerId
         })
 
         const paymentMethods = computed(() => {
-            return state.value.user?.stripePaymentProfile.paymentMethods || []
+            return state.value.paymentMethods || []
         })
 
         function setNullUserObj() {
@@ -60,19 +55,15 @@ export const useUserStore = defineStore(
                 email: "guest@email.com",
                 password: "sogbndg",
                 role: "user",
-                stripePaymentProfile: {
-                    customerId: "123",
-                    paymentMethods: [],
-                },
+                customerId: "123",
             }
+            state.value.paymentMethods = []
         }
 
         return {
-            state, // Keep state to allow mutations
+            state,
             isStaff,
             getStripeCustomerId,
-            stripeCustomerId,
-            stripePaymentProfile,
             paymentMethods,
             email,
             user,

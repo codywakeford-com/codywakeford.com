@@ -1,6 +1,6 @@
 main {
     display: flex;
-    
+
     background: var(--background);
     margin-block: 50px;
     border: 1px solid var(--text2);
@@ -24,7 +24,8 @@ main {
     flex-direction: column;
     gap: 10px;
     border-right: 1px solid var(--text2);
-    padding: 50px 45px;;
+
+    ;
 
     .profile-pic {
         height: 50px;
@@ -40,6 +41,9 @@ main {
     header {
         display: flex;
         gap: 15px;
+        padding-block: 50px 40px;
+        padding-inline: 40px;
+        border-bottom: 1px solid var(--text2);
     }
 }
 
@@ -47,6 +51,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    padding: 25px 40px;
 
     a {
         font-size: 1.1rem;
@@ -57,10 +62,11 @@ main {
         padding-block: 10px;
 
         &:hover {
-            color: var(--primary); 
+            color: var(--primary);
         }
 
-        .iconify, span {
+        .iconify,
+        span {
             color: inherit;
         }
 
@@ -76,5 +82,4 @@ main {
 
 .router-link-active {
     color: var(--primary);
- }
-
+}

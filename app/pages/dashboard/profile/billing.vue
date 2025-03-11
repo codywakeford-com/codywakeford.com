@@ -9,7 +9,7 @@
         </header>
 
         <div class="saved-cards">
-            <stripe-payment-method v-for="(card, index) in savedCards" :key="index" :card="card" />
+            <stripe-payment-method v-for="(card, index) in $User.state.paymentMethods" :key="index" :card="card" />
 
             <button @click="$BillingModal.openAddCardModal" class="add-card">
                 <Icon class="add-icon" name="material-symbols:add" size="20" />
@@ -22,10 +22,6 @@
 </template>
 
 <script setup lang="ts">
-const savedCards = computed(() => {
-    return $User.stripePaymentProfile?.paymentMethods || []
-})
-
 definePageMeta({
     layout: "dashboard-profile",
     middleware: "dashboard",
@@ -40,17 +36,22 @@ main {
         font-size: 1.5rem;
     }
 }
-
+.profile-page {
+    max-width: 925px;
+}
 .saved-cards {
     display: flex;
     gap: 15px;
     padding-block: 25px;
+    overflow-x: scroll;
+    max-width: 100%;
 
     .add-card {
         display: flex;
         flex-direction: column;
         justify-content: center;
         gap: 10px;
+        min-width: 300px;
 
         align-items: center;
         border-radius: 10px;
