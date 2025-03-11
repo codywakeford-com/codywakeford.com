@@ -1,0 +1,44 @@
+name: Deploy to Firebase 
+
+on:
+  push:
+    branches:
+      - master
+
+  workflow_run:
+    workflows: ["test_and_push_to_master"]
+    types:
+      - completed
+
+env:
+  ACTIONS_STEP_DEBUG: true
+
+permissions:                    
+  contents: write              
+  pull-requests: write 
+
+jobs: 
+  deploy:
+    runs-on: ubuntu-latest
+
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: master
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install Deploy Dependencies
+        run: npm install firebase-tools nuxt
+
+      - name: Build 
+        run: npm run build -- --preset=firebase
+
+      - name: Deploy to Firebase
+        run: npx firebase-tools deploy --token ${{ secrets.FIREBASE_TOKEN }} --project jonnyparker-com
