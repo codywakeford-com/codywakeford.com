@@ -3,7 +3,7 @@
         <div class="top">
             <div>
                 <Icon name="ri:file-2-line" size="30px" />
-                <div class="name">{{ file.name }}</div>
+                <div class="name">{{ $Files.truncateName(file.name, 18) }}</div>
             </div>
 
             <button ref="menuOpenButton" class="menu-button" @click="toggleMenu()">
@@ -11,8 +11,8 @@
             </button>
         </div>
         <div class="bottom">
+            <div>{{ $Files.formatSize(file.size) }}</div>
             <div>{{ dayjs(file.timestamp).format("DD MMM") }}</div>
-            <div>{{ (file.size / 1024 / 102).toFixed(2) }} kb</div>
         </div>
 
         <div class="menu" ref="menu" v-show="menuActive">
@@ -76,6 +76,9 @@ const props = defineProps<{
 .file-card {
     position: relative;
     flex-direction: column;
+    max-width: 325px;
+    flex: 1;
+    min-width: 300px;
 
     .top {
         display: flex;

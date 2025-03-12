@@ -11,12 +11,13 @@ declare global {
         name: string
         previewUrl: string
         downloadUrl: string
-        size: number
+        smallImageUrl: string | undefined
+        size: number /** Size in byes */
+        mime: MIMEType
+        lastModified: number
         sender: User["email"]
         signed?: boolean
         timestamp: number
-        /**File type extension. E.g pdf, docx */
-        extension: string
         projectId: Project["id"]
     }
 }

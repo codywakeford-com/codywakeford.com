@@ -7,33 +7,23 @@
             </header>
 
             <section class="recent-section">
-                <header>
+                <header class="sub-header">
                     <h2>Recent Files</h2>
                 </header>
 
-                <div class="cards" v-if="$Files.state.files.length">
+                <div class="cards">
                     <dashboard-file-card-large
-                        v-for="(file, index) of $Files.state.files"
-                        @click="selectedDoc = file.url"
+                        v-for="(file, index) of $Files.getRecent(4)"
+                        @click="selectedDoc = file.previewUrl"
                         :key="index"
                         :file="file"
                     />
                 </div>
             </section>
 
-            <section>
-                <header>
-                    <h2>Folders</h2>
-                </header>
-
-                <div class="cards">
-                    <dashboard-folder-card v-for="project of $Projects.state.projects" :project="project" />
-                </div>
-            </section>
-
             <div class="files-section">
                 <div class="files-table-box">
-                    <header>
+                    <header class="sub-header">
                         <h2>All Files</h2>
                     </header>
 
@@ -79,12 +69,17 @@ main {
         flex-direction: column;
         gap: 25px;
         flex-grow: 1;
+        overflow-y: auto;
     }
 
     h1 {
         font-size: 1.5rem;
         font-weight: 600;
     }
+}
+
+.sub-header {
+    margin-block: 15px;
 }
 
 .search-section {

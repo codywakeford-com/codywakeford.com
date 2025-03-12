@@ -1,6 +1,6 @@
 <template>
     <dialog ref="modal" @click="modal?.close()" id="payment-modal">
-        <stripe-payment-card />
+        <!-- <stripe-payment-card /> -->
     </dialog>
 </template>
 

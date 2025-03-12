@@ -17,4 +17,6 @@ export default class PdfController {
 
         return { quoteDocUrl: quoteUrl, invoiceDocUrl: invoiceUrl, proposalDocUrl }
     }
+
+    static async generateWebsiteSummaryReport(url: string) {}
 }

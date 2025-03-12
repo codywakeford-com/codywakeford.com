@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 
 import Fuse from "fuse.js"
+import { truncate } from "fs"
 
 interface State {
     files: ProjectFile[]
@@ -13,28 +14,37 @@ export const useFileStore = defineStore(
             files: [],
         })
 
-        const getByFileId = computed(() => {
-            return (fileId: string) => {
-                return state.value.files.find((f) => f.id === fileId)
+        const getByFileId = computed(() => (fileId: string) => {
+            return state.value.files.find((f) => f.id === fileId)
+        })
+
+        const getRecent = computed(() => (count: number) => {
+            return state.value.files.slice(0, count)
+        })
+
+        const formatSize = computed(() => (sizeInBytes: number): string => {
+            if (sizeInBytes >= 1024 * 1024) {
+                return (sizeInBytes / (1024 * 1024)).toFixed(2) + " MB"
+            } else {
+                return (sizeInBytes / 1024).toFixed(2) + " KB"
             }
         })
 
-        const getRecent = computed(() => {
-            return (count: number) => {
-                return state.value.files.slice(0, count)
-            }
+        const truncateName = computed(() => (fileName: string, length: number): string => {
+            return fileName.length < length
+                ? fileName
+                : `${fileName
+                      .split("")
+                      .splice(0, length - 2)
+                      .join("")}...`
         })
 
-        const getByIds = computed(() => {
-            return (fileIds: string[]) => {
-                return state.value.files.filter((f) => fileIds.includes(f.id))
-            }
+        const getFilesByIds = computed(() => (fileIds: string[]) => {
+            return state.value.files.filter((f) => fileIds.includes(f.id))
         })
 
-        const getByProjectId = computed(() => {
-            return (projectId: string) => {
-                return state.value.files.filter((f) => f.projectId === projectId)
-            }
+        const getByProjectId = computed(() => (projectId: string) => {
+            return state.value.files.filter((f) => f.projectId === projectId)
         })
 
         const filterFiles = computed(() => {
@@ -56,7 +66,7 @@ export const useFileStore = defineStore(
             }
         })
 
-        return { state, getByProjectId, getByFileId, getByIds, filterFiles, getRecent }
+        return { state, getByProjectId, truncateName, getByFileId, getFilesByIds, filterFiles, getRecent, formatSize }
     },
     { persist: false },
 )

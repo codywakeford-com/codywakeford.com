@@ -4,6 +4,7 @@
             <Icon name="mdi-light:magnify" size="25" />
             <input type="search" placeholder="Search files..." v-model="$FilesDashboard.state.filters.search" />
         </div>
+
         <select name="" id="" v-model="$FilesDashboard.state.filters.type">
             <option value="any">Any</option>
             <option value="image">Image</option>
@@ -14,8 +15,24 @@
     </section>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts"></script>
 
-</script>
+<style scoped lang="scss">
+.input-box {
+    display: flex;
+    align-items: center;
+    background: var(--text1-1);
+    padding: 5px 10px;
+    border-radius: 5px;
 
-<style scoped lang="scss"></style>
+    input {
+        min-width: 300px;
+        background: none;
+        border: none;
+
+        &:focus {
+            outline: none;
+        }
+    }
+}
+</style>

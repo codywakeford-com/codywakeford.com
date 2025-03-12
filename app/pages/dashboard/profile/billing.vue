@@ -1,6 +1,6 @@
 <template>
     <section class="profile-page">
-        <header>
+        <header class="page-header">
             <h1>Billing Details</h1>
             <p>
                 Your billing information is securely stored and can be updated at any time. Please ensure your details
@@ -8,16 +8,32 @@
             </p>
         </header>
 
-        <div class="saved-cards">
-            <stripe-payment-method v-for="(card, index) in $User.state.paymentMethods" :key="index" :card="card" />
+        <section>
+            <header class="sub-header">
+                <h2>PAYMENT METHODS</h2>
+            </header>
+            <div class="saved-cards">
+                <stripe-payment-method v-for="(card, index) in $User.state.paymentMethods" :key="index" :card="card" />
 
-            <button @click="$BillingModal.openAddCardModal" class="add-card">
-                <Icon class="add-icon" name="material-symbols:add" size="20" />
-                <label for="">Add Payment Method</label>
-            </button>
-        </div>
+                <button @click="$BillingModal.openAddCardModal" class="add-card">
+                    <Icon class="add-icon" name="material-symbols:add" size="20" />
+                    <label for="">Add Payment Method</label>
+                </button>
+            </div>
+        </section>
 
-        <dashboard-billing-history />
+        <section>
+            <header class="sub-header">
+                <h2>MY SUBSCRIPTIONS</h2>
+            </header>
+        </section>
+
+        <section>
+            <header class="sub-header">
+                <h2>BILLING HISTORY</h2>
+            </header>
+            <dashboard-billing-history />
+        </section>
     </section>
 </template>
 
@@ -29,6 +45,7 @@ definePageMeta({
 </script>
 
 <style scoped lang="scss">
+@use "~/style/profile.scss" as *;
 main {
     padding-block: 25px;
 

@@ -4,6 +4,7 @@ export default class ProjectService {
     static async create(emails: string[]) {
         const project: Project = {
             id: uuid(),
+            name: "Website Development",
             emails: emails,
             phase: "discovery",
             type: "full",
@@ -22,12 +23,12 @@ export default class ProjectService {
     }
 
     static async addQuoteToProject(projectId: string, quoteUrl: string, proposalUrl: string, quoteAmount: number) {
+        throw new Error("Fix this function")
         const files: ProjectFile[] = [
             {
                 id: uuid(),
                 name: "project-proposal.pdf",
                 projectId: projectId,
-                extension: "pdf",
                 sender: "codypwakeford@gmail.com",
                 size: 15,
                 timestamp: Date.now(),
@@ -37,11 +38,10 @@ export default class ProjectService {
                 id: uuid(),
                 name: "project-quote.pdf",
                 projectId: projectId,
-                extension: "pdf",
                 sender: "codypwakeford@gmail.com",
                 timestamp: Date.now(),
                 size: 15,
-                url: quoteUrl,
+                previewUrl: quoteUrl,
             },
         ]
 

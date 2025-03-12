@@ -1,7 +1,7 @@
 <template>
     <div class="pattern-background"></div>
     <main>
-        <stripe-payment-card />
+        <!-- <stripe-payment-card /> -->
     </main>
 </template>
 

@@ -4,6 +4,7 @@
         <dashboard-activity-log-system-message v-if="activity.type === 'system-message'" :activity="activity" />
         <dashboard-activity-log-meeting v-if="activity.type === 'meeting'" :activity="activity" />
         <dashboard-activity-log-quote v-if="activity.type === 'quote'" :activity="activity" />
+        <dashboard-activity-log-attachment v-if="activity.type === 'attachment'" :activity="activity" />
     </div>
 </template>
 

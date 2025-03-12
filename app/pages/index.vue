@@ -5,6 +5,7 @@
         <index-why />
         <testimonials />
         <contact />
+        <index-calendly-inline />
     </main>
 </template>
 

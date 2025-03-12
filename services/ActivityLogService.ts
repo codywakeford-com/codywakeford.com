@@ -1,7 +1,7 @@
 import DbService from "./DbService"
 
 export default class ActivityLogService {
-    static async addFilesActivityItem(projectId: Project["id"], fileIds: ProjectFile["id"][]) {
+    static async addFilesActivityItem(projectId: Project["id"], sender: User["email"], fileIds: ProjectFile["id"][]) {
         const item = {
             type: "attachment",
             files: fileIds,
@@ -22,7 +22,11 @@ export default class ActivityLogService {
         await DbService.createObject<ActivityItem>(`/projects/${projectId}/activity-log`, item)
     }
 
-    static async addMessageActivityItem(projectId: Project["id"], message: MessageActivityItem["message"], sender: User["email"]) {
+    static async addMessageActivityItem(
+        projectId: Project["id"],
+        message: MessageActivityItem["message"],
+        sender: User["email"],
+    ) {
         const item = {
             sender: sender,
             type: "activity-message",
@@ -34,7 +38,11 @@ export default class ActivityLogService {
         await DbService.createObject<ActivityItem>(`/projects/${projectId}/activity-log`, item)
     }
 
-    static async addSystemMessageActivityItem(projectId: Project["id"], message: SystemMessageActivityItem["message"], actions: Action["id"][] = []) {
+    static async addSystemMessageActivityItem(
+        projectId: Project["id"],
+        message: SystemMessageActivityItem["message"],
+        actions: Action["id"][] = [],
+    ) {
         const item: SystemMessageActivityItem = {
             id: uuid(),
             message: message,

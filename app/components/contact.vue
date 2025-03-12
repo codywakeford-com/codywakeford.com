@@ -19,9 +19,7 @@
                             </div>
 
                             <div class="right">
-                                <nuxt-link to="mailto:codypwakeford@gmail.com"
-                                    >codypwakeford@gmail.com</nuxt-link
-                                >
+                                <nuxt-link to="mailto:codypwakeford@gmail.com">codypwakeford@gmail.com</nuxt-link>
                                 <nuxt-link to="tel:07570068765">07570068765</nuxt-link>
                             </div>
                         </div>
@@ -38,11 +36,10 @@
                     <div>
                         <h4>Get In Touch</h4>
                         <p>
-                            Got a question or ready to bring your project to life? I'd love to hear
-                            from you! Whether you're looking for more information about my services,
-                            need a quote, or just want to say hello, please fill out the form below,
-                            and I'll get back to you as soon as possible. Let's create something
-                            amazing together!
+                            Got a question or ready to bring your project to life? I'd love to hear from you! Whether
+                            you're looking for more information about my services, need a quote, or just want to say
+                            hello, please fill out the form below, and I'll get back to you as soon as possible. Let's
+                            create something amazing together!
                         </p>
                     </div>
 
@@ -93,9 +90,7 @@
                         </div>
                         <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
 
-                        <button-primary-m :loading="false" type="submit"
-                            >Send Message</button-primary-m
-                        >
+                        <button-primary-m :loading="false" type="submit">Send Message</button-primary-m>
                     </form>
                 </div>
             </div>

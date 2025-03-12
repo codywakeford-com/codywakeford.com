@@ -10,14 +10,27 @@ main {
 .profile-page {
     padding: 50px;
 
-    header {
+    .page-header {
+        padding-block: 0;
+
         h1 {
             margin-bottom: 10px;
         }
     }
+
+    .sub-header {
+
+        background: var(--text1-1);
+        padding: 5px 15px;
+        margin-top: 50px;
+        border-radius: 5px;
+
+        h2 {
+            color: var(--text5);
+            font-size: 1rem;
+        }
+    }
 }
-
-
 
 .profile-nav {
     display: flex;
@@ -25,25 +38,33 @@ main {
     gap: 10px;
     border-right: 1px solid var(--text2);
 
-    ;
-
     .profile-pic {
-        height: 50px;
-        width: 50px;
+        height: 60px;
+        width: 60px;
         background: var(--primary);
         border-radius: 50%;
         display: flex;
         justify-content: center;
         align-items: center;
         color: var(--text1);
+        cursor: pointer;
     }
 
     header {
         display: flex;
+        flex-direction: column;
         gap: 15px;
         padding-block: 50px 40px;
         padding-inline: 40px;
         border-bottom: 1px solid var(--text2);
+
+        .flex {
+            align-items: center;
+        }
+
+        button {
+            width: fit-content;
+        }
     }
 }
 

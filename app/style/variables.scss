@@ -1,40 +1,39 @@
-
-
 :root {
-  --primary: #0b2760;
-  --primary2: #0f347c;
-  --secondary: #ececec;
-  --background: #ffffff;
-  --text1: #FFFFFF;
-  --text2: #D9D9D9;
-  --text3: #B3B3B3;
-  --text4: #8C8C8C;
-  --text5: #666666;
-  --text6: #000000;
-  --shadow-color: lightgrey;
+    --primary: #0b2760;
+    --primary2: #0f347c;
+    --secondary: #ececec;
+    --background: #ffffff;
+    --text1: #FFFFFF;
+    --text1-1: #EEEEEE;
+    --text2: #D9D9D9;
+    --text3: #B3B3B3;
+    --text4: #8C8C8C;
+    --text5: #666666;
+    --text6: #000000;
+    --shadow-color: lightgrey;
 
-  --text1a: #FFFFFF;
-  --text2a: #D9D9D9;
-  --text3a: #B3B3B3;
-  --text4a: #8C8C8C;
-  --text5a: #666666;
-  --text6a: #000000;
+    --text1a: #FFFFFF;
+    --text2a: #D9D9D9;
+    --text3a: #B3B3B3;
+    --text4a: #8C8C8C;
+    --text5a: #666666;
+    --text6a: #000000;
 
-  --modal-background: rgba(0, 0, 0, 0.2);
+    --modal-background: rgba(0, 0, 0, 0.2);
 }
 
 .dark-mode {
-  --primary: #0b2760;
-  --primary2: #0a1b4a;
-  --background: #222;
-  --secondary: #2a2a2a;
-  --text6: #FFFFFF;
-  --text5: #D9D9D9;
-  --text4: #B3B3B3;
-  --text3: #8C8C8C;
-  --text2: #666666;
-  --text1: #000000;
-  --shadow-color: #222;
+    --primary: #0b2760;
+    --primary2: #0a1b4a;
+    --background: #222;
+    --secondary: #2a2a2a;
+    --text6: #FFFFFF;
+    --text5: #D9D9D9;
+    --text4: #B3B3B3;
+    --text3: #8C8C8C;
+    --text2: #666666;
+    --text1: #000000;
+    --shadow-color: #222;
 }
 
 
@@ -63,4 +62,3 @@ $footer-height: 75px;
         --page-gutter: 25px;
     }
 }
-

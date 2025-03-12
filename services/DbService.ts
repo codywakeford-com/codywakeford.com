@@ -135,7 +135,9 @@ export default class DbService {
         })
     }
 
+    // Pass an object reference to be updated when changes occur
     static initDocumentListener(path: string, state: any) {
+        console.log(path)
         const db = useNuxtApp().$db as Firestore
         const docRef = doc(db, path)
 
@@ -143,17 +145,7 @@ export default class DbService {
             if (docSnapshot.exists()) {
                 const docData = { id: docSnapshot.id, ...docSnapshot.data() } as any
 
-                const index = state.findIndex((i) => {
-                    return i.id === docData.id
-                })
-
-                if (index === -1) {
-                    state.push(docData)
-                    return
-                }
-
-                state[index] = docData
-
+                Object.assign(state, docData)
                 return
             } else {
                 console.log("Document does not exist.")

@@ -19,7 +19,7 @@
                     placeholder="Type a message..."
                     class="message-input"
                     :disabled="sending"
-                    @keyup.enter="ActivityLogController.sendMessage(projectId, message, messageFiles)"
+                    @keyup.enter="sendMessage(projectId, message, messageFiles)"
                 />
                 <label class="file-input-label">
                     <input type="file" @change="handleFileSelect" class="file-input" :disabled="sending" />
@@ -31,7 +31,7 @@
             type="button"
             class="send-button"
             :disabled="sending"
-            @click="ActivityLogController.sendMessage(projectId, message, messageFiles)"
+            @click="sendMessage(projectId, message, messageFiles)"
         >
             <Icon name="f7:paperplane-fill" size="25" />
         </button>
@@ -46,19 +46,10 @@ const sending = ref(false)
 const message = ref("")
 const messageFiles = ref<File[]>([])
 
-const messageFilesProper = computed(() => {
-    return messageFiles.value.map((file) => {
-        const url = URL.createObjectURL(file)
-        const type = file.type.startsWith("image/") ? "image" : "document"
-
-        return {
-            id: "",
-            name: file.name,
-            timestamp: Date.now(),
-            url: url,
-        } as ProjectFile
-    })
-})
+async function sendMessage(projectId: string, message: string, messageFiles: File[]) {
+    if (message.trim() === "" && !messageFiles.length) return
+    await ActivityLogController.sendMessage(projectId, message, messageFiles)
+}
 
 function removeFile(fileName: string) {
     const index = messageFiles.value.findIndex((file) => {
@@ -69,6 +60,7 @@ function removeFile(fileName: string) {
         messageFiles.value.splice(index, 1)
     }
 }
+
 function handleFileSelect(event: Event) {
     const input = event.target as HTMLInputElement
     if (input.files && input.files.length > 0) {

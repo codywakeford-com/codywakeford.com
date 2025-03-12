@@ -9,6 +9,8 @@ declare global {
         email: string
         role: UserRole
         customerId: string
+        profilePic?: string
+        profileColor: string
     }
 
     type UserRole = "staff" | "user"

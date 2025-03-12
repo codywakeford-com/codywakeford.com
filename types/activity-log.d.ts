@@ -33,6 +33,7 @@ declare global {
 
     interface AttachmentActivityItem extends BaseActivityItem {
         type: "attachment"
+        sender: User["email"]
         files: ProjectFile["id"][]
     }
 
@@ -61,5 +62,12 @@ declare global {
         meetingId: string
     }
 
-    type ActivityItem = ActionActivityItem | AttachmentActivityItem | MessageActivityItem | PhaseActivityItem | QuoteActivityItem | MeetingActivityItem | SystemMessageActivityItem
+    type ActivityItem =
+        | ActionActivityItem
+        | AttachmentActivityItem
+        | MessageActivityItem
+        | PhaseActivityItem
+        | QuoteActivityItem
+        | MeetingActivityItem
+        | SystemMessageActivityItem
 }

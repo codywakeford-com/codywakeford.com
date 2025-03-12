@@ -1,12 +1,30 @@
 <template>
     <mpage>
         <main class="staff-main-form">
-            <form-kit type="form" @submit.prevent="submit()">
-                <header class="form-header">
-                    <h1>Build Client Quote</h1>
-                    <p>Here we can generate a client quote and project proposal pdf to be sent over.</p>
-                </header>
+            <header class="form-header">
+                <h1>Build Client Quote</h1>
+                <p>Here we can generate a client quote and project proposal pdf to be sent over.</p>
+            </header>
+            <form-kit type="form" v-if="quoteUrl && proposalUrl" @submit="addQuoteToProject()">
+                <div class="input-row">
+                    <embed v-if="quoteUrl" :src="quoteUrl" type="application/pdf" />
+                    <embed v-if="proposalUrl" :src="proposalUrl" type="application/pdf" />
+                    <embed v-if="invoiceUrl" :src="invoiceUrl" type="application/pdf" />
+                </div>
 
+                <template #submit>
+                    <div class="input-row">
+                        <button type="submit" class="submit-button" :disabled="loading">
+                            <loader v-if="loading" color="white" />
+                            <span v-else>Submit</span>
+                        </button>
+
+                        <button type="button">Start Again</button>
+                    </div>
+                </template>
+            </form-kit>
+
+            <form-kit type="form" @submit="submit()" v-else>
                 <h2>Project Proposal</h2>
 
                 <form-kit
@@ -15,11 +33,18 @@
                     label="Scope of Work"
                     help="Please explain your understanding of the clients requiremnts. This helps clear up any misunderstandings before the quote is accepted."
                     validation="required"
+                    value="hello"
                 />
 
                 <div class="input-row">
-                    <form-kit type="text" label="Number of Days Work" validation="required" v-model="input.nDaysWork" />
-                    <form-kit type="date" label="Due Date" validation="required" v-model="input.due" />
+                    <form-kit
+                        type="text"
+                        label="Number of Days Work"
+                        validation="required"
+                        value="default"
+                        v-model="input.nDaysWork"
+                    />
+                    <form-kit type="date" label="Due Date" validation="required" value="default" v-model="input.due" />
                 </div>
 
                 <header class="sub-heading">
@@ -29,10 +54,9 @@
 
                 <FormKit
                     type="list"
-                    :value="['']"
+                    v-model="input.deliverables"
                     dynamic
                     #default="{ items, node, value }"
-                    validation="list_length:2|required"
                     :config="{ validation: 'required' }"
                 >
                     <div class="input-row">
@@ -41,6 +65,7 @@
                             :key="item"
                             :index="index"
                             label="Deliverables"
+                            value="hello"
                             @suffix-icon-click="() => node.input(value.filter((_, i) => i !== index))"
                         />
 
@@ -60,7 +85,7 @@
 
                 <FormKit
                     type="list"
-                    :value="[{}]"
+                    v-model="input.quoteItems"
                     dynamic
                     #default="{ items, node, value }"
                     :config="{ validation: 'required' }"
@@ -88,21 +113,6 @@
 
                 <div class="total">Total £{{ total }}</div>
 
-                <!-- <embed v-if="quoteUrl" :src="quoteUrl" type="application/pdf" /> -->
-                <!-- <embed v-if="proposalUrl" :src="proposalUrl" type="application/pdf" /> -->
-                <!-- <embed v-if="invoiceUrl" :src="invoiceUrl" type="application/pdf" /> -->
-                <!---->
-                <!-- <button -->
-                <!--     type="button" -->
-                <!--     v-if="projectId && quoteUrl" -->
-                <!--     @click="ProjectController.addQuoteToProject(projectId, quoteUrl, proposalUrl, total)" -->
-                <!-- > -->
-                <!--     Upload Quote To Project -->
-                <!-- </button> -->
-                <!-- <button-primary-m :disabled="loading" type="submit"> -->
-                <!--     {{ loading ? "Loading" : "Generate Documents" }} -->
-                <!-- </button-primary-m> -->
-
                 <template #submit>
                     <button type="submit" class="submit-button" :disabled="loading">
                         <loader v-if="loading" color="white" />
@@ -124,54 +134,34 @@ definePageMeta({
 })
 const proposalUrl = ref("")
 import PdfController from "~~/controllers/PdfController"
-import ProjectController from "~~/controllers/ProjectsController"
 
 const quoteUrl = ref<null | string>(null)
 const invoiceUrl = ref<null | string>(null)
 
-const quoteItems = ref([])
-function addQuoteItem() {
-    for (let value of Object.values(newQuoteItem.value)) {
-        if (!value) return
-    }
-
-    quoteItems.value.push(newQuoteItem.value)
-
-    newQuoteItem.value = {
-        name: "",
-        quantity: 0,
-        unitPrice: 0,
-        paymentType: "single",
-
-        get subtotal() {
-            return this.quantity * this.unitPrice
-        },
-    }
-}
-
-const total = computed(() => {
-    return quoteItems.value.reduce((sum: number, item: QuoteItem) => {
-        return sum + item.subtotal
-    }, 0)
+const input = ref({
+    scope: "",
+    nDaysWork: 0,
+    due: "",
+    deliverables: [""],
+    quoteItems: [{}] as QuoteItem[],
 })
 
-const deliverableInput = ref("")
-const input = ref<Proposal>({
-    scope: "This project aims to design and develop a responsive website for the client. The website will include an e-commerce platform with product listing, cart functionality, and payment gateway integration.",
-    nDaysWork: 21,
-    due: "March 2nd 2025",
-    deliverables: ["Home Page", "About Page"],
+const total = computed(() => {
+    return input.value.quoteItems.reduce((sum: number, item: QuoteItem) => {
+        return sum + item.subtotal * 100
+    }, 0)
 })
 
 const loading = ref(false)
 
 async function submit() {
+    console.log("here")
     loading.value = true
 
     const { quoteDocUrl, invoiceDocUrl, proposalDocUrl } = await PdfController.generateQuoteAndProposal(
         $Projects.state.selectedProjectId,
-        quoteItems.value,
-        total.value * 100,
+        input.value.quoteItems,
+        total.value,
         "name",
         input.value.scope,
         input.value.nDaysWork,

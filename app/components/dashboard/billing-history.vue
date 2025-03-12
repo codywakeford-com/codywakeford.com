@@ -56,15 +56,6 @@ const reciepts = computed(() => {
 <template>
     <section>
         <div class="billing-history">
-            <header>
-                <div class="left">
-                    <h2>Billing History</h2>
-                    <p>View all payments made to codywakeford.com</p>
-                </div>
-
-                <div class="right"></div>
-            </header>
-
             <table>
                 <thead>
                     <tr>

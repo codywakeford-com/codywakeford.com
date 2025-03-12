@@ -22,6 +22,7 @@ export default class InitController {
     }
 
     static async initUserListeners(userId: string) {
+        DbService.initDocumentListener(`/users/${userId}`, $User.state.user)
         DbService.initCollectionListener(`/users/${userId}/payment-methods`, $User.state.paymentMethods)
     }
 }
