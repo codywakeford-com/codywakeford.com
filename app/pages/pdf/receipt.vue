@@ -90,7 +90,7 @@
     <div class="contact-details">
       <div class="item">
         <Icon icon="material-symbols:mail" width="20" />
-        <h3>codypwakeford@gmail.com</h3>
+        <h3>cody@codywakeford.com</h3>
       </div>
 
       <div class="item">

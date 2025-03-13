@@ -19,6 +19,11 @@
                 <nuxt-link v-if="!$User.state.user?.id" to="/auth/login">
                     <button-primary-m>Sign In</button-primary-m>
                 </nuxt-link>
+
+                <nuxt-link v-else-if="!gflags.dashboard">
+                    <button-primary-m @click="AuthController.logout()">Sign Out</button-primary-m>
+                </nuxt-link>
+
                 <nuxt-link to="/dashboard/client" v-else>
                     <button-primary-m>Dashboard</button-primary-m>
                 </nuxt-link>
@@ -27,7 +32,10 @@
     </nav>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import gflags from "~/utils/global-flags"
+import type AuthController from "~~/controllers/AuthController"
+</script>
 
 <style lang="scss" scoped>
 nav {

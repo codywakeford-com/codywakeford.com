@@ -19,7 +19,7 @@
                             </div>
 
                             <div class="right">
-                                <nuxt-link to="mailto:codypwakeford@gmail.com">codypwakeford@gmail.com</nuxt-link>
+                                <nuxt-link to="mailto:cody@codywakeford.com">cody@codywakeford.com</nuxt-link>
                                 <nuxt-link to="tel:07570068765">07570068765</nuxt-link>
                             </div>
                         </div>
@@ -148,7 +148,7 @@ async function sendEmail() {
 
     const email: $MailerEmail = {
         subject: "codywakeford.com enquiry",
-        to: "codypwakeford@gmail.com",
+        to: "cody@codywakeford.com",
         from: input.value.email,
         text: `
         Name: ${input.value.name}\n

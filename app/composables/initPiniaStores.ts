@@ -1,3 +1,4 @@
+import type { useEmbedModalStore } from "~/stores/embed-modal"
 import InitController from "~~/controllers/InitController"
 
 let $User: ReturnType<typeof useUserStore>
@@ -11,6 +12,7 @@ let $Actions: ReturnType<typeof useActionStore>
 let $BillingModal: ReturnType<typeof useBillingModalStore>
 let $Calendly: ReturnType<typeof useCalendlyStore>
 let $FilesDashboard: ReturnType<typeof useFilesDashboardStore>
+let $EmbedModal: ReturnType<typeof useEmbedModalStore>
 
 export async function initPiniaStores() {
     if (!import.meta.client) return
@@ -26,6 +28,7 @@ export async function initPiniaStores() {
     }
 
     $Actions = useActionStore()
+    $EmbedModal = useEmbedModalStore()
     $ActivityLogs = useActivityLogStore()
     $Files = useFileStore()
     $Calendly = useCalendlyStore()
@@ -40,6 +43,7 @@ export {
     $Projects,
     $Chatroom,
     $FilesDashboard,
+    $EmbedModal,
     $Files,
     $ActivityLogs,
     $App,

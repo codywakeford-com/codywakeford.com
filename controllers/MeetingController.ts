@@ -1,12 +1,11 @@
-import ActionService from "~~/services/ActionService"
 import ActivityLogService from "~~/services/ActivityLogService"
 import MeetingService from "~~/services/MeetingService"
 import ActionController from "./ActionsController"
 
 export default class MeetingController {
     static async onMeetingScheduled(event: any) {
-        if (!$Actions.state.selectedActionId || !$Projects.state.selectedProjectId) {
-            console.log($Actions.state.selectedActionId, $Projects.state.selectedProjectId)
+        if (!$Projects.state.selectedProjectId) {
+            console.log($Projects.state.selectedProjectId)
             throw new Error("Global state not correct")
         }
 

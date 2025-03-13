@@ -71,7 +71,7 @@ const loading = ref(false)
 const input = ref({
     firstName: "cody",
     lastName: "wakeford",
-    email: "codypwakeford@gmail.com",
+    email: "cody@codywakeford.com",
     password: "123123",
     confirmPassword: "123123",
 })

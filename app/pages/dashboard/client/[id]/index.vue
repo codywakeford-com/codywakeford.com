@@ -19,15 +19,6 @@
                     <h3>Timeline</h3>
                     <dashboard-timeline :project="project" />
                 </div>
-
-                <div class="meeting card">
-                    <dashboard-meetings v-if="$Meetings.getByProjectId(projectId).length" />
-
-                    <div class="no-meetings-message" v-else>
-                        <h3>Meetings</h3>
-                        <p>You have no meetings booked for this project at the moment.</p>
-                    </div>
-                </div>
             </div>
 
             <div class="center-content">
@@ -48,6 +39,15 @@
                     <div class="no-actions-message" v-else>
                         <h3>Actions</h3>
                         <p>Nothing to do at the moment!</p>
+                    </div>
+                </div>
+
+                <div class="meeting card">
+                    <dashboard-meetings v-if="$Meetings.getByProjectId(projectId).length" />
+
+                    <div class="no-meetings-message" v-else>
+                        <h3>Meetings</h3>
+                        <p>You have no meetings booked for this project at the moment.</p>
                     </div>
                 </div>
 
@@ -116,6 +116,8 @@ definePageMeta({
 $gap: 15px;
 
 main {
+    max-width: 1400px;
+    margin-inline: auto;
     padding-block: 25px 25px;
 
     height: 100vh;
@@ -195,7 +197,7 @@ main {
     }
 
     .left-content {
-        display: flex;
+        display: none; //flex;
         flex-direction: column;
         flex-grow: 1;
         height: 100%;
@@ -304,5 +306,11 @@ header {
     padding: 25px;
     border-radius: $border-radius;
     box-shadow: 3px 3px 20px var(--shadow-color);
+}
+
+@media (max-width: 1550px) {
+    .left-content {
+        display: none !important;
+    }
 }
 </style>

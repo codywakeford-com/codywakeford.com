@@ -21,7 +21,7 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <!-- <th>Type</th> -->
+                            <th>Type</th>
                             <th>Unit Price</th>
                             <th>Quantity</th>
                             <th>Subtotal</th>
@@ -31,7 +31,7 @@
                     <tbody>
                         <tr v-for="item in data.quote.items">
                             <td>{{ item.name }}</td>
-                            <!-- <td>{{ item.paymentType }}</td> -->
+                            <td>{{ item.paymentType }}</td>
                             <td>£{{ item.unitPrice }}</td>
                             <td>{{ item.quantity }}</td>
                             <td>£{{ item.subtotal }}</td>
@@ -88,7 +88,7 @@
         <div class="contact-details">
             <div class="item">
                 <Icon icon="material-symbols:mail" width="20" />
-                <h3>codypwakeford@gmail.com</h3>
+                <h3>cody@codywakeford.com</h3>
             </div>
 
             <div class="item">

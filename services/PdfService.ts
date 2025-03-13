@@ -1,5 +1,49 @@
+import { type ApiPdfIndex } from "~~/server/api/pdf/[type]/index.post"
+
+namespace PdfService {
+    export interface GenerateQuote {
+        Params: {
+            projectId: string
+            quoteItems: QuoteItem[]
+            totalAmount: number
+            recieptName: string
+        }
+        Return: Promise<{
+            projectFile: ProjectFile
+        }>
+    }
+
+    export interface GenerateInvoice {
+        Params: {
+            projectId: string
+            quoteItems: QuoteItem[]
+            totalAmount: number
+            recieptName: string
+        }
+        Return: Promise<{
+            projectFile: ProjectFile
+        }>
+    }
+
+    export interface GenerateProposal {
+        Params: {
+            projectId: string
+            scope: string
+            nDaysWork: number
+            due: string
+            deliverables: string[]
+        }
+
+        Return: Promise<{
+            projectFile: ProjectFile
+        }>
+    }
+}
+
 export default class PdfService {
-    static async generateQuote(projectId: string, quoteItems: any[], totalAmount: number, recieptName: string) {
+    static generateQuote: Func<PdfService.GenerateQuote> = async (params) => {
+        const { projectId, quoteItems, totalAmount, recieptName } = params
+
         const quote: Quote = {
             id: uuid(),
             discount: 0,
@@ -12,15 +56,17 @@ export default class PdfService {
             totalAmount,
         }
 
-        const quoteUrl = await $fetch(`/api/pdf/quote`, {
+        const projectFile = await $fetch<ApiPdfIndex.Response>(`/api/pdf/quote`, {
             method: "post",
-            body: { quote, recieptName },
+            body: { data: { quote, recieptName }, projectId, fileName: "quote.pdf" } as ApiPdfIndex.RequestBody,
         })
 
-        return { quoteUrl }
+        return { projectFile }
     }
 
-    static async generateInvoice(projectId: string, quoteItems: any[], totalAmount: number, recieptName: string) {
+    static generateInvoice: Func<PdfService.GenerateInvoice> = async (params) => {
+        const { projectId, quoteItems, totalAmount, recieptName } = params
+
         const quote: Quote = {
             id: uuid(),
             discount: 0,
@@ -33,20 +79,26 @@ export default class PdfService {
             totalAmount,
         }
 
-        const invoiceUrl = await $fetch("/api/pdf/invoice", {
+        const projectFile = await $fetch<ApiPdfIndex.Response>("/api/pdf/invoice", {
             method: "post",
-            body: { quote, recieptName },
+            body: { data: { quote, recieptName }, projectId, fileName: "invoice.pdf" } as ApiPdfIndex.RequestBody,
         })
 
-        return { invoiceUrl }
+        return { projectFile }
     }
 
-    static async generateProposal(scope: string, nDaysWork: number, due: string, deliverables: string[]) {
-        const proposalDocUrl = await $fetch(`/api/pdf/proposal`, {
+    static generateProposal: Func<PdfService.GenerateProposal> = async (params) => {
+        const { projectId, scope, due, deliverables, nDaysWork } = params
+
+        const projectFile = await $fetch<ApiPdfIndex.Response>(`/api/pdf/proposal`, {
             method: "POST",
-            body: { scope, nDaysWork, due, deliverables },
+            body: {
+                data: { scope, nDaysWork, due, deliverables },
+                projectId,
+                fileName: "project-proposal.pdf",
+            } as ApiPdfIndex.RequestBody,
         })
 
-        return { proposalDocUrl }
+        return { projectFile }
     }
 }

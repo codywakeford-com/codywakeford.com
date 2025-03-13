@@ -26,6 +26,7 @@
             <header class="sub-header">
                 <h2>MY SUBSCRIPTIONS</h2>
             </header>
+            <profile-subscription-card v-for="sub of subs" :subscription="sub" />
         </section>
 
         <section>
@@ -38,6 +39,15 @@
 </template>
 
 <script setup lang="ts">
+const subs = ref([
+    {
+        projectId: "123123",
+        projectName: "Website development",
+        amount: 10000,
+        period: "monthly",
+    },
+])
+
 definePageMeta({
     layout: "dashboard-profile",
     middleware: "dashboard",

@@ -1,5 +1,5 @@
 <template>
-    <div class="file-card large">
+    <div class="file-card large" @click="$EmbedModal.open(file.previewUrl, file.mime)">
         <Icon name="material-symbols:folder" size="75px" style="color: #ffd662" />
         <div class="name">{{ fileName }}</div>
     </div>

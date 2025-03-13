@@ -2,9 +2,9 @@
     <section class="navigation">
         <div class="blue-bar">
             <content>
-                <nuxt-link to="mailto:codypwakeford@gmail.com">
+                <nuxt-link to="mailto:cody@codywakeford.com">
                     <Icon name="material-symbols:mail-outline-rounded" size="20" />
-                    <span>codypwakeford@gmail.com</span>
+                    <span>cody@codywakeford.com</span>
                 </nuxt-link>
                 <nuxt-link to="tel:07570068765">
                     <Icon name="material-symbols:call" size="20" />

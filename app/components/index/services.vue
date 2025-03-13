@@ -39,7 +39,6 @@ section {
     background: var(--primary);
     padding-block: var(--page-gutter) calc(var(--page-gutter) * 2);
 }
-
 .content {
     display: flex;
     gap: 50px;

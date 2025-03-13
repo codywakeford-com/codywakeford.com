@@ -2,6 +2,7 @@
     <main>
         <index-hero />
         <index-services />
+        <index-work />
         <index-why />
         <testimonials />
         <contact />
@@ -17,6 +18,6 @@ definePageMeta({
 
 <style lang="scss" scoped>
 main {
-    overflow-x: hidden;
+    overflow: hidden;
 }
 </style>

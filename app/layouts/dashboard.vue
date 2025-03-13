@@ -10,6 +10,7 @@
     </div>
 
     <stripe-payment-modal />
+    <dashboard-embed-modal />
     <dashboard-calendly-modal />
     <dashboard-design-modal />
     <dashboard-files-modal :project-id="projectId" />

@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import ProjectController from "~~/controllers/ProjectsController"
 
-const emails = ref(["codypwakeford@gmail.com"])
+const emails = ref(["cody@codywakeford.com"])
 const emailInput = ref("")
 const loading = ref(false)
 

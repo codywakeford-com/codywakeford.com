@@ -1,30 +1,29 @@
 <template>
     <section class="file-preview card" v-if="previewFile">
-        <header class="preview-header">
-            <h3>File Preview</h3>
-            <Icon name="material-symbols:multimodal-hand-eye" size="25" v-modal="'doc-preview'" />
-        </header>
         <embed :src="previewFile.previewUrl" />
-        <h3 class="file-name">{{ previewFile.name }}</h3>
 
-        <div class="properties">
-            <div class="left">
-                <h4>Name:</h4>
-                <h4>ID:</h4>
-                <h4>Size:</h4>
-                <h4>Uploaded By:</h4>
-                <h4>Mime Type:</h4>
-                <h4>Last Modified:</h4>
-                <h4>Uploaded On:</h4>
-            </div>
-            <div class="right">
-                <div>{{ $Files.truncateName(previewFile.name, 25) }}</div>
-                <div>{{ previewFile.id }}</div>
-                <div>{{ $Files.formatSize(previewFile.size) }}</div>
-                <div>{{ previewFile.sender }}</div>
-                <div>{{ previewFile.mime }}</div>
-                <div>{{ dayjs(previewFile.lastModified).format("dddd Do MMM HH:mma") }}</div>
-                <div>{{ dayjs(previewFile.timestamp).format("dddd Do MMM HH:mma") }}</div>
+        <div class="card">
+            <h3 class="file-name">{{ previewFile.name }}</h3>
+
+            <div class="properties">
+                <div class="left">
+                    <h4>Name:</h4>
+                    <h4>ID:</h4>
+                    <h4>Size:</h4>
+                    <h4>Uploaded By:</h4>
+                    <h4>Mime Type:</h4>
+                    <h4>Last Modified:</h4>
+                    <h4>Uploaded On:</h4>
+                </div>
+                <div class="right">
+                    <div>{{ $Files.truncateName(previewFile.name, 25) }}</div>
+                    <div>{{ previewFile.id }}</div>
+                    <div>{{ $Files.formatSize(previewFile.size) }}</div>
+                    <div>{{ previewFile.sender }}</div>
+                    <div>{{ previewFile.mime }}</div>
+                    <div>{{ dayjs(previewFile.lastModified).format("dddd Do MMM HH:mma") }}</div>
+                    <div>{{ dayjs(previewFile.timestamp).format("dddd Do MMM HH:mma") }}</div>
+                </div>
             </div>
         </div>
     </section>
@@ -37,16 +36,20 @@ const previewFile = computed(() => $FilesDashboard.previewFile)
 
 <style scoped lang="scss">
 .file-preview {
-    background: var(--text1);
-    padding: 25px 35px;
-    border: 1px solid var(--text3);
     max-width: 500px;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 25px;
     overflow: hidden;
     min-width: 400px;
+
+    .card {
+        border-radius: 5px;
+        background: var(--text1);
+        border: 1px solid var(--text3);
+        padding: 25px;
+    }
 
     header {
         display: flex;

@@ -7,11 +7,11 @@
 
             <div class="right">
                 <button @click="navActive = false">
-                    <Icon v-if="navActive" icon="akar-icons:cross" width="25" color="black" />
+                    <Icon v-if="navActive" name="akar-icons:cross" size="25" />
                 </button>
 
                 <button @click="navActive = true">
-                    <Icon v-if="!navActive" width="30" icon="solar:hamburger-menu-linear" color="black" />
+                    <Icon v-if="!navActive" size="30" name="solar:hamburger-menu-linear" />
                 </button>
             </div>
         </nav>
@@ -22,9 +22,12 @@
             <nuxt-link @click="navActive = false" to="/#why">Why Me?</nuxt-link>
             <nuxt-link @click="navActive = false" to="/#reviews">Reviews</nuxt-link>
             <nuxt-link @click="navActive = false" to="/#contact">Contact Me</nuxt-link>
-
             <nuxt-link @click="navActive = false" v-if="!$User.state.user?.id" to="/auth/login">
                 <button-primary-m>Sign In</button-primary-m>
+            </nuxt-link>
+
+            <nuxt-link v-else-if="!gflags.dashboard">
+                <button-primary-m>Sign Out</button-primary-m>
             </nuxt-link>
 
             <nuxt-link @click="navActive = false" to="/dashboard/client" v-else>
@@ -35,8 +38,8 @@
 </template>
 
 <script setup lang="ts">
+import gflags from "~/utils/global-flags"
 const navActive = ref(false)
-import { Icon } from "@iconify/vue"
 </script>
 
 <style lang="scss" scoped>

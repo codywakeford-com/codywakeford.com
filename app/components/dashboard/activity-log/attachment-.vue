@@ -18,7 +18,9 @@ dayjs.extend(advancedFormat)
 const props = defineProps<{
     activity: AttachmentActivityItem
 }>()
+
 const files = computed(() => {
+    return []
     return $Files.getFilesByIds(props.activity.files)
 })
 </script>

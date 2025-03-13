@@ -54,6 +54,7 @@ function scrollToBottom() {
     flex-direction: column;
     height: 100%;
     position: relative;
+    max-height: 1029px;
 
     .messages-container {
         border-bottom: 2px solid var(--secondary);
@@ -65,7 +66,6 @@ function scrollToBottom() {
         padding-inline: 35px;
         padding-block: 25px 50px;
         scroll-behavior: smooth;
-        max-height: calc(100vh - 310px);
         gap: 25px;
     }
 }

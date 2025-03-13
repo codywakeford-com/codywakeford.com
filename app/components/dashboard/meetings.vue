@@ -3,21 +3,21 @@
         <h3>Upcoming Meeting</h3>
         <div class="meeting-details" v-if="meeting">
             <rflex class="atendees">
-                <Icon width="20" icon="material-symbols:person-outline" />
+                <Icon size="20" name="material-symbols:person-outline" />
                 <span>{{ meeting.clients[0]?.name }}</span>
             </rflex>
             <rflex class="time">
-                <Icon width="20" icon="uil:calender" />
+                <Icon size="20" name="uil:calender" />
                 <span>{{ dayjs(meeting.startTime).format("dddd Do MMMM YYYY, HH:mma ") }}</span>
             </rflex>
 
             <rflex>
-                <Icon width="20" icon="material-symbols:globe" />
+                <Icon size="20" name="material-symbols:globe" />
                 <span>UK, Ireland, Lisbon Time</span>
             </rflex>
 
             <rflex class="status">
-                <Icon width="20" icon="gridicons:stats" />
+                <Icon size="20" name="gridicons:stats" />
                 <span>{{ meeting.status }}</span>
             </rflex>
         </div>
@@ -34,7 +34,6 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
 import dayjs from "dayjs"
 import advancedFormat from "dayjs/plugin/advancedFormat"
 dayjs.extend(advancedFormat)

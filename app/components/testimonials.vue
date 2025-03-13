@@ -2,15 +2,19 @@
     <section id="reviews">
         <section-sub-header color="light">
             <template #sub>HIGHEST QUALITY</template>
-            <template #header>Don't Take My Word For It</template>
+            <template #header>Don't Just Take My Word For It</template>
         </section-sub-header>
 
         <div class="carousel-container">
             <div ref="carousel" class="carousel">
-                <div class="carousel-card" :style="{ transform: `translateX(${item.offset}px)`, opacity: item.opacity }" v-for="(item, index) in testimonials">
+                <div
+                    class="carousel-card"
+                    :style="{ transform: `translateX(${item.offset}px)`, opacity: item.opacity }"
+                    v-for="(item, index) in testimonials"
+                >
                     <div class="text">{{ item.text }}</div>
                     <div class="stars">
-                        <Icon color="gold" icon="material-symbols:star" width="18" v-for="_ in 5" />
+                        <Icon name="material-symbols:star" size="18" v-for="_ in 5" />
                     </div>
 
                     <nuxt-link :to="`https://${item.url}`" target="_blank">
@@ -20,18 +24,16 @@
             </div>
             <div class="controls">
                 <button @click="move(1)">
-                    <Icon icon="material-symbols:arrow-left-alt-rounded" width="25" />
+                    <Icon name="material-symbols:arrow-left-alt-rounded" size="25" />
                 </button>
                 <button @click="move(-1)">
-                    <Icon icon="material-symbols:arrow-right-alt-rounded" width="25" />
+                    <Icon name="material-symbols:arrow-right-alt-rounded" size="25" />
                 </button>
             </div>
         </div>
     </section>
 </template>
 <script setup lang="ts">
-import { Icon } from "@iconify/vue"
-
 const carousel = ref<HTMLElement | null>(null)
 
 interface Testimonial {
@@ -316,6 +318,10 @@ section {
                 align-items: center;
                 padding-inline: 25px;
                 margin-top: 20px;
+
+                .iconify {
+                    color: gold;
+                }
             }
 
             h6 {
@@ -327,41 +333,6 @@ section {
                 opacity: 1;
             }
         }
-    }
-}
-
-.gold-rectangle {
-    &.r-1 {
-        top: -40px;
-        left: 50px;
-        z-index: -1;
-    }
-
-    &.r-2 {
-        top: -65px;
-        left: 115px;
-        z-index: -1;
-    }
-
-    &.r-3 {
-        bottom: -25px;
-        right: 50px;
-    }
-
-    &.r-4 {
-        bottom: -50px;
-        right: 115px;
-    }
-}
-
-@media (max-width: 550px) {
-    section {
-        padding-inline: 50px;
-    }
-
-    .r-3,
-    .r-4 {
-        display: none;
     }
 }
 </style>

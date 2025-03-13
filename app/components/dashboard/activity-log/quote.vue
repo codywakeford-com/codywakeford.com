@@ -2,7 +2,7 @@
     <div class="quote">
         <!-- Quote -->
         <span>
-            <div class="sender">codypwakeford@gmail.com</div>
+            <div class="sender">cody@codywakeford.com</div>
             has uploaded the project proposal
         </span>
         <div class="timestamp">{{ dayjs(activity.timestamp).format("dddd Do MMM HH:mma") }}</div>

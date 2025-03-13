@@ -1,12 +1,12 @@
 <template>
-    <div class="file-card">
+    <div class="file-card" @click="$EmbedModal.open(file.previewUrl, file.mime)">
         <div class="top">
             <div>
                 <Icon name="ri:file-2-line" size="30px" />
                 <div class="name">{{ $Files.truncateName(file.name, 18) }}</div>
             </div>
 
-            <button ref="menuOpenButton" class="menu-button" @click="toggleMenu()">
+            <button ref="menuOpenButton" class="menu-button" @click.stop="toggleMenu()">
                 <Icon name="mage:dots-horizontal" size="25" />
             </button>
         </div>
@@ -15,7 +15,7 @@
             <div>{{ dayjs(file.timestamp).format("DD MMM") }}</div>
         </div>
 
-        <div class="menu" ref="menu" v-show="menuActive">
+        <div class="menu" ref="menu" v-show="menuActive" @click.stop>
             <nuxt-link :to="file.downloadUrl" :download="file.name">
                 <button>
                     <Icon name="material-symbols:download" size="20" />
@@ -23,7 +23,7 @@
                 </button>
             </nuxt-link>
 
-            <button>
+            <button @click="$EmbedModal.open(file.previewUrl, file.mime)">
                 <Icon name="streamline:interface-edit-view-eye-eyeball-open-view" size="20" />
                 <span>View</span>
             </button>

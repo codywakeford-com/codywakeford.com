@@ -5,6 +5,7 @@
                 <h1>Build Client Quote</h1>
                 <p>Here we can generate a client quote and project proposal pdf to be sent over.</p>
             </header>
+
             <form-kit type="form" v-if="quoteUrl && proposalUrl" @submit="addQuoteToProject()">
                 <div class="input-row">
                     <embed v-if="quoteUrl" :src="quoteUrl" type="application/pdf" />
@@ -95,6 +96,13 @@
                             <form-kit type="text" name="name" label="Item Name" />
                             <form-kit name="quantity" type="text" label="Quantity" />
                             <form-kit name="unitPrice" type="text" label="Unit Price" />
+                            <form-kit
+                                type="select"
+                                name="paymentType"
+                                label="Payment Type"
+                                :values="['single', 'weekly', 'biweekly', 'monthly']"
+                            />
+
                             <button
                                 type="button"
                                 @click="() => node.input(value.filter((_, i) => i !== index))"
@@ -120,6 +128,11 @@
                     </button>
                 </template>
             </form-kit>
+
+            <pre>
+
+                {{ input }}
+            </pre>
         </main>
     </mpage>
 </template>
@@ -134,16 +147,25 @@ definePageMeta({
 })
 const proposalUrl = ref("")
 import PdfController from "~~/controllers/PdfController"
+import ProjectController from "~~/controllers/ProjectsController"
 
 const quoteUrl = ref<null | string>(null)
 const invoiceUrl = ref<null | string>(null)
 
 const input = ref({
     scope: "",
-    nDaysWork: 0,
-    due: "",
-    deliverables: [""],
-    quoteItems: [{}] as QuoteItem[],
+    nDaysWork: 7,
+    due: "2025-03-27",
+    deliverables: ["Home Page"],
+    quoteItems: [
+        {
+            name: "Website Development",
+            paymentType: "single",
+            quantity: 3,
+            unitPrice: 200,
+            subtotal: 200,
+        },
+    ] as QuoteItem[],
 })
 
 const total = computed(() => {
@@ -152,33 +174,39 @@ const total = computed(() => {
     }, 0)
 })
 
+async function addQuoteToProject() {
+    if (!quoteUrl.value || !invoiceUrl.value) return
+
+    await ProjectController.submitQuoteAndProposal({})
+}
+
 const loading = ref(false)
 
 async function submit() {
-    console.log("here")
+    if (!projectId) throw new Error("error")
     loading.value = true
 
-    const { quoteDocUrl, invoiceDocUrl, proposalDocUrl } = await PdfController.generateQuoteAndProposal(
-        $Projects.state.selectedProjectId,
-        input.value.quoteItems,
-        total.value,
-        "name",
-        input.value.scope,
-        input.value.nDaysWork,
-        input.value.due,
-        input.value.deliverables,
-    )
+    const { quote, invoice, proposal } = await PdfController.generateQuoteAndProposal({
+        projectId: projectId,
+        quoteItems: input.value.quoteItems,
+        amount: total.value,
+        recieptName: "Testing name",
+        scope: input.value.scope,
+        nDaysWork: input.value.nDaysWork,
+        deliverables: input.value.deliverables,
+        due: input.value.due,
+    })
 
-    if (quoteDocUrl) {
-        quoteUrl.value = quoteDocUrl
+    if (quote.previewUrl) {
+        quoteUrl.value = quote.previewUrl
     }
 
-    if (invoiceDocUrl) {
-        invoiceUrl.value = invoiceDocUrl
+    if (invoice.previewUrl) {
+        invoiceUrl.value = invoice.previewUrl
     }
 
-    if (proposalDocUrl) {
-        proposalUrl.value = proposalDocUrl
+    if (proposal.previewUrl) {
+        proposalUrl.value = proposal.previewUrl
     }
 
     loading.value = false

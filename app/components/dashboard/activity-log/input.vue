@@ -19,7 +19,7 @@
                     placeholder="Type a message..."
                     class="message-input"
                     :disabled="sending"
-                    @keyup.enter="sendMessage(projectId, message, messageFiles)"
+                    @keyup.enter="sendMessage()"
                 />
                 <label class="file-input-label">
                     <input type="file" @change="handleFileSelect" class="file-input" :disabled="sending" />
@@ -27,12 +27,7 @@
                 </label>
             </div>
         </div>
-        <button
-            type="button"
-            class="send-button"
-            :disabled="sending"
-            @click="sendMessage(projectId, message, messageFiles)"
-        >
+        <button type="button" class="send-button" :disabled="sending" @click="sendMessage()">
             <Icon name="f7:paperplane-fill" size="25" />
         </button>
     </div>
@@ -46,9 +41,13 @@ const sending = ref(false)
 const message = ref("")
 const messageFiles = ref<File[]>([])
 
-async function sendMessage(projectId: string, message: string, messageFiles: File[]) {
-    if (message.trim() === "" && !messageFiles.length) return
-    await ActivityLogController.sendMessage(projectId, message, messageFiles)
+async function sendMessage() {
+    if (message.value.trim() === "" && !messageFiles.value.length) return
+
+    await ActivityLogController.sendMessage(projectId, message.value, messageFiles.value)
+
+    message.value = ""
+    messageFiles.value = []
 }
 
 function removeFile(fileName: string) {
