@@ -12,6 +12,7 @@ export default class EmailController {
             return { error: null, success: "Your email has been recieved, I'll get back to you shortly." }
         } catch (e) {
             console.log(e)
+            console.log(e)
 
             return { error: "An unknown error occurred. Feel free to email at cody@codywakeford.com", success: null }
         }
