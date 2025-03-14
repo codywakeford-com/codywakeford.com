@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type Contact from "~/components/contact.vue"
+import { cases } from "~/utils/case-studies"
 const route = useRoute()
 const id = route.params.id as string
 const selectedImage = ref(0)
@@ -13,60 +15,18 @@ const c = computed(() => {
     return a
 })
 
-interface Case {
-    id: string
-    name: string
-    images: string[]
-    description: string
-    keyFeatures: string[]
-    websiteUrl?: string
+function scrollTop() {
+    const container = document.getElementById("container")
+
+    if (!container) return
+
+    if (container) {
+        container.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+        })
+    }
 }
-
-const cases: Case[] = [
-    {
-        id: "primeproperty",
-        name: "Prime Property",
-        images: ["/assets/", "/assets/", "/assets/", "/assets/", "/assets/"],
-        description:
-            "For Prime Property, a leading Spanish property agency, I designed and developed a fully customized website tailored to showcase their portfolio of properties for sale, rent, and investment opportunities across Spain. The website serves as an informative and user-friendly platform that helps potential buyers and renters easily find their ideal properties, while also giving the agency the tools to manage and update listings seamlessly.",
-        keyFeatures: [
-            "Admin Dashboard",
-            "Live Updates",
-            "Property Listings with Filters",
-            "Advanced Search (Price, Location, Type)",
-            "Interactive Property Map",
-            "Property Detail Pages with Images, Floor Plans, and Videos",
-            "Contact Forms for Inquiries",
-            "SEO Optimization for Listings",
-            "Mobile-Friendly Design",
-            "Customizable Property Categories",
-            "Analytics Dashboard for Admins",
-            "Property Price Estimation Tool",
-            "Multi-Language Support",
-        ],
-
-        websiteUrl: "https://primeproperty.codywakeford.com",
-    },
-    {
-        id: "bean-and-brew",
-        name: "Bean and Brew",
-        images: ["/bean-and-brew.webp"],
-        description:
-            "For Bean and Brew, a cozy and welcoming coffee shop, I designed and developed a sleek, one-page website that captures the essence of their coffee culture. The website serves as an easy-to-navigate platform for coffee enthusiasts to explore the shop's menu, learn about their unique coffee blends, and connect with the brand. With a focus on simplicity and high-quality imagery, the website offers an inviting space for customers to discover promotions, place orders, and find the shop's location. The mobile-friendly design ensures that customers can easily access the site from any device, making it a go-to resource for coffee lovers on the go.",
-        keyFeatures: [
-            "Responsive Design",
-            "Simple Navigation for Easy Browsing",
-            "High-Quality Coffee Imagery",
-            "About Us Section with Brand Story",
-            "Menu with Coffee Options & Descriptions",
-            "Social Media Links for Easy Sharing",
-            "SEO Optimization for Search Visibility",
-            "Fast Load Times with Minimalistic Design",
-            "Custom Coffee-Themed Design Elements",
-        ],
-        websiteUrl: "https://primeproperty.codywakeford.com",
-    },
-]
 </script>
 <template>
     <main>
@@ -74,19 +34,30 @@ const cases: Case[] = [
 
         <article>
             <content>
-                <div class="flex">
+                <div class="flex" id="container">
                     <div class="sticky-container">
                         <div class="sticky-content">
                             <h2>{{ c.name }}</h2>
-                            <p>{{ c.description }}</p>
+                            <p v-for="p of c.description">{{ p }}</p>
 
+                            <h3>Key Features</h3>
                             <ul>
                                 <li v-for="i of c.keyFeatures">{{ i }}</li>
                             </ul>
-                            <nuxt-link v-if="c.websiteUrl" :to="c.websiteUrl">Live Website</nuxt-link>
+
+                            <nuxt-link targe="_blank" v-if="c.websiteUrl" :to="c.websiteUrl">
+                                <button-primary-m class="go-button">
+                                    <span>Live Website</span>
+                                    <Icon size="25" name="material-symbols:arrow-right-alt" />
+                                </button-primary-m>
+                            </nuxt-link>
 
                             <div class="pages-button-group" v-if="c.images.length - 1">
-                                <button v-for="(i, index) of c.images" @click="selectedImage = index">
+                                <button
+                                    v-for="(i, index) of c.images"
+                                    :class="{ active: selectedImage === index }"
+                                    @click="((selectedImage = index), scrollTop())"
+                                >
                                     {{ index + 1 }}
                                 </button>
                             </div>
@@ -98,6 +69,8 @@ const cases: Case[] = [
                 </div>
             </content>
         </article>
+
+        <contact />
     </main>
 </template>
 
@@ -119,29 +92,68 @@ article {
     top: 115px;
     padding: 10px;
     z-index: 100000;
+
+    h2 {
+        margin-bottom: 15px;
+    }
+
+    p {
+        line-height: 1.7;
+        margin-bottom: 25px;
+    }
+
+    ul {
+        padding-left: 20px;
+        li {
+            margin-bottom: 5px;
+        }
+    }
+}
+
+.go-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 25px;
+    font-size: 1.05rem;
+    .iconify {
+        color: var(--text1);
+    }
 }
 .pages-button-group {
     display: flex;
     gap: 1px;
+    margin-top: 25px;
     border-radius: 10px;
     overflow: hidden;
     width: fit-content;
+    border: 3px solid var(--primary);
 
     button {
         padding: 3px 15px;
         background: var(--primary);
         color: var(--text1);
         font-weight: bold;
+
+        &.active {
+            background: var(--text1);
+            color: var(--primary);
+        }
     }
 }
 .image-col {
-    background: var(--text2);
     min-width: 600px;
     max-width: 600px;
     flex: 1;
 
     img {
         max-width: 600px;
+        border: 3px solid var(--primary);
+        border-radius: 25px;
+        overflow: hidden;
+        min-height: 1000px;
+        min-width: 600px;
+        background: var(--text2);
     }
 }
 </style>

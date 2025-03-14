@@ -22,7 +22,11 @@
                 </thead>
 
                 <tbody>
-                    <tr v-for="(project, index) of $Projects.state.projects" :key="index" @click="navigateTo(`/dashboard/staff/${project.id}`)">
+                    <tr
+                        v-for="(project, index) of $Projects.state.projects"
+                        :key="index"
+                        @click="navigateTo(`/dashboard/staff/${project.id}`)"
+                    >
                         <td>{{ project.id }}</td>
                         <td>{{ project.phase }}</td>
                     </tr>
@@ -30,13 +34,16 @@
             </table>
 
             <div class="action-buttons">
-                <nuxt-link to="/dashboard/staff/forms/add-project" class="action-btn create-project-btn">Create Project</nuxt-link>
+                <nuxt-link to="/dashboard/staff/forms/add-project" class="action-btn create-project-btn">
+                    Create Project
+                </nuxt-link>
             </div>
         </section>
     </mpage>
 </template>
 
 <script setup lang="ts">
+const $Projects = useProjectStore()
 definePageMeta({
     layout: "dashboard",
     middleware: "staff-dashboard",

@@ -37,7 +37,8 @@
 import dayjs from "dayjs"
 import advancedFormat from "dayjs/plugin/advancedFormat"
 dayjs.extend(advancedFormat)
-
+const $Meetings = useMeetingStore()
+const $Calendly = useCalendlyStore()
 const projectId = useRoute().params.id as string
 
 const meeting = computed(() => {

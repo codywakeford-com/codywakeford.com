@@ -20,6 +20,7 @@ export default class AuthController {
     }
 
     static async login(email: string, password: string) {
+        const $User = useUserStore()
         try {
             const { jwt, user } = await AuthService.login(email, password)
 
@@ -49,6 +50,9 @@ export default class AuthController {
     }
 
     static logout() {
+        const $User = useUserStore()
+        const $Projects = useProjectStore()
+
         $User.state.user = null
         $Projects.state.projects = []
 

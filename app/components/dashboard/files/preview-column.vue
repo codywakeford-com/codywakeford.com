@@ -31,6 +31,8 @@
 
 <script setup lang="ts">
 import dayjs from "dayjs"
+const $FilesDashboard = useFilesDashboardStore()
+const $Files = useFileStore()
 const previewFile = computed(() => $FilesDashboard.previewFile)
 </script>
 

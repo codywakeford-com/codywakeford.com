@@ -28,6 +28,8 @@ export default class ProjectController {
     }
 
     static async deleteProject(projectId: string) {
+        const $Projects = useProjectStore()
+
         await DbService.deleteObject(`/projects/${projectId}`)
         $Projects.state.projects = $Projects.state.projects.filter((p) => {
             return p.id !== projectId
@@ -35,6 +37,8 @@ export default class ProjectController {
     }
 
     static async addQuoteToProject(projectId: string, quoteUrl: string, proposalUrl: string, quoteAmount: number) {
+        const $Projects = useProjectStore()
+
         if ($Projects.getByProjectId(projectId).quote?.accepted) return
         await ProjectService.addQuoteToProject(projectId, quoteUrl, proposalUrl, quoteAmount * 100)
         await ActivityLogService.addQuoteActivityItem(projectId)
@@ -66,6 +70,8 @@ export default class ProjectController {
     }
 
     static async acceptProjectProposal(projectId: Project["id"]) {
+        const $User = useUserStore()
+
         try {
             await DbService.updateObject(`/projects/${projectId}`, { quote: { accepted: true } })
             await ActivityLogService.addMessageActivityItem(
@@ -81,12 +87,16 @@ export default class ProjectController {
     }
 
     static async acceptDesign(projectId: string) {
+        const $Projects = useProjectStore()
+
         await DbService.updateObject(`/projects/${projectId}`, { design: { accepted: true } })
         await ActionController.onAcceptDesign(projectId)
         await ProjectPhaseService.incrementPhase($Projects.getByProjectId(projectId))
     }
 
     static async incrementPhase(projectId: string) {
+        const $Projects = useProjectStore()
+
         await ProjectPhaseService.incrementPhase($Projects.getByProjectId(projectId))
     }
 }

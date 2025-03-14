@@ -16,6 +16,7 @@
 <script setup lang="ts">
 const dialog = ref<HTMLDialogElement | null>(null)
 const projectId = useRoute().params.id as string
+const $Projects = useProjectStore()
 
 const link = computed(() => {
     let url = $Projects.designUrl(projectId)

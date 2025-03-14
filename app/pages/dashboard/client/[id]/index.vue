@@ -83,6 +83,12 @@
 import dayjs from "dayjs"
 import advancedFormat from "dayjs/plugin/advancedFormat"
 
+const $Actions = useActionStore()
+const $Meetings = useMeetingStore()
+const $Projects = useProjectStore()
+const $Files = useFileStore()
+const $User = useUserStore()
+
 dayjs.extend(advancedFormat)
 
 const date = computed(() => {

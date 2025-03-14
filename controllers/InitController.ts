@@ -5,6 +5,12 @@ import ProjectService from "~~/services/ProjectService"
 export default class InitController {
     // Set up the users dashboard listeners.
     static async initProjectListeners(email: string) {
+        const $Projects = useProjectStore()
+        const $Actions = useActionStore()
+        const $ActivityLogs = useActivityLogStore()
+        const $Meetings = useMeetingStore()
+        const $Files = useFileStore()
+
         DbService.initCollectionListener(
             `/projects`,
             $Projects.state.projects,
@@ -22,6 +28,8 @@ export default class InitController {
     }
 
     static async initUserListeners(userId: string) {
+        const $User = useUserStore()
+
         DbService.initDocumentListener(`/users/${userId}`, $User.state.user)
         DbService.initCollectionListener(`/users/${userId}/payment-methods`, $User.state.paymentMethods)
     }

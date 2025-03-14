@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import ProjectController from "~~/controllers/ProjectsController"
-
+const $Projects = useProjectStore()
 const route = useRoute()
 const projectId = route.params.projectId as string
 const designLink = "https://www.figma.com/design/qqUdjEse9KeWVUQ0svy2jJ/CV-Site?node-id=0-1&t=v2s3QXbpmENRqtiS-1"

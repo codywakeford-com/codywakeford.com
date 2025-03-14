@@ -1,11 +1,12 @@
 <template>
     <div class="pattern-background"></div>
     <main>
-        <!-- <stripe-payment-card /> -->
+        <stripe-payment-card />
     </main>
 </template>
 
 <script setup lang="ts">
+const $BillingModal = useBillingModalStore()
 onMounted(() => {
     $BillingModal.state.ui = "payment"
 })

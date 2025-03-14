@@ -3,8 +3,10 @@ import dayjs from "dayjs"
 import advancedFormat from "dayjs/plugin/advancedFormat"
 dayjs.extend(advancedFormat)
 
+const $User = useUserStore()
+
 const reciepts = computed(() => {
-    return $User.getReciepts
+    return $User.getReciepts || []
 })
 
 // const reciepts = [

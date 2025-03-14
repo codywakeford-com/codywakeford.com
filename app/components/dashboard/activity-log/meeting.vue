@@ -48,6 +48,8 @@ const props = defineProps<{
     activity: MeetingActivityItem
 }>()
 
+const $Meetings = useMeetingStore()
+
 const meeting = computed(() => {
     if (props.activity.type !== "meeting") return null
 

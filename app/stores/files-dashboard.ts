@@ -24,6 +24,7 @@ export const useFilesDashboardStore = defineStore(
         })
 
         const filteredFiles = computed(() => {
+            const $Files = useFileStore()
             return $Files.filterFiles(state.value.filters)
         })
 

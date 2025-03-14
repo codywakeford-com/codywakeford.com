@@ -49,6 +49,7 @@
 <script setup lang="ts">
 import AuthController from "~~/controllers/AuthController"
 import UserController from "~~/controllers/UserController"
+const $User = useUserStore()
 
 const imageInputRef = ref<HTMLInputElement | null>(null)
 const imageFile = ref<any | null>(null)

@@ -99,6 +99,7 @@ const route = useRoute()
 const amount = ref<number | undefined>(undefined)
 const userInputAmount = ref<number>(0)
 const $BillingModal = useBillingModalStore()
+const $User = useUserStore()
 const useNewCard = ref(true) // keeps track if the user wants to use a saved card or not
 const cardNumber = ref<StripeCardNumberElement | null>(null)
 const cardExpiry = ref<StripeCardExpiryElement | null>(null)

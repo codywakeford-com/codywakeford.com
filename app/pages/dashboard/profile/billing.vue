@@ -39,6 +39,9 @@
 </template>
 
 <script setup lang="ts">
+const $BillingModal = useBillingModalStore()
+const $User = useUserStore()
+
 const subs = ref([
     {
         projectId: "123123",

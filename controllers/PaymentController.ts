@@ -16,6 +16,7 @@ interface PayWithCardElementInput {
 
 export default class PaymentController {
     static async payWithCardElement({ projectId, stripe, card, billing, amount, userId }: PayWithCardElementInput) {
+        const $Projects = useProjectStore()
         try {
             const clientSecret = await PaymentService.getPaymentSecret({
                 amount,
@@ -90,6 +91,8 @@ export default class PaymentController {
     }
 
     static async setupPaymentMethod({ stripe, cardElement, billing }: PaymentController_SetupPaymentMethod) {
+        const $User = useUserStore()
+
         try {
             let customerId: string | undefined = $User.getStripeCustomerId
 

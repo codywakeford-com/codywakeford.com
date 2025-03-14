@@ -32,7 +32,7 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 400px;
+    min-height: 300px;
 }
 
 h1 {
@@ -40,7 +40,7 @@ h1 {
 }
 
 img {
-    max-width: 150px;
+    max-width: 100px;
     position: -webkit-sticky;
     position: -moz-sticky;
     position: -o-sticky;

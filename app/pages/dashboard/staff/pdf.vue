@@ -11,6 +11,8 @@
 </template>
 
 <script setup lang="ts">
+const $Projects = useProjectStore()
+
 definePageMeta({
     layout: "dashboard",
     middleware: "staff-dashboard",

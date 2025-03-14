@@ -35,6 +35,8 @@
 </template>
 
 <script setup lang="ts">
+const $User = useUserStore()
+
 definePageMeta({
     layout: "dashboard-profile",
     middleware: "dashboard",

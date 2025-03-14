@@ -15,7 +15,9 @@
     </section>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const $FilesDashboard = useFilesDashboardStore()
+</script>
 
 <style scoped lang="scss">
 .input-box {

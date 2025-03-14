@@ -1,35 +1,9 @@
 <script setup lang="ts">
-interface Card {
-    url: string
-}
-
-const cards: Card[] = [
-    {
-        url: new URL("/assets/preview-site1.webp", import.meta.url).href,
-    },
-    {
-        url: new URL("/assets/preview-site2.webp", import.meta.url).href,
-    },
-    {
-        url: new URL("/assets/preview-site3.webp", import.meta.url).href,
-    },
-    {
-        url: new URL("/assets/preview-site4.webp", import.meta.url).href,
-    },
-    {
-        url: new URL("/assets/preview-site5.webp", import.meta.url).href,
-    },
-    {
-        url: new URL("/assets/preview-site6.png", import.meta.url).href,
-    },
-    {
-        url: new URL("/assets/preview-site7.png", import.meta.url).href,
-    },
-]
+import { cases } from "~/utils/case-studies"
 </script>
 
 <template>
-    <section>
+    <section id="case-studies">
         <content>
             <section-sub-header color="dark">
                 <template #sub>MY WORK</template>
@@ -37,12 +11,12 @@ const cards: Card[] = [
             </section-sub-header>
 
             <div class="row">
-                <div v-for="(i, index) in cards" class="card">
-                    <img :src="i.url" alt="" />
+                <nuxt-link :to="`/case-studies/${i.id}`" v-for="(i, index) in cases" class="card">
+                    <img :src="i.previewImage" alt="" />
                     <div class="overlay">
                         <span>View case study</span>
                     </div>
-                </div>
+                </nuxt-link>
             </div>
         </content>
     </section>

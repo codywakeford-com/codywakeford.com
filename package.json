@@ -39,6 +39,7 @@
         "nuxt-calendly": "^0.1.21",
         "pinia": "^2.3.0",
         "pinia-plugin-persistedstate": "^4.2.0",
+        "puppeteer-full-page-screenshot": "^1.2.5",
         "resend": "^4.1.2",
         "stripe": "^17.7.0",
         "vue": "latest",

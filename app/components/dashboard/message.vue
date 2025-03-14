@@ -34,6 +34,8 @@
 
 <script setup lang="ts">
 import dayjs from "dayjs"
+const $User = useUserStore()
+
 const props = defineProps<{
     message: Message
 }>()

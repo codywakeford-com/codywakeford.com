@@ -11,7 +11,9 @@
     </dialog>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const $EmbedModal = useEmbedModalStore()
+</script>
 
 <style scoped lang="scss">
 section {

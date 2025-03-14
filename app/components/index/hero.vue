@@ -6,8 +6,7 @@
                 <h1>High Quality Websites for Small Businesses</h1>
                 <h2>
                     I make superb, budget-friendly websites for small to medium-sized businesses that want effective,
-                    user-friendly, and beautiful websites
-                    their customers will love.
+                    user-friendly, and beautiful websites their customers will love.
                 </h2>
             </div>
             <img class="hero-image" src="/assets/hero-image.png" alt="cody wakeford" />
@@ -45,7 +44,7 @@ section {
     h2 {
         font-weight: normal;
         font-size: 1.2rem;
-        color: var(--text5);
+        color: var(--text6);
         max-width: 500px;
         line-height: 1.6;
     }

@@ -46,6 +46,7 @@
 import FilesController from "~~/controllers/FilesController"
 const route = useRoute()
 const projectId = route.params.id as string
+const $Projects = useProjectStore()
 const modal = ref<HTMLDialogElement | null>(null)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 let isFileInputOpen = ref(false)

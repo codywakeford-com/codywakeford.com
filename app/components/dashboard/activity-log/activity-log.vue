@@ -14,7 +14,7 @@
 <script setup lang="ts">
 const projectId = useRoute().params.id as string
 const messagesContainer = ref<HTMLElement | null>(null)
-
+const $ActivityLogs = useActivityLogStore()
 watch($ActivityLogs.state.log, () => {
     setTimeout(() => {
         scrollToBottom()

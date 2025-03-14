@@ -9,14 +9,15 @@
 
             <div class="right">
                 <nuxt-link to="/#hero">Home</nuxt-link>
+                <nuxt-link to="/#case-studies">Case Studies</nuxt-link>
                 <nuxt-link to="/payments">Payments</nuxt-link>
                 <nuxt-link to="/#services">Services</nuxt-link>
+                <nuxt-link to="/about">About Me</nuxt-link>
                 <nuxt-link to="/#why">Why Me?</nuxt-link>
-
                 <nuxt-link to="/#reviews">Reviews</nuxt-link>
                 <nuxt-link to="/#contact">Contact Me</nuxt-link>
 
-                <nuxt-link v-if="!$User.state.user?.id" to="/auth/login">
+                <nuxt-link v-if="!$User?.state.user?.id" to="/auth/login">
                     <button-primary-m>Sign In</button-primary-m>
                 </nuxt-link>
 
@@ -59,10 +60,6 @@ nav {
 .logo {
     height: 40px;
     filter: invert(1);
-}
-
-.exact-link-active {
-    text-decoration: underline;
 }
 
 a,

@@ -21,6 +21,8 @@
 
 <script setup lang="ts">
 import ProjectController from "~~/controllers/ProjectsController"
+const $User = useUserStore()
+const $Projects = useProjectStore()
 definePageMeta({
     layout: "dashboard",
     middleware: "dashboard",

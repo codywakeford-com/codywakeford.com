@@ -11,6 +11,7 @@ import MeetingController from "~~/controllers/MeetingController"
 
 const modal = ref<HTMLElement | null>(null)
 const calendly = useCalendly()
+const $Calendly = useCalendlyStore()
 
 const loadCalendlyWidget = async () => {
     await nextTick()

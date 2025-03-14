@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const $Projects = useProjectStore()
+const $Actions = useActionStore()
+
 interface Props {
     interface: "staff" | "client"
 }
