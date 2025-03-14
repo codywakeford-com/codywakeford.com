@@ -90,7 +90,10 @@
                         </div>
                         <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
 
-                        <button-primary-m :loading="false" type="submit">Send Message</button-primary-m>
+                        <button-primary-m type="submit" class="submits-button">
+                            <loader v-if="loading" width="20px" color="#fff" />
+                            <span v-else>Send Message</span>
+                        </button-primary-m>
                     </form>
                 </div>
             </div>
@@ -99,6 +102,8 @@
 </template>
 
 <script setup lang="ts">
+import EmailController from "~~/controllers/EmailController"
+
 const errorMessages = ref<string[]>([])
 const nameError = ref(false)
 const emailError = ref(false)
@@ -106,6 +111,7 @@ const messageError = ref(false)
 const fieldErrorMessage = "All fields must be filled out."
 const emailErrorMessage = "Please input a valid email."
 const successMessage = ref("")
+const loading = ref(false)
 
 function handleEmailInput() {
     if (!emailError.value) return
@@ -146,28 +152,24 @@ async function sendEmail() {
 
     if (emailError.value || nameError.value || messageError.value) return
 
-    const email: $MailerEmail = {
-        subject: "codywakeford.com enquiry",
+    loading.value = true
+    const { error, success } = await EmailController.sendEmail({
+        from: "noreply@resend.codywakeford.com",
         to: "cody@codywakeford.com",
-        from: input.value.email,
+        subject: "Enquiry from codywakeford.com index",
         text: `
-        Name: ${input.value.name}\n
-        Email: ${input.value.email}\n
-        Message: ${input.value.message}
+            Name: ${input.value.name}\n
+            Email: ${input.value.email}\n
+            Message: ${input.value.message}
         `,
-    }
+    })
 
-    try {
-        await $Mailer.send(email)
-        successMessage.value = "Email sent successfully. I'll get back to you shortly!"
-        input.value = {
-            name: "",
-            email: "",
-            message: "",
-        }
-    } catch (error) {
-        errorMessages.value.push("An error occured while sending the email.")
-    }
+    console.log(error, success)
+
+    if (error) errorMessages.value.push(error)
+    if (success) successMessage.value = success
+
+    loading.value = false
 }
 
 const input = ref({
@@ -207,6 +209,13 @@ const input = ref({
     }
 }
 
+.submits-button {
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 20px !important;
+}
 .error {
     color: $danger1;
     font-size: 0.9rem;

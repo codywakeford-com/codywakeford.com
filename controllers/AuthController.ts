@@ -29,6 +29,7 @@ export default class AuthController {
             if (user) $User.state.user = user
 
             InitController.initProjectListeners($User.state.user.email)
+            InitController.initUserListeners($User.state.user.id)
 
             navigateTo("/dashboard/client")
             return { error: null }

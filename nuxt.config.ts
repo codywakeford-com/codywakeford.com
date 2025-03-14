@@ -13,7 +13,6 @@ export default defineNuxtConfig({
         client: true,
     },
 
-    ssr: false,
     vite: {
         css: {
             preprocessorOptions: {

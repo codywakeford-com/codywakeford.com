@@ -45,7 +45,7 @@ function scrollTop() {
                                 <li v-for="i of c.keyFeatures">{{ i }}</li>
                             </ul>
 
-                            <nuxt-link targe="_blank" v-if="c.websiteUrl" :to="c.websiteUrl">
+                            <nuxt-link target="_blank" v-if="c.websiteUrl" :to="c.websiteUrl">
                                 <button-primary-m class="go-button">
                                     <span>Live Website</span>
                                     <Icon size="25" name="material-symbols:arrow-right-alt" />
@@ -142,8 +142,6 @@ article {
     }
 }
 .image-col {
-    min-width: 600px;
-    max-width: 600px;
     flex: 1;
 
     img {
@@ -154,6 +152,14 @@ article {
         min-height: 1000px;
         min-width: 600px;
         background: var(--text2);
+    }
+}
+
+@media (max-width: 1100px) {
+    .image-col {
+        img {
+            min-width: 0px;
+        }
     }
 }
 </style>

@@ -70,5 +70,5 @@ export const useUserStore = defineStore(
             setNullUserObj,
         }
     },
-    { persist: true },
+    { persist: false },
 )

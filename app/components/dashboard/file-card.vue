@@ -40,6 +40,9 @@
 
 <script setup lang="ts">
 import dayjs from "dayjs"
+const $Files = useFileStore()
+const $EmbedModal = useEmbedModalStore()
+
 const menu = ref<HTMLElement | null>(null)
 const menuOpenButton = ref<HTMLButtonElement | null>(null)
 

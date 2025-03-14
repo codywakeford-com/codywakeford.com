@@ -17,30 +17,12 @@
         </nav>
 
         <aside>
-            <nuxt-link @click="navActive = false" to="/#hero">Home</nuxt-link>
-            <nuxt-link @click="navActive = false" to="/#services">Services</nuxt-link>
-            <nuxt-link @click="navActive = false" to="/#case-studies">Case Studies</nuxt-link>
-            <nuxt-link @click="navActive = false" to="/#why">Why Me?</nuxt-link>
-            <nuxt-link @click="navActive = false" to="/#reviews">Reviews</nuxt-link>
-            <nuxt-link @click="navActive = false" to="/#contact">Contact Me</nuxt-link>
-
-            <nuxt-link @click="navActive = false" v-if="!$User?.state.user?.id" to="/auth/login">
-                <button-primary-m>Sign In</button-primary-m>
-            </nuxt-link>
-
-            <nuxt-link v-else-if="!gflags.dashboard">
-                <button-primary-m>Sign Out</button-primary-m>
-            </nuxt-link>
-
-            <nuxt-link @click="navActive = false" to="/dashboard/client" v-else>
-                <button-primary-m>Dashboard</button-primary-m>
-            </nuxt-link>
+            <nav-item-list @click="navActive = false" />
         </aside>
     </div>
 </template>
 
 <script setup lang="ts">
-import gflags from "~/utils/global-flags"
 const navActive = ref(false)
 </script>
 

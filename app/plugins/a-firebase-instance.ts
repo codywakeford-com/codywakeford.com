@@ -13,18 +13,22 @@ export default defineNuxtPlugin(() => {
     const firebaseConfig = useRuntimeConfig().public.firebaseConfig
 
     let app: FirebaseApp | undefined
-
     let auth: Auth | undefined
-
     let db: Firestore | undefined
-
     let storage: FirebaseStorage | undefined
+
+    const prod = process.env.NODE_ENV === "production"
+
+    const databaseId = prod ? "prod" : "(default)"
+    const bucketUrl = prod ? "gs://codywakeford-prod" : "gs://portfolio-1953f.firebasestorage.app"
+
+    console.log("using", databaseId)
 
     try {
         // Initialize Firebase apps
         app = initializeApp(firebaseConfig)
-        db = getFirestore(app)
-        storage = getStorage(app)
+        db = getFirestore(app, databaseId)
+        storage = getStorage(app, bucketUrl)
         auth = getAuth(app)
 
         console.log("Firebase client app, auth, db, and storage initialized.")

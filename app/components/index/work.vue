@@ -58,13 +58,14 @@ section {
         opacity: 0;
         justify-content: center;
         align-items: center;
-        width: 100%;
-        height: 100%;
+        width: 300px;
+        height: 200px;
         position: absolute;
         background: rgba(0, 0, 0, 0.75);
         color: var(--text1a);
-        left: 0;
-        top: 0;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
         transition: all 0.15s;
     }
 

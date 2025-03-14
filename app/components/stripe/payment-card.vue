@@ -23,7 +23,7 @@
 
                 <button class="new-card" @click="useNewCard = true">Use existing card</button>
             </div>
-            <div class="flex" v-else>
+            <div class="flex" v-show="$BillingModal.state.ui === 'payment' && !useNewCard">
                 <div class="left">
                     <form-kit
                         type="text"
