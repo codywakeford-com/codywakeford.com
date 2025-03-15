@@ -1,19 +1,28 @@
 <template>
     <section @click.stop.prevent>
         <header>
-            <h1 v-if="$BillingModal.type === 'save-card'">Add a card</h1>
-            <h1 v-else>Make a payment</h1>
+            <div>
+                <h1 v-if="$BillingModal.type === 'save-card'">Add a card</h1>
+                <h1 v-else>Make a payment</h1>
+                <p>A reciept email will be sent to you.</p>
+            </div>
 
             <div class="amount" v-if="$BillingModal.state.ui === 'payment'">
                 <h2 v-if="$BillingModal.state.paymentAmount">
                     £{{ ($BillingModal.state.paymentAmount / 100).toFixed(2) }}
                 </h2>
-                <input type="text" v-else />
+                <div v-else class="amount-input">
+                    <span>£</span>
+                    <input type="number" name="amount" />
+                </div>
             </div>
         </header>
 
         <FormKit type="form" :errors="errors.formErrors" novalidate v-show="useNewCard" ref="form" @submit="submit()">
-            <div class="existing-cards" v-if="useNewCard && $BillingModal.state.ui === 'payment'">
+            <div
+                class="existing-cards"
+                v-if="$User.state.isLoggedIn && useNewCard && $BillingModal.state.ui === 'payment'"
+            >
                 <stripe-payment-method-sm
                     @click="selectedCardIndex = index"
                     v-for="(card, index) of $User.state.paymentMethods"
@@ -23,7 +32,8 @@
 
                 <button class="new-card" @click="useNewCard = true">Use existing card</button>
             </div>
-            <div class="flex" v-show="$BillingModal.state.ui === 'payment' && !useNewCard">
+
+            <div class="flex" v-else-show>
                 <div class="left">
                     <form-kit
                         type="text"
@@ -327,7 +337,11 @@ header {
 
     h1 {
         font-size: 1.25rem;
+    }
+    p {
         margin-bottom: 15px;
+        font-size: 0.9rem;
+        opacity: 0.9;
     }
 }
 
@@ -393,5 +407,23 @@ header {
     font-size: 0.8rem;
     font-weight: bold;
     color: $danger1;
+}
+
+.amount-input {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 5px 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    input {
+        border: none;
+        background: none;
+
+        &:focus {
+            outline: none;
+        }
+    }
 }
 </style>

@@ -89,7 +89,7 @@ export default class DbService {
 
         if (queryConstraint) colRef = query(colRef, queryConstraint)
 
-        onSnapshot(colRef, (snapshot) => {
+        const unsubscribe = onSnapshot(colRef, (snapshot) => {
             const keepIds: string[] = []
             snapshot.docChanges().forEach((change) => {
                 const docData = { id: change.doc.id, ...change.doc.data() } as any
@@ -133,15 +133,16 @@ export default class DbService {
             // remove items no longer in firebase
             // state.splice(0, state.length, ...state.filter((i) => keepIds.includes(i.id)))
         })
+
+        return unsubscribe
     }
 
     // Pass an object reference to be updated when changes occur
     static initDocumentListener(path: string, state: any) {
-        console.log(path)
         const db = useNuxtApp().$db as Firestore
         const docRef = doc(db, path)
 
-        onSnapshot(docRef, (docSnapshot) => {
+        const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
             if (docSnapshot.exists()) {
                 const docData = { id: docSnapshot.id, ...docSnapshot.data() } as any
 
@@ -151,5 +152,7 @@ export default class DbService {
                 console.log("Document does not exist.")
             }
         })
+
+        return unsubscribe
     }
 }

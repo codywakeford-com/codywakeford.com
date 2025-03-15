@@ -32,7 +32,7 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 300px;
+    min-height: 325px;
 }
 
 h1 {
@@ -48,5 +48,15 @@ img {
     position: absolute;
     right: 50px;
     bottom: 0;
+}
+
+@media (max-width: 600px) {
+    h1 {
+        text-align: center;
+        font-size: 1.4rem;
+    }
+    img {
+        max-width: 50px;
+    }
 }
 </style>

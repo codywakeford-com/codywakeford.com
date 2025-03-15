@@ -51,11 +51,13 @@ const input = ref({
     email: "",
     password: "",
 })
+
 const errors = ref<string[]>([])
 
 async function handleSignIn(email: string, password: string) {
     loading.value = true
     const { error } = await AuthController.login(email, password)
+    console.log("hello helo")
 
     if (error) errors.value.push(error)
     loading.value = false

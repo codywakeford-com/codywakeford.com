@@ -1,16 +1,16 @@
 <template>
-    <div :class="{ 'nav-active': navActive }" class="nav-box">
+    <div ref="nav" :class="{ 'nav-active': navActive }" class="nav-box">
         <nav>
             <div class="left">
                 <img src="/assets/cw-logo.webp" alt="logo" />
             </div>
 
             <div class="right">
-                <button @click="navActive = false">
+                <button @click.stop="navActive = false">
                     <Icon v-if="navActive" name="akar-icons:cross" size="25" />
                 </button>
 
-                <button @click="navActive = true">
+                <button @click.stop="navActive = true">
                     <Icon v-if="!navActive" size="30" name="solar:hamburger-menu-linear" />
                 </button>
             </div>
@@ -24,6 +24,16 @@
 
 <script setup lang="ts">
 const navActive = ref(false)
+const nav = ref<HTMLDivElement | null>(null)
+
+onMounted(() => {
+    window.addEventListener("click", (event: Event) => {
+        if (navActive.value === false) return
+        if (!nav.value?.contains(event.target as Node)) {
+            navActive.value = false
+        }
+    })
+})
 </script>
 
 <style lang="scss" scoped>
@@ -66,7 +76,7 @@ aside {
     position: absolute;
     width: 100vw;
     left: 0;
-    top: -265%;
+    top: -365%;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -75,7 +85,7 @@ aside {
     border-bottom: 3px solid var(--primary);
 
     padding-inline: 25px;
-    padding-block: 25px 25px;
+    padding-block: 10px 25px;
 }
 
 button {

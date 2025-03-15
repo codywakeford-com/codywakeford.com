@@ -91,7 +91,6 @@ article {
     position: sticky;
     top: 115px;
     padding: 10px;
-    z-index: 100000;
 
     h2 {
         margin-bottom: 15px;
@@ -155,11 +154,25 @@ article {
     }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1050px) {
+    .flex {
+        flex-direction: column;
+    }
     .image-col {
+        width: fit-content;
+
         img {
+            max-width: 100%;
+            margin-inline: auto;
             min-width: 0px;
         }
+    }
+}
+
+@media (max-width: 400px) {
+    ul,
+    h3 {
+        display: none !important;
     }
 }
 </style>

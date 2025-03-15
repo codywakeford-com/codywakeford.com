@@ -5,6 +5,7 @@ interface State {
     jwt: string | null
     isLoading: boolean
     paymentMethods: PaymentMethod[]
+    isLoggedIn: boolean
 }
 
 export const useUserStore = defineStore(
@@ -15,11 +16,14 @@ export const useUserStore = defineStore(
                 firstName: "John",
                 lastName: "Doe",
                 id: "guest-user-id",
+                profileColor: "ffffff",
                 password: "hello",
                 email: "guest user",
                 role: "user",
                 customerId: "",
             },
+
+            isLoggedIn: false,
 
             jwt: null,
             isLoading: true,
@@ -47,16 +51,26 @@ export const useUserStore = defineStore(
             return state.value.paymentMethods || []
         })
 
+        function setUser(user: User, jwt: string) {
+            state.value.jwt = jwt
+            localStorage.setItem("jwt", jwt)
+
+            state.value.user = user
+            state.value.isLoggedIn = true
+        }
+
         function setNullUserObj() {
             state.value.user = {
-                id: "hello",
+                id: "a",
                 firstName: "Guest",
                 lastName: "User",
+                profileColor: "ffffff",
                 email: "guest@email.com",
                 password: "sogbndg",
                 role: "user",
                 customerId: "123",
             }
+            state.value.isLoggedIn = false
             state.value.paymentMethods = []
         }
 
@@ -68,7 +82,8 @@ export const useUserStore = defineStore(
             email,
             user,
             setNullUserObj,
+            setUser,
         }
     },
-    { persist: false },
+    { persist: true },
 )

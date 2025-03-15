@@ -19,6 +19,7 @@
 <style lang="scss" scoped>
 nav {
     background-color: white;
+    border-bottom: 3px solid var(--primary);
 
     .content {
         display: flex;

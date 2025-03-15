@@ -1,18 +1,17 @@
 <template>
     <main class="auth-page">
-        <form @submit.prevent="handleResetPassword" class="auth-form">
-            <lheader>
+        <form-kit type="form" @submit.prevent="handleResetPassword" class="auth-form">
+            <header>
                 <h1>Forgot Password?</h1>
                 <p>
-                    Enter the email address associated with your account and we will send a link to
-                    reset your password.
+                    Enter the email address associated with your account and we will send a link to reset your password.
                 </p>
-            </lheader>
+            </header>
 
-            <cflex>
+            <form-kit type="email">
                 <label for="email">Email Address</label>
                 <input type="text" name="email" v-model="email" />
-            </cflex>
+            </form-kit>
 
             <p v-if="successMessage" class="success-message">
                 {{ successMessage }}
@@ -20,33 +19,30 @@
             <p v-if="errorMessage" class="error-message">
                 {{ errorMessage }}
             </p>
-            <button-primary-m type="submit" class="submit-button">
-                <loader v-if="loading" color="white" />
-                <div v-else>Reset Password</div>
-            </button-primary-m>
 
-            <p class="no-account-p">
-                Remember your password?
-                <nuxt-link to="/auth/login">Sign In</nuxt-link>
-            </p>
-        </form>
+            <template #submit>
+                <button type="submit" :disabled="loading">
+                    <loader v-if="loading" color="white" />
+                    <span v-else>Submit</span>
+                </button>
+                <p class="no-account-p">
+                    Remember your password?
+                    <nuxt-link to="/auth/login">Sign In</nuxt-link>
+                </p>
+            </template>
+        </form-kit>
     </main>
 </template>
 
 <script setup>
-import { Icon } from "@iconify/vue"
-
 definePageMeta({
     layout: "auth",
-    middleware: "dashboard",
 })
 
 const loading = ref(false)
 const email = ref("")
 const successMessage = ref("")
 const errorMessage = ref("")
-
-const { $authUtils } = useNuxtApp()
 
 const handleResetPassword = async () => {
     loading.value = true

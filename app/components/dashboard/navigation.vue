@@ -31,14 +31,14 @@
                 <Icon name="eos-icons:admin" size="30" />
             </nuxt-link>
 
-            <button class="nav-item" @click="toggleTheme()">
-                <Icon
-                    v-if="$colorMode.preference === 'light'"
-                    name="line-md:moon-filled-to-sunny-filled-loop-transition"
-                    size="30"
-                />
-                <Icon v-else name="line-md:sunny-filled-loop-to-moon-filled-alt-loop-transition" size="30" />
-            </button>
+            <!-- <button class="nav-item" @click="toggleTheme()"> -->
+            <!--     <Icon -->
+            <!--         v-if="$colorMode.preference === 'light'" -->
+            <!--         name="line-md:moon-filled-to-sunny-filled-loop-transition" -->
+            <!--         size="30" -->
+            <!--     /> -->
+            <!--     <Icon v-else name="line-md:sunny-filled-loop-to-moon-filled-alt-loop-transition" size="30" /> -->
+            <!-- </button> -->
 
             <nuxt-link class="nav-item" to="/#hero" data-tooltip="Back to homepage">
                 <Icon name="material-symbols:arrow-back" size="30" />

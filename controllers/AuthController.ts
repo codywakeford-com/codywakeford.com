@@ -21,12 +21,13 @@ export default class AuthController {
 
     static async login(email: string, password: string) {
         const $User = useUserStore()
+
         try {
             const { jwt, user } = await AuthService.login(email, password)
 
-            localStorage.setItem("jwt", jwt)
-            $User.state.jwt = jwt
-            if (user) $User.state.user = user
+            if (!user) throw createError("An unknown error has occurred")
+
+            $User.setUser(user, jwt)
 
             InitController.initProjectListeners($User.state.user.email)
             InitController.initUserListeners($User.state.user.id)
@@ -53,9 +54,11 @@ export default class AuthController {
     static logout() {
         const $User = useUserStore()
         const $Projects = useProjectStore()
+        const $app = useAppStore()
 
-        $User.state.user = null
+        $User.setNullUserObj()
         $Projects.state.projects = []
+        $app.unsub()
 
         localStorage.removeItem("user")
         localStorage.removeItem("jwt")

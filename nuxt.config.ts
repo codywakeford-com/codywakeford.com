@@ -34,6 +34,7 @@ export default defineNuxtConfig({
         RESEND_API_KEY: process.env.RESEND_API_KEY,
         SECRET_KEY: process.env.SECRET_KEY,
         STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+        NAME_AUTH_DEV: process.env.NAME_AUTH_DEV,
         public: {
             STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
             CALENDLY_PAT: process.env.CALENDLY_PAT,
