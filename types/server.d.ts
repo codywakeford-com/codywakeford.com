@@ -1,7 +1,29 @@
-export { }
+export {}
 
 declare global {
     namespace Api {
+        namespace Projects {
+            namespace Email {
+                interface Request {
+                    email: string
+                }
+
+                interface Return {
+                    ids: string[]
+                }
+            }
+        }
+
+        namespace Emails {
+            namespace Invitation {
+                type Response = undefined
+
+                interface Request {
+                    emails: string[]
+                }
+            }
+        }
+
         namespace Auth {
             namespace Login {
                 interface Request {
@@ -14,6 +36,8 @@ declare global {
 
             namespace Register {
                 interface Request {
+                    firstName: string
+                    lastName: string
                     email: string
                     password: string
                     role?: User["role"]

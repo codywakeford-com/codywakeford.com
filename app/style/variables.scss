@@ -1,0 +1,64 @@
+:root {
+    --primary: #0b2760;
+    --primary2: #0f347c;
+    --secondary: #ececec;
+    --background: #ffffff;
+    --text1: #FFFFFF;
+    --text1-1: #EEEEEE;
+    --text2: #D9D9D9;
+    --text3: #B3B3B3;
+    --text4: #8C8C8C;
+    --text5: #666666;
+    --text6: #000000;
+    --shadow-color: lightgrey;
+
+    --text1a: #FFFFFF;
+    --text2a: #D9D9D9;
+    --text3a: #B3B3B3;
+    --text4a: #8C8C8C;
+    --text5a: #666666;
+    --text6a: #000000;
+
+    --modal-background: rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode {
+    --primary: #0b2760;
+    --primary2: #0a1b4a;
+    --background: #222;
+    --secondary: #2a2a2a;
+    --text6: #FFFFFF;
+    --text5: #D9D9D9;
+    --text4: #B3B3B3;
+    --text3: #8C8C8C;
+    --text2: #666666;
+    --text1: #000000;
+    --shadow-color: #222;
+}
+
+
+$danger-transparent: rgba(243, 196, 196, 0.445);
+$danger1: rgb(223, 67, 67);
+$success: rgb(10, 116, 10);
+$border-radius: 5px;
+
+$page-width: 1200px;
+$dashboard-page-width: 1600px;
+
+$header-font: "Open Sans";
+$sub-header-font: "Open Sans";
+$font: "Open Sans";
+
+$nav-height: 75px;
+$footer-height: 75px;
+
+:root {
+    --page-gutter: 50px;
+    --page-gutter-sm: 25px;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --page-gutter: 25px;
+    }
+}

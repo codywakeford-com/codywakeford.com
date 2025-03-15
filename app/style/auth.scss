@@ -1,0 +1,84 @@
+@use "./variables.scss" as *;
+
+.auth-page {
+    display: flex;
+
+    padding-top: $nav-height;
+    min-height: calc(100vh - $footer-height);
+    align-items: center;
+    justify-content: center;
+
+    .formkit-form {
+        padding: 25px;
+        width: 350px;
+        border: 1px solid var(--text2);
+
+        header {
+            margin-bottom: 30px;
+
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+            }
+        }
+
+        button {
+            margin-top: 25px;
+        }
+    }
+
+}
+
+.divider {
+    margin-inline: auto;
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.6);
+    position: relative;
+    width: 100%;
+    margin-block: 25px;
+    display: flex;
+    justify-content: center;
+
+    span {
+        position: relative;
+        z-index: 2;
+        background: var(--background);
+        padding-inline: 10px;
+    }
+
+    &::before {
+        content: "";
+        width: 100%;
+        top: 50%;
+        height: 1px;
+        background: rgba(0, 0, 0, 0.1);
+        position: absolute;
+    }
+}
+
+.forgot-password-link {
+    margin-left: auto;
+    font-size: 0.9rem;
+    color: #2d71ea;
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    top: -12px;
+}
+
+.no-account-p {
+    justify-content: center;
+    margin-inline: auto;
+    margin-top: 15px;
+    font-size: 0.9rem;
+
+    a {
+        font-size: 0.9rem;
+        color: #2d71ea !important;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

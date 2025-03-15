@@ -1,0 +1,26 @@
+@use "~/style/variables.scss" as *;
+
+.file-card {
+    background: var(--background);
+    display: flex;
+    min-width: 250px;
+    padding: 20px;
+    border: 1px solid var(--text2);
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+        border: 1px solid var(--primary);
+    }
+
+    &.large {
+        font-weight: bold;
+        max-width: 400px;
+        flex: 1;
+
+        align-items: center;
+        gap: 10px;
+        padding-block: 25px;
+        flex-direction: column;
+    }
+}

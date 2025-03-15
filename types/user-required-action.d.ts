@@ -14,7 +14,7 @@ declare global {
         action: Actiontype
     }
 
-    type ActionType = "payment" | "aporove-design" | "book-meeting" | "respond-to-proposal" | "upload-document"
+    type ActionType = "payment" | "aporove-design" | "book-meeting" | "accept-quote"
 
     type ActionStatus = "pending" | "completed" | "cancelled"
 }

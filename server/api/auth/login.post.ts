@@ -2,10 +2,10 @@ import { collection, getDocs, query, where } from "firebase/firestore"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
-export default eventHandler(async (event): Promise<ApiAuthLogin.Response> => {
+export default eventHandler(async (event): Promise<Api.Auth.Login.Response> => {
     const db = event.context.db
     const secretKey = useRuntimeConfig().SECRET_KEY
-    const { email, password } = (await readBody(event)) as ApiAuthLogin.Request
+    const { email, password } = (await readBody(event)) as Api.Auth.Login.Request
 
     if (!email || !password) {
         throw createError({
@@ -17,38 +17,30 @@ export default eventHandler(async (event): Promise<ApiAuthLogin.Response> => {
     const userColRef = collection(db, "users")
     const q = query(userColRef, where("email", "==", email))
 
-    try {
-        const querySnapshot = await getDocs(q)
+    const querySnapshot = await getDocs(q)
 
-        if (querySnapshot.empty) {
-            throw createError({
-                statusCode: 401,
-                message: "Email or password is incorrect",
-            })
-        }
-
-        const doc = querySnapshot.docs[0]
-        let user = { id: doc.id, ...doc.data() } as $User
-
-        const passwordMatch = await bcrypt.compare(password, user.password)
-
-        if (passwordMatch) {
-            const { password, ...userWithoutPassword } = user
-
-            const token = jwt.sign(userWithoutPassword, secretKey)
-
-            return token
-        } else {
-            throw createError({
-                statusCode: 401,
-                message: "Email or password is incorrect",
-            })
-        }
-    } catch (error) {
-        console.log(error)
+    if (querySnapshot.empty) {
         throw createError({
-            statusCode: 500,
-            message: "And unknown error occured",
+            statusCode: 401,
+            message: "Email or password is incorrect",
+        })
+    }
+
+    const doc = querySnapshot.docs[0]
+    let user = { id: doc.id, ...doc.data() } as $User
+
+    const passwordMatch = await bcrypt.compare(password, user.password)
+
+    if (passwordMatch) {
+        const { password, ...userWithoutPassword } = user
+
+        const token = jwt.sign(userWithoutPassword, secretKey)
+
+        return token
+    } else {
+        throw createError({
+            statusCode: 401,
+            message: "Email or password is incorrect",
         })
     }
 })

@@ -1,0 +1,21 @@
+
+dialog {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    min-height: 100vh;
+    min-width: 100vw;
+    z-index: 10000;
+    border: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--modal-background);
+    transition: all 0.55s;
+}
+
+dialog[open] {
+    display: flex;
+}

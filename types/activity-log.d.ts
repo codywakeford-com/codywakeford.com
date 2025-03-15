@@ -4,6 +4,16 @@ declare global {
     // An activity item can have an action button attatched
     type ActionButton = LinkButton | MeetingButton | OpenDesignButton
 
+    interface Message {
+        type: "message"
+        id: string
+        message: string
+        sender: string
+        timestamp: FieldValue
+        files: string[]
+        projectId: string
+    }
+
     interface OpenDesignButton {
         type: "open-design"
     }
@@ -14,6 +24,7 @@ declare global {
         timestamp: number
         actions: Action["id"][]
         sender: User["email"] | "system"
+        projectId: Project["id"]
     }
 
     interface ActionActivityItem extends BaseActivityItem {
@@ -22,6 +33,7 @@ declare global {
 
     interface AttachmentActivityItem extends BaseActivityItem {
         type: "attachment"
+        sender: User["email"]
         files: ProjectFile["id"][]
     }
 
@@ -37,7 +49,6 @@ declare global {
 
     interface QuoteActivityItem extends BaseActivityItem {
         type: "quote"
-        projectId: Project["id"]
     }
 
     interface SystemMessageActivityItem extends BaseActivityItem {
@@ -59,9 +70,4 @@ declare global {
         | QuoteActivityItem
         | MeetingActivityItem
         | SystemMessageActivityItem
-
-    interface ActivityLog {
-        projectId: string
-        activity: ActivityItem[]
-    }
 }

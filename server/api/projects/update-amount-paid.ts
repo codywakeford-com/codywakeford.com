@@ -1,5 +1,4 @@
 import { collection, doc, getDoc, updateDoc } from "firebase/firestore"
-
 export default eventHandler(async (event) => {
     const db = event.context.db
     const { id, amountPaid } = await readBody(event)

@@ -1,18 +1,23 @@
+import vue from "@vitejs/plugin-vue"
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     compatibilityDate: "2024-11-01",
     devtools: { enabled: true },
+    future: { compatibilityVersion: 4 },
+
+    imports: { dirs: ["~~/controllers", "~~/services"] },
+
     sourcemap: {
         server: true,
         client: true,
     },
 
-    ssr: false,
     vite: {
         css: {
             preprocessorOptions: {
                 scss: {
-                    additionalData: '@use "@/style/variables.scss" as *;',
+                    additionalData: '@use "~/style/variables.scss" as *;',
                 },
             },
         },
@@ -21,12 +26,15 @@ export default defineNuxtConfig({
     scripts: {
         registry: {
             stripe: true,
+            googleAnalytics: { id: process.env.FIREBASE_MEASUREMENT_ID || "" },
         },
     },
 
     runtimeConfig: {
+        RESEND_API_KEY: process.env.RESEND_API_KEY,
         SECRET_KEY: process.env.SECRET_KEY,
         STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+        NAME_AUTH_DEV: process.env.NAME_AUTH_DEV,
         public: {
             STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
             CALENDLY_PAT: process.env.CALENDLY_PAT,
@@ -42,13 +50,35 @@ export default defineNuxtConfig({
         },
     },
 
-    extends: [
-        ["../nova-components", { install: true }],
-        ["../novatek-email", { install: true }],
-        ["../novatek-payments", { install: true }],
-        ["../firebase-service", { install: true }],
+    extends: [["../nova-components", { install: true }]],
+
+    css: ["~/style/main.scss", "~/style/modal.scss"],
+    modules: [
+        "@nuxt/fonts",
+        "@pinia/nuxt",
+        "nuxt-calendly",
+        "@nuxt/icon",
+        "@nuxt/scripts",
+        "pinia-plugin-persistedstate/nuxt",
+        "@nuxtjs/color-mode",
+        "@formkit/nuxt",
     ],
 
-    css: ["@/style/main.scss"],
-    modules: ["@nuxt/fonts", "@pinia/nuxt", "nuxt-calendly", "@nuxt/icon", "@nuxt/scripts"],
+    nitro: {
+        rollupConfig: {
+            plugins: [vue()],
+        },
+    },
+
+    colorMode: {
+        preference: "system", // default value of $colorMode.preference
+        fallback: "light", // fallback value if not system preference found
+        hid: "nuxt-color-mode-script",
+        globalName: "__NUXT_COLOR_MODE__",
+        componentName: "ColorScheme",
+        classPrefix: "",
+        classSuffix: "-mode",
+        storage: "localStorage", // or 'sessionStorage' or 'cookie'
+        storageKey: "nuxt-color-mode",
+    },
 })
