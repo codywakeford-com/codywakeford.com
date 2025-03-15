@@ -17,4 +17,18 @@ export default class EmailController {
             return { error: "An unknown error occurred. Feel free to email at cody@codywakeford.com", success: null }
         }
     }
+
+    static async sendEmailConfirmationEmail(email: string) {
+        await $fetch(`/api/emails/confirmation`, {
+            method: "POST",
+            body: { email },
+        })
+    }
+
+    static async sendResetPasswordEmail(email: string) {
+        await $fetch(`/api/emails/reset-password`, {
+            method: "POST",
+            body: { email },
+        })
+    }
 }

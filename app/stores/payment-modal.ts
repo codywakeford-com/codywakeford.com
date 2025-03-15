@@ -3,6 +3,7 @@ interface State {
     ui: "payment" | "save-card"
     paymentAmount: number | undefined
 }
+
 export const useBillingModalStore = defineStore(
     "billingModal",
     () => {

@@ -41,4 +41,4 @@ jobs:
         run: npm run build -- --preset=firebase
 
       - name: Deploy to Firebase
-        run: npx firebase-tools deploy --token ${{ secrets.FIREBASE_TOKEN }} --project jonnyparker-com
+        run: npx firebase-tools deploy --token ${{ secrets.FIREBASE_TOKEN }} 
